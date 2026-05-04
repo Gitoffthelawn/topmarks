@@ -1,0 +1,50 @@
+name: Build extension ZIP
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Generate config.local.js from secrets
+        env:
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+        run: |
+          if [ -z "$UNSPLASH_ACCESS_KEY" ]; then
+            echo "::error::UNSPLASH_ACCESS_KEY secret is not set."
+            exit 1
+          fi
+          printf 'UNSPLASH_ACCESS_KEY=%s\n' "$UNSPLASH_ACCESS_KEY" > .env
+          npm run build-config
+
+      - run: npm run lint
+
+      - run: npx web-ext build --overwrite-dest
+
+      - name: Attach ZIP to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: web-ext-artifacts/*.zip
+
+      - name: Upload ZIP as workflow artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: topmarks-extension
+          path: web-ext-artifacts/*.zip
