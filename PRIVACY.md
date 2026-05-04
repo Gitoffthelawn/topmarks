@@ -60,7 +60,9 @@ Unsplash is an independent third-party service. Once data reaches Unsplash, Unsp
 
 ### 4.2 Bookmarked websites — favicon retrieval
 
-To display the small icon next to each bookmark, the extension loads `/favicon.ico` directly from each bookmarked site's own origin (for example, a `github.com` bookmark causes a request to `https://github.com/favicon.ico`). This is the same request your browser would normally make to render that site.
+To display the small icon next to each bookmark, the extension first reads the favicon from Firefox's own local favicon cache (via the internal `page-icon:` URL scheme). When Firefox already has a cached icon for the bookmarked page, **no network request is made**.
+
+If Firefox's cache doesn't have an icon for that URL, the extension loads `/favicon.ico` directly from the bookmarked site's own origin (for example, a `github.com` bookmark causes a request to `https://github.com/favicon.ico`). This is the same request your browser would normally make to render that site.
 
 The extension does **not** route favicon requests through any third-party favicon-lookup service. If a bookmarked site does not host a favicon at the standard path, the extension displays a built-in globe icon and no further request is made.
 

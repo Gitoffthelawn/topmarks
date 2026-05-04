@@ -66,14 +66,19 @@ function sortFoldersFirst(nodes) {
 }
 
 function faviconSources(url) {
-  // Only the site's own /favicon.ico is fetched. We deliberately avoid third-party
-  // favicon services (Google, DuckDuckGo, etc.) because they would receive each
-  // bookmark's hostname, which counts as transmitting browsing data to a third
-  // party under Firefox add-on policies.
+  // 1. `page-icon:` — undocumented Firefox URL scheme that returns the favicon
+  //    Firefox already has cached for the page. No network request, no third
+  //    parties. Falls through silently if the scheme isn't accessible from this
+  //    context.
+  // 2. The site's own `/favicon.ico` — direct fetch, no third-party service.
+  //
+  // Third-party favicon services (Google, DuckDuckGo, etc.) are deliberately
+  // avoided: they would receive each bookmark's hostname, transmitting browsing
+  // data to a third party under Firefox add-on policies.
   try {
     const u = new URL(url);
     if (u.protocol !== "http:" && u.protocol !== "https:") return [];
-    return [`${u.origin}/favicon.ico`];
+    return [`page-icon:${url}`, `${u.origin}/favicon.ico`];
   } catch {
     return [];
   }
