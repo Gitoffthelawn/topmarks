@@ -21,6 +21,7 @@
   "interval6h": { "message": "6 小时" },
   "interval12h": { "message": "12 小时" },
   "interval24h": { "message": "24 小时" },
+  "bgErrorMessage": { "message": "无法加载壁纸。将自动重试。" },
   "attrPhoto": { "message": "照片" },
   "attrUnsplash": { "message": "Unsplash" },
   "emptyToolbar": { "message": "您的书签栏为空。" },

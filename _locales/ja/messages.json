@@ -21,6 +21,7 @@
   "interval6h": { "message": "6時間" },
   "interval12h": { "message": "12時間" },
   "interval24h": { "message": "24時間" },
+  "bgErrorMessage": { "message": "壁紙を読み込めませんでした。自動的に再試行します。" },
   "attrPhoto": { "message": "写真" },
   "attrUnsplash": { "message": "Unsplash" },
   "emptyToolbar": { "message": "ブックマークバーは空です。" },

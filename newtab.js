@@ -2,6 +2,14 @@ const TOOLBAR_ID = "toolbar_____";
 const SVG_NS = "http://www.w3.org/2000/svg";
 // Tabliss's curated wallpaper collection — ~545 hand-picked, consistent high quality.
 const UNSPLASH_COLLECTION_ID = "1053828";
+// Exponential-backoff bounds for Unsplash failures. Doubles each consecutive
+// failure (30s → 1m → 2m → 4m → 8m → 16m → 30m).
+const BACKOFF_BASE_MS = 30 * 1000;
+const BACKOFF_MAX_MS = 30 * 60 * 1000;
+
+function backoffDelayMs(failures) {
+  return Math.min(BACKOFF_BASE_MS * Math.pow(2, failures - 1), BACKOFF_MAX_MS);
+}
 // Per Unsplash API guidelines, every link back to unsplash.com must include UTM
 // params. The `utm_source` should match the application name you registered at
 // https://unsplash.com/oauth/applications.
@@ -410,7 +418,13 @@ async function loadBackground({ force = false } = {}) {
     return;
   }
 
-  const { cachedBackground } = await browser.storage.local.get(["cachedBackground"]);
+  const stored = await browser.storage.local.get([
+    "cachedBackground",
+    "unsplashBackoff",
+  ]);
+  const cachedBackground = stored.cachedBackground;
+  const backoff = stored.unsplashBackoff || { failures: 0, nextAttemptAt: 0 };
+
   const intervalMs = (settings.backgroundIntervalHours || 6) * 60 * 60 * 1000;
   // Caches without rawUrl are from an older format and get invalidated automatically.
   const isExpired =
@@ -428,6 +442,19 @@ async function loadBackground({ force = false } = {}) {
 
   if (!force && !isExpired) return;
 
+  // Honor the backoff window so a stream of new tabs after a failure doesn't
+  // hammer the API. Backoff state is shared across all tabs via storage.
+  const now = Date.now();
+  if (now < backoff.nextAttemptAt) {
+    const waitS = Math.ceil((backoff.nextAttemptAt - now) / 1000);
+    console.warn(
+      `Unsplash backoff active (${backoff.failures} consecutive failures); ` +
+        `next attempt in ${waitS}s`
+    );
+    if (!cachedBackground?.rawUrl) clearBackground();
+    return;
+  }
+
   if (hasUnsplashKey()) {
     try {
       const fresh = await fetchUnsplashRandomPhoto();
@@ -441,12 +468,24 @@ async function loadBackground({ force = false } = {}) {
         photoUrl: fresh.photoUrl,
         fetchedAt: Date.now(),
       };
-      await browser.storage.local.set({ cachedBackground: cached });
+      await browser.storage.local.set({
+        cachedBackground: cached,
+        unsplashBackoff: { failures: 0, nextAttemptAt: 0 },
+      });
       applyBackground({ ...cached, imageUrl });
       triggerUnsplashDownload(fresh.downloadLocation);
       return;
     } catch (err) {
-      console.warn("Unsplash fetch failed:", err);
+      const failures = backoff.failures + 1;
+      const delay = backoffDelayMs(failures);
+      await browser.storage.local.set({
+        unsplashBackoff: { failures, nextAttemptAt: Date.now() + delay },
+      });
+      console.warn(
+        `Unsplash fetch failed (attempt ${failures}); ` +
+          `next attempt in ${Math.round(delay / 1000)}s`,
+        err
+      );
     }
   }
 
@@ -479,6 +518,35 @@ function applyStyle() {
   try {
     localStorage.setItem("style", settings.style);
   } catch {}
+}
+
+async function updateBackgroundErrorVisibility() {
+  const errorEl = document.getElementById("setting-bg-error");
+  const intervalEl = document.getElementById("setting-bg-interval");
+  if (!errorEl || !intervalEl) return;
+
+  if (!settings.backgroundEnabled) {
+    errorEl.hidden = true;
+    intervalEl.hidden = false;
+    return;
+  }
+
+  const { unsplashBackoff } = await browser.storage.local.get(["unsplashBackoff"]);
+  const active =
+    unsplashBackoff &&
+    unsplashBackoff.failures > 0 &&
+    unsplashBackoff.nextAttemptAt > Date.now();
+
+  errorEl.hidden = !active;
+  intervalEl.hidden = active;
+}
+
+if (browser.storage?.onChanged) {
+  browser.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes.unsplashBackoff) {
+      updateBackgroundErrorVisibility();
+    }
+  });
 }
 
 systemDarkMq.addEventListener("change", () => {
@@ -587,6 +655,7 @@ function handleSettingChange(key) {
     applyStyle();
   } else if (key === "backgroundEnabled" || key === "backgroundIntervalHours") {
     loadBackground();
+    if (key === "backgroundEnabled") updateBackgroundErrorVisibility();
   }
 }
 
@@ -618,4 +687,5 @@ for (const ev of bookmarkEvents) {
   setupSettingsPanel();
   renderBookmarks();
   loadBackground();
+  updateBackgroundErrorVisibility();
 })();

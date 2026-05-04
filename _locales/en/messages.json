@@ -21,6 +21,7 @@
   "interval6h": { "message": "6 hours" },
   "interval12h": { "message": "12 hours" },
   "interval24h": { "message": "24 hours" },
+  "bgErrorMessage": { "message": "Couldn't load wallpaper. Will retry automatically." },
   "attrPhoto": { "message": "Photo" },
   "attrUnsplash": { "message": "Unsplash" },
   "emptyToolbar": { "message": "Your bookmarks toolbar is empty." },

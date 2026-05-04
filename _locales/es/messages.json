@@ -21,6 +21,7 @@
   "interval6h": { "message": "6 horas" },
   "interval12h": { "message": "12 horas" },
   "interval24h": { "message": "24 horas" },
+  "bgErrorMessage": { "message": "No se pudo cargar el fondo. Se reintentará automáticamente." },
   "attrPhoto": { "message": "Foto" },
   "attrUnsplash": { "message": "Unsplash" },
   "emptyToolbar": { "message": "Tu barra de marcadores está vacía." },

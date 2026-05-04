@@ -21,6 +21,7 @@
   "interval6h": { "message": "6 Stunden" },
   "interval12h": { "message": "12 Stunden" },
   "interval24h": { "message": "24 Stunden" },
+  "bgErrorMessage": { "message": "Hintergrund konnte nicht geladen werden. Versuch wird automatisch wiederholt." },
   "attrPhoto": { "message": "Foto" },
   "attrUnsplash": { "message": "Unsplash" },
   "emptyToolbar": { "message": "Deine Lesezeichen-Symbolleiste ist leer." },

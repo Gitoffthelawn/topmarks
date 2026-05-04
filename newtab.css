@@ -465,6 +465,12 @@ body.hide-folder-icons .folder-icon {
   border-color: transparent;
 }
 
+.bg-error {
+  font-size: 12px;
+  color: var(--fg-muted);
+  cursor: default;
+}
+
 .toggle-group {
   display: flex;
   width: 100%;

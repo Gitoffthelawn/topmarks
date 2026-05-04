@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <label class="setting setting-text">
+      <label class="setting setting-text" id="setting-bg-interval">
         <span data-i18n="refreshIntervalLabel">Refresh background every</span>
         <select data-setting="backgroundIntervalHours">
           <option value="1" data-i18n="interval1h">1 hour</option>
@@ -102,6 +102,18 @@
           <option value="24" data-i18n="interval24h">24 hours</option>
         </select>
       </label>
+
+      <div
+        class="setting bg-error"
+        id="setting-bg-error"
+        role="status"
+        aria-live="polite"
+        hidden
+      >
+        <span data-i18n="bgErrorMessage"
+          >Couldn't load wallpaper. Will retry automatically.</span
+        >
+      </div>
     </div>
 
     <script src="config.local.js"></script>

@@ -21,6 +21,7 @@
   "interval6h": { "message": "6 heures" },
   "interval12h": { "message": "12 heures" },
   "interval24h": { "message": "24 heures" },
+  "bgErrorMessage": { "message": "Impossible de charger l'arrière-plan. Nouvelle tentative automatique." },
   "attrPhoto": { "message": "Photo" },
   "attrUnsplash": { "message": "Unsplash" },
   "emptyToolbar": { "message": "Votre barre de favoris est vide." },
