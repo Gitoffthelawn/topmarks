@@ -8,6 +8,12 @@ on:
 permissions:
   contents: write
 
+env:
+  # Opt actions/* into Node 24 ahead of the June 2026 default flip.
+  # Does not affect the Node version used by `npm run` steps below
+  # (that one comes from .nvmrc via setup-node).
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build:
     runs-on: ubuntu-latest
