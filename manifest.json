@@ -9,6 +9,11 @@
     "storage",
     "https://api.unsplash.com/*"
   ],
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg",
+    "128": "icons/icon.svg"
+  },
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
