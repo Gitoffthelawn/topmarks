@@ -479,7 +479,12 @@ async function loadBackground({ force = false } = {}) {
       const failures = backoff.failures + 1;
       const delay = backoffDelayMs(failures);
       await browser.storage.local.set({
-        unsplashBackoff: { failures, nextAttemptAt: Date.now() + delay },
+        unsplashBackoff: {
+          failures,
+          nextAttemptAt: Date.now() + delay,
+          lastErrorMessage: String(err?.message || err),
+          lastErrorAt: Date.now(),
+        },
       });
       console.warn(
         `Unsplash fetch failed (attempt ${failures}); ` +
@@ -531,7 +536,12 @@ async function updateBackgroundErrorVisibility() {
     return;
   }
 
-  const { unsplashBackoff } = await browser.storage.local.get(["unsplashBackoff"]);
+  const stored = await browser.storage.local.get([
+    "unsplashBackoff",
+    "cachedBackground",
+  ]);
+  const unsplashBackoff = stored.unsplashBackoff;
+  const cachedBackground = stored.cachedBackground;
   const active =
     unsplashBackoff &&
     unsplashBackoff.failures > 0 &&
@@ -539,6 +549,33 @@ async function updateBackgroundErrorVisibility() {
 
   errorEl.hidden = !active;
   intervalEl.hidden = active;
+
+  const now = Date.now();
+  if (active) {
+    console.error("[Topmarks] Wallpaper error shown in settings.", {
+      consecutiveFailures: unsplashBackoff.failures,
+      nextAttemptInSeconds: Math.ceil((unsplashBackoff.nextAttemptAt - now) / 1000),
+      nextAttemptAt: new Date(unsplashBackoff.nextAttemptAt).toISOString(),
+      lastErrorMessage: unsplashBackoff.lastErrorMessage || null,
+      lastErrorAt: unsplashBackoff.lastErrorAt
+        ? new Date(unsplashBackoff.lastErrorAt).toISOString()
+        : null,
+      cachedBackgroundShown: !!cachedBackground?.rawUrl,
+      cachedBackgroundFetchedAt: cachedBackground?.fetchedAt
+        ? new Date(cachedBackground.fetchedAt).toISOString()
+        : null,
+      cachedBackgroundAgeHours: cachedBackground?.fetchedAt
+        ? Math.round((now - cachedBackground.fetchedAt) / 36e5 * 10) / 10
+        : null,
+      backgroundIntervalHours: settings.backgroundIntervalHours,
+      hasUnsplashKey: hasUnsplashKey(),
+    });
+  } else {
+    console.info("[Topmarks] No active wallpaper error.", {
+      backoff: unsplashBackoff || null,
+      cachedBackgroundShown: !!cachedBackground?.rawUrl,
+    });
+  }
 }
 
 if (browser.storage?.onChanged) {
@@ -591,6 +628,7 @@ function setupSettingsPanel() {
     const willOpen = panel.hidden;
     panel.hidden = !willOpen;
     btn.setAttribute("aria-expanded", String(willOpen));
+    if (willOpen) updateBackgroundErrorVisibility();
   });
 
   panel.addEventListener("click", (e) => e.stopPropagation());

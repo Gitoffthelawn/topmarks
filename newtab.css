@@ -380,6 +380,10 @@ body.hide-folder-icons .folder-icon {
   user-select: none;
 }
 
+.setting[hidden] {
+  display: none;
+}
+
 .setting + .setting {
   border-top: 1px solid var(--glass-border-soft);
 }
