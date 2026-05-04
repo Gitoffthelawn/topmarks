@@ -83,4 +83,4 @@ PRIVACY.md             Privacy policy
 
 ## License
 
-Not yet licensed for redistribution.
+Released under the [MIT License](./LICENSE).
