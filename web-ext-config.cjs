@@ -13,6 +13,8 @@ module.exports = {
     "package-lock.json",
     "README.md",
     "PRIVACY.md",
+    "LISTING.md",
+    "sample-bookmarks.html",
     "web-ext-config.cjs",
     "web-ext-artifacts/**",
   ],
