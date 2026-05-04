@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>New Tab</title>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme") || "auto";
+          var resolved =
+            t === "auto"
+              ? window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light"
+              : t;
+          document.documentElement.dataset.theme = resolved;
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="newtab.css" />
+  </head>
+  <body>
+    <nav
+      id="bookmarks-bar"
+      data-i18n-aria-label="bookmarksBarLabel"
+      aria-label="Bookmarks bar"
+    ></nav>
+    <main id="content"></main>
+
+    <div id="bg-attribution" hidden>
+      <a id="bg-photo-link" target="_blank" rel="noopener" data-i18n="attrPhoto">Photo</a>
+      <span class="bg-attribution-sep" aria-hidden="true">|</span>
+      <a id="bg-author" target="_blank" rel="noopener"></a>
+      <span class="bg-attribution-sep" aria-hidden="true">|</span>
+      <a id="bg-unsplash-link" target="_blank" rel="noopener" data-i18n="attrUnsplash">Unsplash</a>
+    </div>
+
+    <button
+      id="settings-btn"
+      type="button"
+      data-i18n-aria-label="settingsButtonLabel"
+      aria-label="Settings"
+      aria-expanded="false"
+      aria-controls="settings-panel"
+    >
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    </button>
+
+    <div
+      id="settings-panel"
+      role="dialog"
+      data-i18n-aria-label="settingsPanelLabel"
+      aria-label="Settings"
+      aria-labelledby="settings-heading"
+      hidden
+    >
+      <h2 id="settings-heading" data-i18n="settingsHeading">Settings</h2>
+
+      <label class="setting">
+        <span data-i18n="hideFolderIcons">Hide folder icons</span>
+        <input type="checkbox" data-setting="hideFolderIcons" />
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="setting">
+        <span data-i18n="centerBookmarks">Center bookmarks in bar</span>
+        <input type="checkbox" data-setting="centerBookmarks" />
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="setting">
+        <span data-i18n="showBackgroundImage">Show background image</span>
+        <input type="checkbox" data-setting="backgroundEnabled" />
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <div class="setting setting-text">
+        <span id="theme-label" data-i18n="themeLabel">Theme</span>
+        <div
+          class="toggle-group"
+          role="radiogroup"
+          aria-labelledby="theme-label"
+          data-setting="theme"
+        >
+          <button type="button" role="radio" data-value="auto" data-i18n="themeAuto">Auto</button>
+          <button type="button" role="radio" data-value="light" data-i18n="themeLight">Light</button>
+          <button type="button" role="radio" data-value="dark" data-i18n="themeDark">Dark</button>
+        </div>
+      </div>
+
+      <label class="setting setting-text">
+        <span data-i18n="refreshIntervalLabel">Refresh background every</span>
+        <select data-setting="backgroundIntervalHours">
+          <option value="1" data-i18n="interval1h">1 hour</option>
+          <option value="6" data-i18n="interval6h">6 hours</option>
+          <option value="12" data-i18n="interval12h">12 hours</option>
+          <option value="24" data-i18n="interval24h">24 hours</option>
+        </select>
+      </label>
+
+      <button
+        type="button"
+        id="refresh-bg-btn"
+        class="setting-button"
+        data-i18n="refreshNow"
+      >
+        Refresh background now
+      </button>
+    </div>
+
+    <script src="config.local.js"></script>
+    <script src="newtab.js"></script>
+  </body>
+</html>
