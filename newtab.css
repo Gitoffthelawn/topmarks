@@ -465,19 +465,6 @@ body.hide-folder-icons .folder-icon {
   border-color: transparent;
 }
 
-.setting-button {
-  width: 100%;
-  margin-top: 10px;
-  padding: 7px 10px;
-  border: 1px solid var(--glass-control-border);
-  border-radius: 6px;
-  background: var(--glass-control-bg);
-  color: var(--fg);
-  font: inherit;
-  cursor: pointer;
-  transition: background 0.15s ease, opacity 0.15s ease;
-}
-
 .toggle-group {
   display: flex;
   width: 100%;
@@ -514,14 +501,6 @@ body.hide-folder-icons .folder-icon {
   outline-offset: 1px;
 }
 
-.setting-button:hover:not(:disabled) {
-  background: var(--hover);
-}
-
-.setting-button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
 
 /* ---- Accessibility: respect user motion / transparency preferences ---- */
 

@@ -517,7 +517,6 @@ function syncSettingsUi() {
 function setupSettingsPanel() {
   const btn = document.getElementById("settings-btn");
   const panel = document.getElementById("settings-panel");
-  const refreshBtn = document.getElementById("refresh-bg-btn");
 
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -577,23 +576,6 @@ function setupSettingsPanel() {
     });
   });
 
-  refreshBtn.addEventListener("click", async (e) => {
-    e.stopPropagation();
-    const original = refreshBtn.textContent;
-    refreshBtn.disabled = true;
-    refreshBtn.textContent = t("refreshLoading");
-    try {
-      await browser.storage.local.remove("cachedBackground");
-      await loadBackground({ force: true });
-      refreshBtn.textContent = t("refreshSuccess");
-    } catch {
-      refreshBtn.textContent = t("refreshFailed");
-    }
-    setTimeout(() => {
-      refreshBtn.textContent = original;
-      refreshBtn.disabled = false;
-    }, 1200);
-  });
 }
 
 function handleSettingChange(key) {

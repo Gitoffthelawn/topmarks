@@ -4,22 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>New Tab</title>
-    <script>
-      (function () {
-        try {
-          var t = localStorage.getItem("theme") || "auto";
-          var resolved =
-            t === "auto"
-              ? window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light"
-              : t;
-          document.documentElement.dataset.theme = resolved;
-          document.documentElement.dataset.style =
-            localStorage.getItem("style") || "glass";
-        } catch (e) {}
-      })();
-    </script>
+    <script src="theme-init.js"></script>
     <link rel="stylesheet" href="newtab.css" />
   </head>
   <body>
@@ -117,15 +102,6 @@
           <option value="24" data-i18n="interval24h">24 hours</option>
         </select>
       </label>
-
-      <button
-        type="button"
-        id="refresh-bg-btn"
-        class="setting-button"
-        data-i18n="refreshNow"
-      >
-        Refresh background now
-      </button>
     </div>
 
     <script src="config.local.js"></script>
