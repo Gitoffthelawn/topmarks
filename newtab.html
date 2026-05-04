@@ -15,6 +15,8 @@
                 : "light"
               : t;
           document.documentElement.dataset.theme = resolved;
+          document.documentElement.dataset.style =
+            localStorage.getItem("style") || "glass";
         } catch (e) {}
       })();
     </script>
@@ -90,6 +92,19 @@
           <button type="button" role="radio" data-value="auto" data-i18n="themeAuto">Auto</button>
           <button type="button" role="radio" data-value="light" data-i18n="themeLight">Light</button>
           <button type="button" role="radio" data-value="dark" data-i18n="themeDark">Dark</button>
+        </div>
+      </div>
+
+      <div class="setting setting-text">
+        <span id="style-label" data-i18n="styleLabel">Style</span>
+        <div
+          class="toggle-group"
+          role="radiogroup"
+          aria-labelledby="style-label"
+          data-setting="style"
+        >
+          <button type="button" role="radio" data-value="glass" data-i18n="styleGlass">Glass</button>
+          <button type="button" role="radio" data-value="classic" data-i18n="styleClassic">Classic</button>
         </div>
       </div>
 

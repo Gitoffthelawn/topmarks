@@ -54,6 +54,45 @@
   --toggle-thumb-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+/* ---- Classic style: solid surfaces, no blur, anchored bar ---- */
+:root[data-style="classic"] {
+  --glass-bg: #ffffff;
+  --glass-bg-strong: #ffffff;
+  --glass-control-bg: #f5f5f5;
+  --glass-blur: none;
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-border-soft: rgba(0, 0, 0, 0.08);
+  --glass-highlight: transparent;
+  --glass-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --toggle-track-bg: rgba(0, 0, 0, 0.05);
+  --toggle-thumb-bg: #ffffff;
+  --toggle-thumb-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+:root[data-style="classic"][data-theme="dark"] {
+  --glass-bg: #2b2a33;
+  --glass-bg-strong: #2b2a33;
+  --glass-control-bg: #1c1b22;
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-soft: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --toggle-track-bg: rgba(0, 0, 0, 0.4);
+  --toggle-thumb-bg: rgba(255, 255, 255, 0.15);
+  --toggle-thumb-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* In classic style, the bar anchors flush to the top with a bottom border. */
+:root[data-style="classic"] #bookmarks-bar {
+  margin: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: none;
+}
+
+:root[data-style="classic"] #bg-attribution {
+  border-radius: 6px;
+}
+
 html,
 body {
   margin: 0;

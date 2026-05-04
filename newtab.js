@@ -50,6 +50,7 @@ const SETTINGS_DEFAULTS = {
   backgroundEnabled: true,
   backgroundIntervalHours: 6,
   theme: "auto",
+  style: "glass",
 };
 
 const systemDarkMq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -468,6 +469,13 @@ function applyTheme() {
   } catch {}
 }
 
+function applyStyle() {
+  document.documentElement.dataset.style = settings.style;
+  try {
+    localStorage.setItem("style", settings.style);
+  } catch {}
+}
+
 systemDarkMq.addEventListener("change", () => {
   if (settings.theme === "auto") applyTheme();
 });
@@ -588,6 +596,8 @@ function handleSettingChange(key) {
     applyClassSettings();
   } else if (key === "theme") {
     applyTheme();
+  } else if (key === "style") {
+    applyStyle();
   } else if (key === "backgroundEnabled" || key === "backgroundIntervalHours") {
     loadBackground();
   }
@@ -615,6 +625,7 @@ for (const ev of bookmarkEvents) {
   applyI18n();
   await loadSettings();
   applyTheme();
+  applyStyle();
   applyClassSettings();
   syncSettingsUi();
   setupSettingsPanel();
