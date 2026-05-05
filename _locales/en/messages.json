@@ -27,5 +27,6 @@
   "emptyToolbar": { "message": "Your bookmarks toolbar is empty." },
   "emptyFolder": { "message": "Empty" },
   "unnamedFolder": { "message": "(unnamed folder)" },
-  "loadError": { "message": "Could not load bookmarks." }
+  "loadError": { "message": "Could not load bookmarks." },
+  "moreBookmarks": { "message": "More bookmarks" }
 }

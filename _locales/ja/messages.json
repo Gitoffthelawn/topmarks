@@ -27,5 +27,6 @@
   "emptyToolbar": { "message": "ブックマークバーは空です。" },
   "emptyFolder": { "message": "空" },
   "unnamedFolder": { "message": "(無名のフォルダー)" },
-  "loadError": { "message": "ブックマークを読み込めませんでした。" }
+  "loadError": { "message": "ブックマークを読み込めませんでした。" },
+  "moreBookmarks": { "message": "その他のブックマーク" }
 }

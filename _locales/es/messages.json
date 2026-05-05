@@ -27,5 +27,6 @@
   "emptyToolbar": { "message": "Tu barra de marcadores está vacía." },
   "emptyFolder": { "message": "Vacía" },
   "unnamedFolder": { "message": "(carpeta sin nombre)" },
-  "loadError": { "message": "No se pudieron cargar los marcadores." }
+  "loadError": { "message": "No se pudieron cargar los marcadores." },
+  "moreBookmarks": { "message": "Más marcadores" }
 }

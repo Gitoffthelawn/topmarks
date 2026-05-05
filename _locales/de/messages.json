@@ -27,5 +27,6 @@
   "emptyToolbar": { "message": "Deine Lesezeichen-Symbolleiste ist leer." },
   "emptyFolder": { "message": "Leer" },
   "unnamedFolder": { "message": "(unbenannter Ordner)" },
-  "loadError": { "message": "Lesezeichen konnten nicht geladen werden." }
+  "loadError": { "message": "Lesezeichen konnten nicht geladen werden." },
+  "moreBookmarks": { "message": "Weitere Lesezeichen" }
 }

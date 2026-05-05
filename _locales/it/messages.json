@@ -27,5 +27,6 @@
   "emptyToolbar": { "message": "La barra dei segnalibri è vuota." },
   "emptyFolder": { "message": "Vuota" },
   "unnamedFolder": { "message": "(cartella senza nome)" },
-  "loadError": { "message": "Impossibile caricare i segnalibri." }
+  "loadError": { "message": "Impossibile caricare i segnalibri." },
+  "moreBookmarks": { "message": "Altri segnalibri" }
 }

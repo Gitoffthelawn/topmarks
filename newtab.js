@@ -64,6 +64,9 @@ const SETTINGS_DEFAULTS = {
 const systemDarkMq = window.matchMedia("(prefers-color-scheme: dark)");
 
 let settings = { ...SETTINGS_DEFAULTS };
+// Sorted top-level toolbar nodes; reused by reflowBookmarksBar to repopulate
+// the overflow dropdown after a resize.
+let topLevelNodes = [];
 
 function isFolder(node) {
   return node.type === "folder" || (!node.url && Array.isArray(node.children));
@@ -108,6 +111,27 @@ function createFolderIcon() {
     "M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
   );
   svg.append(path);
+  return svg;
+}
+
+function createDoubleChevronIcon() {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("class", "folder-icon overflow-icon");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("stroke", "currentColor");
+  svg.setAttribute("stroke-width", "2");
+  svg.setAttribute("stroke-linecap", "round");
+  svg.setAttribute("stroke-linejoin", "round");
+  svg.setAttribute("aria-hidden", "true");
+
+  const a = document.createElementNS(SVG_NS, "polyline");
+  a.setAttribute("points", "7 6 13 12 7 18");
+
+  const b = document.createElementNS(SVG_NS, "polyline");
+  b.setAttribute("points", "13 6 19 12 13 18");
+
+  svg.append(a, b);
   return svg;
 }
 
@@ -171,6 +195,9 @@ function createBookmarkLink(node) {
     icon.addEventListener("load", () => {
       // 1×1 placeholder responses some hosts serve in lieu of a real 404.
       if (icon.naturalWidth <= 1) tryNext();
+      // A late-loading favicon may slightly resize its bar item — re-run
+      // overflow detection so the chevron stays accurate.
+      scheduleReflow();
     });
     icon.src = sources[0];
   }
@@ -223,6 +250,11 @@ function createDropdownEntry(node) {
           }
         });
       }
+      if (isOpen) adjustDropdownPosition(submenu, true);
+    });
+
+    li.addEventListener("mouseenter", () => {
+      adjustDropdownPosition(submenu, true);
     });
 
     li.append(trigger, submenu);
@@ -281,6 +313,112 @@ function createTopLevelFolder(node) {
   return wrapper;
 }
 
+function createOverflowChevron() {
+  const wrapper = document.createElement("div");
+  wrapper.className = "bookmark-folder bookmark-overflow";
+  wrapper.hidden = true;
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "bookmark-item folder-button";
+  const label = t("moreBookmarks");
+  button.title = label;
+  button.setAttribute("aria-label", label);
+  button.setAttribute("aria-haspopup", "true");
+  button.setAttribute("aria-expanded", "false");
+  button.append(createDoubleChevronIcon());
+
+  const dropdown = document.createElement("ul");
+  dropdown.className = "folder-dropdown";
+
+  button.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const wasOpen = wrapper.classList.contains("open");
+    closeAllDropdowns();
+    if (!wasOpen) {
+      wrapper.classList.add("open");
+      button.setAttribute("aria-expanded", "true");
+      adjustDropdownPosition(dropdown, false);
+    }
+  });
+
+  wrapper.append(button, dropdown);
+  return wrapper;
+}
+
+let reflowScheduled = false;
+function scheduleReflow() {
+  if (reflowScheduled) return;
+  reflowScheduled = true;
+  requestAnimationFrame(() => {
+    reflowScheduled = false;
+    reflowBookmarksBar();
+  });
+}
+
+function reflowBookmarksBar() {
+  const bar = document.getElementById("bookmarks-bar");
+  if (!bar) return;
+  const overflow = bar.querySelector(".bookmark-overflow");
+  if (!overflow) return;
+
+  // Reset: show every item, show the chevron so we can measure with it included.
+  const items = Array.from(bar.children).filter((el) => el !== overflow);
+  for (const item of items) item.style.removeProperty("display");
+  overflow.hidden = false;
+
+  // Force layout so subsequent measurements reflect the reset state.
+  void bar.offsetWidth;
+
+  const barStyle = getComputedStyle(bar);
+  const padL = parseFloat(barStyle.paddingLeft) || 0;
+  const padR = parseFloat(barStyle.paddingRight) || 0;
+  const gap = parseFloat(barStyle.gap) || 0;
+  const overflowWidth = overflow.getBoundingClientRect().width;
+
+  // Width available for items in the bar's content area, minus what the
+  // chevron + gap will eat once we keep it visible.
+  const available = bar.clientWidth - padL - padR - overflowWidth - gap - 4;
+
+  // Walk items, accumulating widths. First item whose running total exceeds
+  // the available space becomes the cutoff.
+  let used = 0;
+  let firstHidden = -1;
+  for (let i = 0; i < items.length; i++) {
+    const itemWidth = items[i].getBoundingClientRect().width;
+    if (used > 0) used += gap;
+    used += itemWidth;
+    if (used > available) {
+      firstHidden = i;
+      break;
+    }
+  }
+
+  if (firstHidden === -1) {
+    overflow.hidden = true;
+    return;
+  }
+
+  for (let i = firstHidden; i < items.length; i++) {
+    items[i].style.display = "none";
+  }
+
+  const dropdown = overflow.querySelector(".folder-dropdown");
+  populateDropdown(dropdown, topLevelNodes.slice(firstHidden));
+}
+
+function adjustDropdownPosition(dropdown, isSubmenu = false) {
+  if (!dropdown) return;
+  const flipClass = isSubmenu ? "align-left" : "align-right";
+  // Reset first so the natural-anchor measurement is accurate.
+  dropdown.classList.remove(flipClass);
+  const rect = dropdown.getBoundingClientRect();
+  const viewportRight = window.innerWidth - 8;
+  if (rect.right > viewportRight) {
+    dropdown.classList.add(flipClass);
+  }
+}
+
 function closeAllDropdowns() {
   document.querySelectorAll(".bookmark-folder.open").forEach((el) => {
     el.classList.remove("open");
@@ -307,13 +445,16 @@ async function renderBookmarks() {
       bar.append(empty);
       return;
     }
-    for (const node of sortFoldersFirst(items)) {
+    topLevelNodes = sortFoldersFirst(items);
+    for (const node of topLevelNodes) {
       if (isFolder(node)) {
         bar.append(createTopLevelFolder(node));
       } else if (node.url) {
         bar.append(createBookmarkLink(node));
       }
     }
+    bar.append(createOverflowChevron());
+    scheduleReflow();
   } catch (err) {
     const msg = document.createElement("span");
     msg.className = "empty-state";
@@ -714,6 +855,18 @@ const bookmarkEvents = ["onCreated", "onRemoved", "onChanged", "onMoved"];
 for (const ev of bookmarkEvents) {
   if (browser.bookmarks[ev]) browser.bookmarks[ev].addListener(renderBookmarks);
 }
+
+let resizeReflowTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeReflowTimer);
+  // Close any open dropdowns: their position was measured against the old size.
+  closeAllDropdowns();
+  resizeReflowTimer = setTimeout(scheduleReflow, 100);
+});
+
+// One last reflow once every external resource has loaded, in case favicon
+// loads still resize items after the per-image scheduleReflow fires.
+window.addEventListener("load", scheduleReflow);
 
 (async function init() {
   applyI18n();

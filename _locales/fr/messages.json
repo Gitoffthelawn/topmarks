@@ -27,5 +27,6 @@
   "emptyToolbar": { "message": "Votre barre de favoris est vide." },
   "emptyFolder": { "message": "Vide" },
   "unnamedFolder": { "message": "(dossier sans nom)" },
-  "loadError": { "message": "Impossible de charger les favoris." }
+  "loadError": { "message": "Impossible de charger les favoris." },
+  "moreBookmarks": { "message": "Plus de favoris" }
 }

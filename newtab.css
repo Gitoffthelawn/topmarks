@@ -110,6 +110,10 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   transition: background-image 0.4s ease;
+  /* The new tab page never needs to scroll — bar is at top, the rest is
+     either decorative background or position:fixed (settings, attribution).
+     Locking overflow keeps any stray pixel from showing scrollbars. */
+  overflow: hidden;
 }
 
 #bookmarks-bar {
@@ -117,7 +121,9 @@ body {
   align-items: center;
   gap: 2px;
   margin: 16px;
-  padding: 4px 16px;
+  /* Horizontal padding leaves room for the pill's rounded ends so items
+     (and the overflow chevron) never sit on top of the curve. */
+  padding: 4px 20px;
   background: var(--glass-bg-strong);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -255,6 +261,22 @@ body.hide-folder-icons .folder-icon {
   top: -5px;
   left: 100%;
   margin-left: 6px;
+}
+
+/* Top-level dropdown flipped to the right edge of its trigger when it
+   would otherwise overflow the viewport on the right. */
+.bookmark-folder > .folder-dropdown.align-right {
+  left: auto;
+  right: 0;
+}
+
+/* Submenu flipped to open on the left side of its parent when it would
+   otherwise overflow the viewport on the right. */
+.folder-dropdown .submenu.align-left {
+  left: auto;
+  right: 100%;
+  margin-left: 0;
+  margin-right: 6px;
 }
 
 .folder-dropdown li.has-submenu:hover > .submenu,
