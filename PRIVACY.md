@@ -98,12 +98,3 @@ The extension uses HTTPS for every network request it makes. Locally stored data
 ## 10. Changes to this policy
 
 If the extension's data practices change, this policy will be updated and the "Last updated" date at the top will reflect the change. Material changes will also be noted in the extension's release notes on addons.mozilla.org.
-
-## 11. Data controller and contact
-
-The data controller for any processing carried out on the developer's behalf is:
-
-- **Name:** `<DATA_CONTROLLER_NAME>`
-- **Email:** `<YOUR_EMAIL>`
-
-For questions, requests, or concerns about this policy, contact the email above.
