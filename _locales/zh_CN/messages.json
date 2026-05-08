@@ -16,6 +16,9 @@
   "styleLabel": { "message": "风格" },
   "styleGlass": { "message": "玻璃" },
   "styleClassic": { "message": "经典" },
+  "bookmarksPositionLabel": { "message": "书签位置" },
+  "bookmarksPositionTop": { "message": "顶部" },
+  "bookmarksPositionBottom": { "message": "底部" },
   "refreshIntervalLabel": { "message": "更新背景的频率" },
   "interval1h": { "message": "1 小时" },
   "interval6h": { "message": "6 小时" },
@@ -28,5 +31,6 @@
   "emptyFolder": { "message": "空" },
   "unnamedFolder": { "message": "(未命名文件夹)" },
   "loadError": { "message": "无法加载书签。" },
-  "moreBookmarks": { "message": "更多书签" }
+  "moreBookmarks": { "message": "更多书签" },
+  "buyMeACoffee": { "message": "请我喝杯咖啡" }
 }

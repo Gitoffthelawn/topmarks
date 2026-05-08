@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>New Tab</title>
     <script src="theme-init.js"></script>
+    <link
+      rel="preload"
+      href="fonts/Cookie-Regular.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="newtab.css" />
   </head>
   <body>
@@ -93,6 +100,19 @@
         </div>
       </div>
 
+      <div class="setting setting-text">
+        <span id="bookmarks-position-label" data-i18n="bookmarksPositionLabel">Bookmarks position</span>
+        <div
+          class="toggle-group"
+          role="radiogroup"
+          aria-labelledby="bookmarks-position-label"
+          data-setting="bookmarksPosition"
+        >
+          <button type="button" role="radio" data-value="top" data-i18n="bookmarksPositionTop">Top</button>
+          <button type="button" role="radio" data-value="bottom" data-i18n="bookmarksPositionBottom">Bottom</button>
+        </div>
+      </div>
+
       <label class="setting setting-text" id="setting-bg-interval">
         <span data-i18n="refreshIntervalLabel">Refresh background every</span>
         <select data-setting="backgroundIntervalHours">
@@ -113,6 +133,20 @@
         <span data-i18n="bgErrorMessage"
           >Couldn't load wallpaper. Will retry automatically.</span
         >
+      </div>
+
+      <div class="bmc-section">
+        <a
+          class="bmc-link"
+          href="https://www.buymeacoffee.com/alejandro.lacasa"
+          target="_blank"
+          rel="noopener"
+          data-i18n-aria-label="buyMeACoffee"
+          aria-label="Buy me a coffee"
+        >
+          <img class="bmc-logo" src="icons/bmc-logo.svg" alt="" width="24" height="24" />
+          <span class="bmc-text" data-i18n="buyMeACoffee">Buy me a coffee</span>
+        </a>
       </div>
     </div>
 

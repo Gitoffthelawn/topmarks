@@ -16,6 +16,9 @@
   "styleLabel": { "message": "Style" },
   "styleGlass": { "message": "Glass" },
   "styleClassic": { "message": "Classic" },
+  "bookmarksPositionLabel": { "message": "Bookmarks position" },
+  "bookmarksPositionTop": { "message": "Top" },
+  "bookmarksPositionBottom": { "message": "Bottom" },
   "refreshIntervalLabel": { "message": "Refresh background every" },
   "interval1h": { "message": "1 hour" },
   "interval6h": { "message": "6 hours" },
@@ -28,5 +31,6 @@
   "emptyFolder": { "message": "Empty" },
   "unnamedFolder": { "message": "(unnamed folder)" },
   "loadError": { "message": "Could not load bookmarks." },
-  "moreBookmarks": { "message": "More bookmarks" }
+  "moreBookmarks": { "message": "More bookmarks" },
+  "buyMeACoffee": { "message": "Buy me a coffee" }
 }

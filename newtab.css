@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Cookie";
+  src: url("fonts/Cookie-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -93,6 +101,46 @@
   border-radius: 6px;
 }
 
+/* ---- Bookmarks position: bottom ---- */
+/* Pin the bar to the bottom and swap attribution + settings to the top. */
+:root[data-bookmarks-position="bottom"] #bookmarks-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  margin: 0;
+  z-index: 80;
+}
+
+:root[data-style="classic"][data-bookmarks-position="bottom"] #bookmarks-bar {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-bottom: none;
+  border-top: 1px solid var(--glass-border);
+}
+
+:root[data-bookmarks-position="bottom"] #bg-attribution {
+  bottom: auto;
+  top: 16px;
+}
+
+:root[data-bookmarks-position="bottom"] #settings-btn {
+  bottom: auto;
+  top: 16px;
+}
+
+:root[data-bookmarks-position="bottom"] #settings-panel {
+  bottom: auto;
+  top: 72px;
+}
+
+/* Top-level dropdowns flip upward so they don't open off-screen. */
+:root[data-bookmarks-position="bottom"] .bookmark-folder > .folder-dropdown {
+  top: auto;
+  bottom: calc(100% + 7px);
+}
+
 html,
 body {
   margin: 0;
@@ -179,7 +227,7 @@ body.centered #bookmarks-bar {
   opacity: 0.8;
 }
 
-body.hide-folder-icons .folder-icon {
+body.hide-folder-icons .folder-icon:not(.overflow-icon) {
   display: none;
 }
 
@@ -196,7 +244,7 @@ body.hide-folder-icons .folder-icon {
 .folder-dropdown {
   display: none;
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 7px);
   left: 0;
   margin: 0;
   padding: 4px 0;
@@ -325,10 +373,43 @@ body.hide-folder-icons .folder-icon {
   color: inherit;
   text-decoration: underline;
   text-decoration-color: var(--fg-muted);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  position: relative;
+  transition: text-decoration-color 350ms ease-in-out;
+}
+
+#bg-attribution a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 4px;
+  background-color: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4' preserveAspectRatio='none'><path d='M0 2 Q 5 0 10 2 T 20 2' fill='none' stroke='black' stroke-width='1.5'/></svg>");
+          mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4' preserveAspectRatio='none'><path d='M0 2 Q 5 0 10 2 T 20 2' fill='none' stroke='black' stroke-width='1.5'/></svg>");
+  -webkit-mask-repeat: repeat-x;
+          mask-repeat: repeat-x;
+  -webkit-mask-size: 20px 4px;
+          mask-size: 20px 4px;
+  opacity: 0;
+  transition: opacity 350ms ease-in-out;
+  animation: attribution-wave 1.2s linear infinite;
+  pointer-events: none;
 }
 
 #bg-attribution a:hover {
-  text-decoration-color: currentColor;
+  text-decoration-color: transparent;
+}
+
+#bg-attribution a:hover::after {
+  opacity: 1;
+}
+
+@keyframes attribution-wave {
+  from { -webkit-mask-position-x: 0;     mask-position-x: 0; }
+  to   { -webkit-mask-position-x: -20px; mask-position-x: -20px; }
 }
 
 #settings-btn {
@@ -495,6 +576,49 @@ body.hide-folder-icons .folder-icon {
   font-size: 12px;
   color: var(--fg-muted);
   cursor: default;
+}
+
+.bmc-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--glass-border-soft);
+  display: flex;
+  justify-content: center;
+}
+
+.bmc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: #FFDD00;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.bmc-link:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.bmc-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.bmc-logo {
+  display: block;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.bmc-text {
+  font-family: "Cookie", "Brush Script MT", cursive;
+  font-size: 22px;
+  line-height: 1;
+  color: #0D0C22;
 }
 
 .toggle-group {

@@ -16,6 +16,9 @@
   "styleLabel": { "message": "Stile" },
   "styleGlass": { "message": "Vetro" },
   "styleClassic": { "message": "Classico" },
+  "bookmarksPositionLabel": { "message": "Posizione segnalibri" },
+  "bookmarksPositionTop": { "message": "Alto" },
+  "bookmarksPositionBottom": { "message": "Basso" },
   "refreshIntervalLabel": { "message": "Aggiorna sfondo ogni" },
   "interval1h": { "message": "1 ora" },
   "interval6h": { "message": "6 ore" },
@@ -28,5 +31,6 @@
   "emptyFolder": { "message": "Vuota" },
   "unnamedFolder": { "message": "(cartella senza nome)" },
   "loadError": { "message": "Impossibile caricare i segnalibri." },
-  "moreBookmarks": { "message": "Altri segnalibri" }
+  "moreBookmarks": { "message": "Altri segnalibri" },
+  "buyMeACoffee": { "message": "Offrimi un caffè" }
 }

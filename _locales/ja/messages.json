@@ -16,6 +16,9 @@
   "styleLabel": { "message": "スタイル" },
   "styleGlass": { "message": "ガラス" },
   "styleClassic": { "message": "クラシック" },
+  "bookmarksPositionLabel": { "message": "ブックマークの位置" },
+  "bookmarksPositionTop": { "message": "上" },
+  "bookmarksPositionBottom": { "message": "下" },
   "refreshIntervalLabel": { "message": "背景を更新する間隔" },
   "interval1h": { "message": "1時間" },
   "interval6h": { "message": "6時間" },
@@ -28,5 +31,6 @@
   "emptyFolder": { "message": "空" },
   "unnamedFolder": { "message": "(無名のフォルダー)" },
   "loadError": { "message": "ブックマークを読み込めませんでした。" },
-  "moreBookmarks": { "message": "その他のブックマーク" }
+  "moreBookmarks": { "message": "その他のブックマーク" },
+  "buyMeACoffee": { "message": "コーヒーをおごる" }
 }

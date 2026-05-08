@@ -16,6 +16,9 @@
   "styleLabel": { "message": "Estilo" },
   "styleGlass": { "message": "Cristal" },
   "styleClassic": { "message": "Clásico" },
+  "bookmarksPositionLabel": { "message": "Posición de marcadores" },
+  "bookmarksPositionTop": { "message": "Arriba" },
+  "bookmarksPositionBottom": { "message": "Abajo" },
   "refreshIntervalLabel": { "message": "Actualizar fondo cada" },
   "interval1h": { "message": "1 hora" },
   "interval6h": { "message": "6 horas" },
@@ -28,5 +31,6 @@
   "emptyFolder": { "message": "Vacía" },
   "unnamedFolder": { "message": "(carpeta sin nombre)" },
   "loadError": { "message": "No se pudieron cargar los marcadores." },
-  "moreBookmarks": { "message": "Más marcadores" }
+  "moreBookmarks": { "message": "Más marcadores" },
+  "buyMeACoffee": { "message": "Invítame a un café" }
 }

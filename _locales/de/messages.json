@@ -16,6 +16,9 @@
   "styleLabel": { "message": "Stil" },
   "styleGlass": { "message": "Glas" },
   "styleClassic": { "message": "Klassisch" },
+  "bookmarksPositionLabel": { "message": "Position der Lesezeichen" },
+  "bookmarksPositionTop": { "message": "Oben" },
+  "bookmarksPositionBottom": { "message": "Unten" },
   "refreshIntervalLabel": { "message": "Hintergrund aktualisieren alle" },
   "interval1h": { "message": "1 Stunde" },
   "interval6h": { "message": "6 Stunden" },
@@ -28,5 +31,6 @@
   "emptyFolder": { "message": "Leer" },
   "unnamedFolder": { "message": "(unbenannter Ordner)" },
   "loadError": { "message": "Lesezeichen konnten nicht geladen werden." },
-  "moreBookmarks": { "message": "Weitere Lesezeichen" }
+  "moreBookmarks": { "message": "Weitere Lesezeichen" },
+  "buyMeACoffee": { "message": "Spendier mir einen Kaffee" }
 }

@@ -59,6 +59,7 @@ const SETTINGS_DEFAULTS = {
   backgroundIntervalHours: 6,
   theme: "auto",
   style: "glass",
+  bookmarksPosition: "top",
 };
 
 const systemDarkMq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -666,6 +667,13 @@ function applyStyle() {
   } catch {}
 }
 
+function applyBookmarksPosition() {
+  document.documentElement.dataset.bookmarksPosition = settings.bookmarksPosition;
+  try {
+    localStorage.setItem("bookmarksPosition", settings.bookmarksPosition);
+  } catch {}
+}
+
 async function updateBackgroundErrorVisibility() {
   const errorEl = document.getElementById("setting-bg-error");
   const intervalEl = document.getElementById("setting-bg-interval");
@@ -832,6 +840,9 @@ function handleSettingChange(key) {
     applyTheme();
   } else if (key === "style") {
     applyStyle();
+  } else if (key === "bookmarksPosition") {
+    applyBookmarksPosition();
+    scheduleReflow();
   } else if (key === "backgroundEnabled" || key === "backgroundIntervalHours") {
     loadBackground();
     if (key === "backgroundEnabled") updateBackgroundErrorVisibility();
@@ -873,6 +884,7 @@ window.addEventListener("load", scheduleReflow);
   await loadSettings();
   applyTheme();
   applyStyle();
+  applyBookmarksPosition();
   applyClassSettings();
   syncSettingsUi();
   setupSettingsPanel();

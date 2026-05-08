@@ -16,6 +16,9 @@
   "styleLabel": { "message": "Style" },
   "styleGlass": { "message": "Verre" },
   "styleClassic": { "message": "Classique" },
+  "bookmarksPositionLabel": { "message": "Position des favoris" },
+  "bookmarksPositionTop": { "message": "Haut" },
+  "bookmarksPositionBottom": { "message": "Bas" },
   "refreshIntervalLabel": { "message": "Actualiser l'arrière-plan toutes les" },
   "interval1h": { "message": "1 heure" },
   "interval6h": { "message": "6 heures" },
@@ -28,5 +31,6 @@
   "emptyFolder": { "message": "Vide" },
   "unnamedFolder": { "message": "(dossier sans nom)" },
   "loadError": { "message": "Impossible de charger les favoris." },
-  "moreBookmarks": { "message": "Plus de favoris" }
+  "moreBookmarks": { "message": "Plus de favoris" },
+  "buyMeACoffee": { "message": "Offre-moi un café" }
 }
