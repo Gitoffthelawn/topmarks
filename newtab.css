@@ -168,6 +168,7 @@ body {
   display: flex;
   align-items: center;
   gap: 2px;
+  min-height: 40px;
   margin: 16px;
   /* Horizontal padding leaves room for the pill's rounded ends so items
      (and the overflow chevron) never sit on top of the curve. */
