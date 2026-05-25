@@ -5,7 +5,7 @@
 
 ## Summary
 
-Add an optional search field to the Topmarks new-tab page, positioned in the upper third of the viewport. The field submits to the user's default Firefox search engine via `browser.search.search()`. It is disabled by default; enabling it triggers a runtime request for the `search` permission so users who never enable the feature are not prompted on update.
+Add a search field to the Topmarks new-tab page, positioned in the upper third of the viewport. The field submits to the user's default Firefox search engine via `browser.search.search()`. It is enabled by default and can be hidden via a settings toggle. The `search` permission is required at the manifest level, so all users see one permission prompt on update.
 
 ## Goals
 
@@ -24,8 +24,8 @@ Add an optional search field to the Topmarks new-tab page, positioned in the upp
 
 - As a user, I open a new tab, the search field is focused, I type a query and press Enter — the current tab navigates to my default engine's results page.
 - As a user, I want to keep my Topmarks tab open while searching — I press Shift+Enter (or Ctrl/Cmd+Enter) and results open in a new tab.
-- As a user who does not want a search field, I never see it. On update, Firefox does not prompt me for any new permission.
-- As a user who toggles the field on, Firefox prompts me once to grant the `search` permission. If I decline, the toggle reverts to off and I see a brief inline message.
+- As an existing user updating Topmarks, Firefox prompts me once to grant the new `search` permission. The field appears by default; if I don't want it, I uncheck the toggle in settings.
+- As a user who doesn't want a search field, I uncheck **Show search field** in settings. The field is removed; no further prompts.
 
 ## API & permission
 
@@ -40,22 +40,15 @@ Empty query (after `.trim()`) → ignore the submit.
 
 ### Permission strategy
 
-`"search"` is declared as an **optional permission** in `manifest.json`:
+`"search"` is declared as a **required permission** in `manifest.json`:
 
 ```json
-"optional_permissions": ["search"]
+"permissions": ["bookmarks", "storage", "search", "https://api.unsplash.com/*"]
 ```
 
-When the user toggles **Show search field** on:
+All users — including existing installs — see one Firefox permission prompt on update. The toggle in settings is purely a UI control: when on, the field renders; when off, it is removed from the DOM. There is no runtime permission request flow.
 
-1. Call `browser.permissions.request({ permissions: ["search"] })`.
-2. If granted: persist `showSearch: true`, render the field, focus it.
-3. If denied: revert the toggle to off, do not persist, surface a one-line inline note in the settings panel: "Search permission is required to enable this feature."
-
-When the user toggles it off:
-
-- Persist `showSearch: false` and remove the field from the DOM.
-- Do **not** call `browser.permissions.remove(...)` — leaving the permission granted means re-enabling later does not re-prompt. Users who want to revoke can do so in `about:addons`.
+If a user revokes the `search` permission externally (in `about:addons`) while the toggle is on, the next call to `browser.search.search()` will fail silently (logged to console). The toggle remains the source of truth for whether to render the field.
 
 ## Layout
 
@@ -108,8 +101,7 @@ The field has no surrounding buttons, no magnifying-glass icon, and no clear but
 
 ### Edge cases
 
-- Permission denied on toggle-on → toggle reverts, inline message shown.
-- Permission granted but `browser.search.search()` throws (no default engine, internal error) → log to console, no user-visible change beyond the failed navigation. Same-tab submit failure leaves the new tab on Topmarks; new-tab submit leaves an `about:blank` tab. Acceptable for an edge case unlikely to occur in practice.
+- `browser.search.search()` throws (no default engine, permission revoked externally, internal error) → log to console, no user-visible change beyond the failed navigation. Same-tab submit failure leaves the new tab on Topmarks; new-tab submit leaves an `about:blank` tab. Acceptable for an edge case unlikely to occur in practice.
 - Very narrow viewport: input width clamps via `90vw`.
 - Settings panel open/close must not move focus away from the input. Current settings-panel code already only changes focus to its own button — verify no regression.
 
@@ -124,29 +116,26 @@ A new row in the settings panel, placed in the checkbox group with the other on/
 [ ] Show search field          ← new
 ```
 
-`data-setting="showSearch"`, default `false`.
-
-When this toggle is on but the user later revokes the `search` permission externally (e.g., in `about:addons`), the next call to `browser.search.search()` will fail. We accept this as an edge case and rely on the in-extension toggle as the source of truth for whether to render the field.
+`data-setting="showSearch"`, default `true`.
 
 ## Files touched
 
-- `manifest.json` — add `"search"` to `optional_permissions`.
+- `manifest.json` — add `"search"` to `permissions`.
 - `newtab.html` — add the `<input id="search-input">` inside `<main id="content">`; add the toggle row in the settings panel.
 - `newtab.css` — search-field styles for glass and classic.
 - `newtab.js`:
-  - Add `showSearch: false` to `SETTINGS_DEFAULTS`.
+  - Add `showSearch: true` to `SETTINGS_DEFAULTS`.
   - Add `setupSearch()` called from `init()`.
-  - Extend `handleSettingChange()` for the `showSearch` key, with the permission-request flow.
+  - Extend `handleSettingChange()` for the `showSearch` key (add/remove the field; refocus when shown).
   - Wire Enter / modifier-Enter / Escape handlers.
 - `_locales/*/messages.json` — add:
   - `searchPlaceholder` — "Search…"
   - `showSearchField` — settings label
-  - `searchPermissionDenied` — inline message when the user declines the prompt
 
 ## Testing
 
-- Manual: toggle on → permission prompt → grant → field appears and is focused.
-- Manual: toggle on → permission prompt → deny → toggle stays off, inline note appears.
+- Manual: fresh install → field appears by default and is focused.
+- Manual: existing user updating extension → Firefox prompts once for the new `search` permission.
 - Manual: type query, Enter → current tab navigates to default engine's results.
 - Manual: type query, Shift+Enter → new tab opens with results, Topmarks tab stays.
 - Manual: type, Escape → clears; Escape again → blurs.
