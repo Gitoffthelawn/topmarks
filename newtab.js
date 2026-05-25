@@ -848,6 +848,38 @@ function setupSearch() {
   if (!searchInput) return;
   searchInputParent = searchInput.parentElement;
 
+  searchInput.addEventListener("keydown", async (e) => {
+    if (e.key === "Enter") {
+      const query = searchInput.value.trim();
+      if (!query) return;
+      e.preventDefault();
+      const inNewTab = e.shiftKey || e.ctrlKey || e.metaKey;
+      try {
+        if (inNewTab) {
+          const tab = await browser.tabs.create({
+            url: "about:blank",
+            active: true,
+          });
+          await browser.search.search({ query, tabId: tab.id });
+        } else {
+          const current = await browser.tabs.getCurrent();
+          await browser.search.search({ query, tabId: current.id });
+        }
+      } catch (err) {
+        console.error("[Topmarks] Search submit failed:", err);
+      }
+    } else if (e.key === "Escape") {
+      if (searchInput.value !== "") {
+        searchInput.value = "";
+        // Prevent the document-level Escape handler from also closing the
+        // settings panel / dropdowns when the user is just clearing text.
+        e.stopPropagation();
+      } else {
+        searchInput.blur();
+      }
+    }
+  });
+
   if (!settings.showSearch) {
     searchInput.remove();
     return;
