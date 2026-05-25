@@ -838,6 +838,36 @@ function setupSettingsPanel() {
 
 }
 
+// Reference to the search input even when detached from the DOM, so toggling
+// the setting off then on restores the same element (state preserved).
+let searchInput = null;
+let searchInputParent = null;
+
+function setupSearch() {
+  searchInput = document.getElementById("search-input");
+  if (!searchInput) return;
+  searchInputParent = searchInput.parentElement;
+
+  if (!settings.showSearch) {
+    searchInput.remove();
+    return;
+  }
+
+  searchInput.focus();
+}
+
+function applyShowSearch() {
+  if (!searchInput) return;
+  if (settings.showSearch) {
+    if (!searchInput.isConnected && searchInputParent) {
+      searchInputParent.appendChild(searchInput);
+    }
+    searchInput.focus();
+  } else if (searchInput.isConnected) {
+    searchInput.remove();
+  }
+}
+
 function handleSettingChange(key) {
   if (key === "hideFolderIcons" || key === "centerBookmarks") {
     applyClassSettings();
@@ -851,6 +881,8 @@ function handleSettingChange(key) {
   } else if (key === "backgroundEnabled" || key === "backgroundIntervalHours") {
     loadBackground();
     if (key === "backgroundEnabled") updateBackgroundErrorVisibility();
+  } else if (key === "showSearch") {
+    applyShowSearch();
   }
 }
 
@@ -893,6 +925,7 @@ window.addEventListener("load", scheduleReflow);
   applyClassSettings();
   syncSettingsUi();
   setupSettingsPanel();
+  setupSearch();
   renderBookmarks();
   loadBackground();
   updateBackgroundErrorVisibility();
