@@ -13,7 +13,6 @@
 :root {
   /* Light theme tokens (default — applied unless [data-theme="dark"]) */
   --bg: #fafafa;
-  --border: #e5e5e5;
   --fg: #1a1a1a;
   --fg-muted: rgba(26, 26, 26, 0.6);
   --hover: rgba(0, 0, 0, 0.06);
@@ -21,7 +20,6 @@
   --switch-off: #c8c8c8;
 
   /* Liquid glass tokens */
-  --glass-bg: rgba(255, 255, 255, 0.55);
   --glass-bg-strong: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.55);
   --glass-border-soft: rgba(0, 0, 0, 0.08);
@@ -40,13 +38,11 @@
 
 :root[data-theme="dark"] {
   --bg: #1c1b22;
-  --border: #3a3944;
   --fg: #e8e8e8;
   --fg-muted: rgba(232, 232, 232, 0.6);
   --hover: rgba(255, 255, 255, 0.08);
   --switch-off: #52525b;
 
-  --glass-bg: rgba(28, 27, 34, 0.6);
   --glass-bg-strong: rgba(28, 27, 34, 0.88);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-border-soft: rgba(255, 255, 255, 0.06);
@@ -64,7 +60,6 @@
 
 /* ---- Classic style: solid surfaces, no blur, anchored bar ---- */
 :root[data-style="classic"] {
-  --glass-bg: #ffffff;
   --glass-bg-strong: #ffffff;
   --glass-control-bg: #f5f5f5;
   --glass-blur: none;
@@ -78,7 +73,6 @@
 }
 
 :root[data-style="classic"][data-theme="dark"] {
-  --glass-bg: #2b2a33;
   --glass-bg-strong: #2b2a33;
   --glass-control-bg: #1c1b22;
   --glass-border: rgba(255, 255, 255, 0.1);
@@ -425,12 +419,8 @@ body:has(#search-input) #content {
 
 #bg-attribution a {
   color: inherit;
-  text-decoration: underline;
-  text-decoration-color: var(--fg-muted);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 2px;
+  text-decoration: none;
   position: relative;
-  transition: text-decoration-color 350ms ease-in-out;
 }
 
 #bg-attribution a::after {
@@ -451,10 +441,6 @@ body:has(#search-input) #content {
   transition: opacity 350ms ease-in-out;
   animation: attribution-wave 1.2s linear infinite;
   pointer-events: none;
-}
-
-#bg-attribution a:hover {
-  text-decoration-color: transparent;
 }
 
 #bg-attribution a:hover::after {
@@ -727,7 +713,6 @@ body:has(#search-input) #content {
 
 @media (prefers-reduced-transparency: reduce) {
   :root {
-    --glass-bg: var(--bg);
     --glass-bg-strong: var(--bg);
     --glass-control-bg: var(--bg);
   }
