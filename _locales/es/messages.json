@@ -11,6 +11,7 @@
   "showBackgroundImage": { "message": "Mostrar imagen de fondo" },
   "showSearchField": { "message": "Mostrar campo de búsqueda" },
   "searchPlaceholder": { "message": "Buscar…" },
+  "searchAriaLabel": { "message": "Buscar" },
   "themeLabel": { "message": "Tema" },
   "themeAuto": { "message": "Auto" },
   "themeLight": { "message": "Claro" },

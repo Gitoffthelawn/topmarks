@@ -385,6 +385,8 @@ body:has(#search-input) #content {
 /* Classic style: solid surface, smaller radius, no glass blur or shadow. */
 :root[data-style="classic"] #search-input {
   background: var(--glass-bg-strong);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-radius: 6px;
   box-shadow: none;
 }
