@@ -20,7 +20,17 @@
       data-i18n-aria-label="bookmarksBarLabel"
       aria-label="Bookmarks bar"
     ></nav>
-    <main id="content"></main>
+    <main id="content">
+      <input
+        id="search-input"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        data-i18n-placeholder="searchPlaceholder"
+        data-i18n-aria-label="searchPlaceholder"
+        aria-label="Search"
+      />
+    </main>
 
     <div id="bg-attribution" hidden>
       <a id="bg-photo-link" target="_blank" rel="noopener" data-i18n="attrPhoto">Photo</a>
@@ -70,6 +80,12 @@
       <label class="setting">
         <span data-i18n="showBackgroundImage">Show background image</span>
         <input type="checkbox" data-setting="backgroundEnabled" />
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="setting">
+        <span data-i18n="showSearchField">Show search field</span>
+        <input type="checkbox" data-setting="showSearch" />
         <span class="switch" aria-hidden="true"></span>
       </label>
 
