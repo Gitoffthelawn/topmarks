@@ -22,7 +22,7 @@
 
   /* Liquid glass tokens */
   --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --glass-bg-strong: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.55);
   --glass-border-soft: rgba(0, 0, 0, 0.08);
   --glass-highlight: rgba(255, 255, 255, 0.65);
@@ -47,7 +47,7 @@
   --switch-off: #52525b;
 
   --glass-bg: rgba(28, 27, 34, 0.6);
-  --glass-bg-strong: rgba(28, 27, 34, 0.78);
+  --glass-bg-strong: rgba(28, 27, 34, 0.88);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-border-soft: rgba(255, 255, 255, 0.06);
   --glass-highlight: rgba(255, 255, 255, 0.1);
