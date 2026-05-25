@@ -343,6 +343,52 @@ body.hide-folder-icons .folder-icon:not(.overflow-icon) {
   padding: 24px;
 }
 
+body:has(#search-input) #content {
+  display: flex;
+  justify-content: center;
+  padding-top: 33vh;
+}
+
+#search-input {
+  width: min(600px, 90vw);
+  padding: 12px 18px;
+  font: inherit;
+  font-size: 1.1rem;
+  color: var(--fg);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  box-shadow: var(--glass-shadow);
+  /* Remove the default search-type clear button — spec says no buttons. */
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+#search-input::-webkit-search-cancel-button,
+#search-input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  display: none;
+}
+
+#search-input::placeholder {
+  color: inherit;
+  opacity: 0.5;
+}
+
+#search-input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Classic style: solid surface, smaller radius, no glass blur or shadow. */
+:root[data-style="classic"] #search-input {
+  background: var(--glass-bg-strong);
+  border-radius: 6px;
+  box-shadow: none;
+}
+
 #bg-attribution {
   position: fixed;
   bottom: 16px;
@@ -682,7 +728,8 @@ body.hide-folder-icons .folder-icon:not(.overflow-icon) {
   #settings-btn,
   #settings-panel,
   .folder-dropdown,
-  #bg-attribution {
+  #bg-attribution,
+  #search-input {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
