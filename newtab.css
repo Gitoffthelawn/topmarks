@@ -352,6 +352,7 @@ body:has(#search-input) #content {
 
 #search-input {
   width: min(600px, 90vw);
+  min-height: 52px;
   padding: 12px 18px;
   font: inherit;
   font-size: 1.1rem;
