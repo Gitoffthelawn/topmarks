@@ -9,6 +9,8 @@
   "hideFolderIcons": { "message": "フォルダーアイコンを非表示" },
   "centerBookmarks": { "message": "ブックマークをバーの中央に配置" },
   "showBackgroundImage": { "message": "背景画像を表示" },
+  "showSearchField": { "message": "検索欄を表示" },
+  "searchPlaceholder": { "message": "検索…" },
   "themeLabel": { "message": "テーマ" },
   "themeAuto": { "message": "自動" },
   "themeLight": { "message": "ライト" },

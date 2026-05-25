@@ -9,6 +9,8 @@
   "hideFolderIcons": { "message": "Nascondi icone delle cartelle" },
   "centerBookmarks": { "message": "Centra segnalibri nella barra" },
   "showBackgroundImage": { "message": "Mostra immagine di sfondo" },
+  "showSearchField": { "message": "Mostra campo di ricerca" },
+  "searchPlaceholder": { "message": "Cerca…" },
   "themeLabel": { "message": "Tema" },
   "themeAuto": { "message": "Auto" },
   "themeLight": { "message": "Chiaro" },

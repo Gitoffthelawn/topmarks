@@ -9,6 +9,8 @@
   "hideFolderIcons": { "message": "Hide folder icons" },
   "centerBookmarks": { "message": "Center bookmarks in bar" },
   "showBackgroundImage": { "message": "Show background image" },
+  "showSearchField": { "message": "Show search field" },
+  "searchPlaceholder": { "message": "Search…" },
   "themeLabel": { "message": "Theme" },
   "themeAuto": { "message": "Auto" },
   "themeLight": { "message": "Light" },

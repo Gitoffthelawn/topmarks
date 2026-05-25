@@ -12,6 +12,7 @@
   "permissions": [
     "bookmarks",
     "storage",
+    "search",
     "https://api.unsplash.com/*"
   ],
   "icons": {
