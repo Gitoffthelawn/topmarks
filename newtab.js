@@ -50,6 +50,10 @@ function applyI18n() {
     const msg = t(el.dataset.i18nAriaLabel);
     if (msg) el.setAttribute("aria-label", msg);
   });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    const msg = t(el.dataset.i18nPlaceholder);
+    if (msg) el.setAttribute("placeholder", msg);
+  });
 }
 
 const SETTINGS_DEFAULTS = {
@@ -60,6 +64,7 @@ const SETTINGS_DEFAULTS = {
   theme: "auto",
   style: "glass",
   bookmarksPosition: "top",
+  showSearch: true,
 };
 
 const systemDarkMq = window.matchMedia("(prefers-color-scheme: dark)");
