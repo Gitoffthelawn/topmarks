@@ -358,8 +358,10 @@ body:has(#search-input) #content {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
+  border: none;
   border-radius: 9999px;
+  /* --glass-shadow already paints the inset 1px border + outer drop shadow
+     that give the pill its "pop"; an explicit border would double the edge. */
   box-shadow: var(--glass-shadow);
   /* Remove the default search-type clear button — spec says no buttons. */
   appearance: none;
@@ -378,15 +380,17 @@ body:has(#search-input) #content {
 }
 
 #search-input:focus-visible {
-  outline: none;
-  border-color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-/* Classic style: solid surface, smaller radius, no glass blur or shadow. */
+/* Classic style: solid surface, smaller radius, no glass blur or shadow.
+   Classic strips --glass-shadow, so the edge needs an explicit border. */
 :root[data-style="classic"] #search-input {
   background: var(--glass-bg-strong);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  border: 1px solid var(--glass-border);
   border-radius: 6px;
   box-shadow: none;
 }
