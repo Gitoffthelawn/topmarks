@@ -359,7 +359,7 @@ body:has(#search-input) #content {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
-  border-radius: 14px;
+  border-radius: 9999px;
   box-shadow: var(--glass-shadow);
   /* Remove the default search-type clear button — spec says no buttons. */
   appearance: none;
