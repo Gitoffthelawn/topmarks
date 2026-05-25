@@ -355,7 +355,7 @@ body:has(#search-input) #content {
   font: inherit;
   font-size: 1.1rem;
   color: var(--fg);
-  background: var(--glass-bg);
+  background: var(--glass-bg-strong);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: none;
