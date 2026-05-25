@@ -1,6 +1,6 @@
 {
   "name": "topmarks",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "private": true,
   "license": "MIT",
   "description": "Firefox new-tab extension that floats your bookmarks toolbar at the top with a rotating Unsplash wallpaper.",
