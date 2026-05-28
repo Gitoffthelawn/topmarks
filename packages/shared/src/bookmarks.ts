@@ -130,7 +130,7 @@ function createBookmarkLink(node: BookmarkNode): HTMLAnchorElement {
 
   const span = document.createElement("span");
   span.className = "bookmark-title";
-  span.textContent = node.title || node.url || "";
+  span.textContent = node.title;
 
   a.append(icon, span);
   return a;
