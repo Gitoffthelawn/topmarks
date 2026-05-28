@@ -6,7 +6,7 @@
   "description": "Chrome new-tab extension that floats your bookmarks toolbar at the top with a rotating Unsplash wallpaper.",
   "scripts": {
     "build": "tsx build.ts",
-    "dev": "tsx build.ts --watch & web-ext run --source-dir=dist --target=chromium",
+    "dev": "tsx build.ts && (tsx build.ts --watch & web-ext run --source-dir=dist --target=chromium)",
     "package": "web-ext build"
   },
   "dependencies": {
