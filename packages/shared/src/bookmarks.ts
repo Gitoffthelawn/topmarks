@@ -128,11 +128,13 @@ function createBookmarkLink(node: BookmarkNode): HTMLAnchorElement {
     icon = img;
   }
 
-  const span = document.createElement("span");
-  span.className = "bookmark-title";
-  span.textContent = node.title;
-
-  a.append(icon, span);
+  a.append(icon);
+  if (node.title) {
+    const span = document.createElement("span");
+    span.className = "bookmark-title";
+    span.textContent = node.title;
+    a.append(span);
+  }
   return a;
 }
 
