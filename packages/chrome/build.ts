@@ -7,9 +7,10 @@
 import { build, context, type BuildOptions } from "esbuild";
 import { readFile, writeFile, mkdir, cp, rm } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { loadUnsplashKey } from "../shared/src/build-helpers/load-env.ts";
 
-const HERE = path.dirname(new URL(import.meta.url).pathname);
+const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(HERE, "..", "..");
 const SHARED_DIR = path.resolve(REPO_ROOT, "packages", "shared");
 const DIST = path.join(HERE, "dist");

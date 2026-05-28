@@ -4,8 +4,9 @@
 // always reads from packages/shared/package.json directly.
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT = path.resolve(new URL(".", import.meta.url).pathname, "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 async function readVersion(file) {
   return JSON.parse(await readFile(file, "utf8")).version;

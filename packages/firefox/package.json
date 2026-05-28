@@ -10,6 +10,9 @@
     "lint": "web-ext lint --source-dir=dist",
     "package": "web-ext build"
   },
+  "dependencies": {
+    "@topmarks/shared": "*"
+  },
   "devDependencies": {
     "web-ext": "^10.1.0"
   }
