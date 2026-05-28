@@ -85,7 +85,7 @@ function themeInitBundleOptions(): BuildOptions {
   // theme-init.ts must execute synchronously in <head>, before stylesheet parse.
   // Phase 2: source lives in packages/firefox/. Phase 3 moves it to shared.
   return {
-    entryPoints: [path.join(HERE, "theme-init.ts")],
+    entryPoints: [path.join(SHARED_DIR, "src", "theme-init.ts")],
     outfile: path.join(DIST, "theme-init.js"),
     bundle: true,
     format: "iife",
