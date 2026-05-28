@@ -1,0 +1,13 @@
+{
+  "name": "@topmarks/shared",
+  "version": "1.8.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Browser-agnostic app logic, assets, and locales shared between Firefox and Chrome.",
+  "type": "module",
+  "exports": {
+    ".": "./src/newtab.ts",
+    "./platform": "./src/platform.ts",
+    "./theme-init": "./src/theme-init.ts"
+  }
+}
