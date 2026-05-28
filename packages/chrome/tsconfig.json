@@ -5,6 +5,6 @@
     "rootDir": "./src",
     "types": ["chrome", "node"]
   },
-  "include": ["src/**/*.ts", "build.ts"],
+  "include": ["src/**/*.ts"],
   "references": [{ "path": "../shared" }]
 }
