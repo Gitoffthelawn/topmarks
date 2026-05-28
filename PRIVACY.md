@@ -1,15 +1,15 @@
 # Privacy Policy
 
-**Last updated:** 2026-05-04
+**Last updated:** 2026-05-28
 
-This policy explains what data the **Topmarks** browser extension (the "extension") handles, what is transmitted off your device, and how you can control it. It applies to the version of the extension distributed via [addons.mozilla.org](https://addons.mozilla.org) and any source-built copy of the same code.
+This policy explains what data the **Topmarks** browser extension (the "extension") handles, what is transmitted off your device, and how you can control it. It applies to the version of the extension distributed via [addons.mozilla.org](https://addons.mozilla.org) (Firefox) and the [Chrome Web Store](https://chromewebstore.google.com) (Chrome and Chromium-based browsers), and any source-built copy of the same code.
 
 ## 1. Summary
 
-- The extension reads your Firefox bookmarks toolbar locally and displays it on every new tab page.
+- The extension reads your browser's bookmarks toolbar locally and displays it on every new tab page.
 - The extension does **not** collect, transmit, sell, or share your bookmarks, browsing history, or any personal identifier.
 - When the optional "Show background image" feature is enabled (default: on), the extension makes HTTPS requests to Unsplash to fetch a random wallpaper photo. These requests transmit your IP address (unavoidable for any HTTP request) but no other personal data.
-- All settings and cached data are stored only on your device using Firefox's local extension storage APIs.
+- All settings and cached data are stored only on your device using your browser's local extension storage APIs.
 
 ## 2. Data the extension does not collect or transmit
 
@@ -25,12 +25,12 @@ The extension does **not**:
 
 ## 3. Data stored locally on your device
 
-The extension uses Firefox's `browser.storage.local` and `window.localStorage` to remember:
+The extension uses your browser's extension storage (`browser.storage.local` in Firefox / `chrome.storage.local` in Chrome) and `window.localStorage` to remember:
 
 - **Your settings** — theme (auto/light/dark), "hide folder icons", "center bookmarks", "show background image", and refresh interval.
 - **A small cache for the most recent background photo** — its base URL, photographer name, photographer profile link, photo page link, the photo's representative color, and the timestamp it was fetched.
 
-This data is stored only on your device. It is not synchronized to your Firefox Account, transmitted to any server controlled by the developer, or shared with anyone. Uninstalling the extension removes all of it.
+This data is stored only on your device. It is not synchronized to your Firefox Account, Google Account, or any other cloud profile by the extension; it is not transmitted to any server controlled by the developer; and it is not shared with anyone. Uninstalling the extension removes all of it.
 
 ## 4. Network requests made by the extension
 
@@ -48,7 +48,7 @@ These requests include:
 
 - **The extension's Unsplash API access key** (a `Client-ID` header). The access key identifies the *application*, not you.
 - **Your IP address** (as with every HTTP request your browser makes).
-- **Standard browser headers** (User-Agent, Accept, etc.) sent by Firefox to every server.
+- **Standard browser headers** (User-Agent, Accept, etc.) sent by your browser to every server.
 
 These requests do **not** include your bookmarks, browsing history, search terms, any user identifier, analytics beacons, or cookies set by the developer.
 
@@ -60,21 +60,28 @@ Unsplash is an independent third-party service. Once data reaches Unsplash, Unsp
 
 ### 4.2 Bookmarked websites — favicon retrieval
 
-To display the small icon next to each bookmark, the extension first reads the favicon from Firefox's own local favicon cache (via the internal `page-icon:` URL scheme). When Firefox already has a cached icon for the bookmarked page, **no network request is made**.
+To display the small icon next to each bookmark, the extension first reads the favicon from your browser's own local favicon cache:
 
-If Firefox's cache doesn't have an icon for that URL, the extension loads `/favicon.ico` directly from the bookmarked site's own origin (for example, a `github.com` bookmark causes a request to `https://github.com/favicon.ico`). This is the same request your browser would normally make to render that site.
+- In **Firefox**, via the internal `page-icon:` URL scheme.
+- In **Chrome**, via the internal `_favicon/` URL scheme (which is why the Chrome build requests the `favicon` permission — see §5).
+
+When the browser already has a cached icon for the bookmarked page, **no network request is made**.
+
+If the local cache doesn't have an icon for that URL, the extension loads `/favicon.ico` directly from the bookmarked site's own origin (for example, a `github.com` bookmark causes a request to `https://github.com/favicon.ico`). This is the same request your browser would normally make to render that site.
 
 The extension does **not** route favicon requests through any third-party favicon-lookup service. If a bookmarked site does not host a favicon at the standard path, the extension displays a built-in globe icon and no further request is made.
 
 ## 5. Permissions
 
-The extension requests only the permissions strictly required for its functionality:
+The extension requests only the permissions strictly required for its functionality. Some permissions differ between the Firefox and Chrome builds because of browser API differences.
 
-| Permission | Why it is needed |
-|---|---|
-| `bookmarks` | Read your Firefox bookmarks toolbar to display it on the new tab page. The extension only reads bookmarks; it does not modify, delete, or transmit them. |
-| `storage` | Persist your settings and the last-fetched background photo's metadata locally. |
-| `https://api.unsplash.com/*` | Make HTTPS requests to Unsplash to fetch a random wallpaper photo when "Show background image" is enabled. |
+| Permission | Build | Why it is needed |
+|---|---|---|
+| `bookmarks` | Both | Read your browser's bookmarks toolbar to display it on the new tab page. The extension only reads bookmarks; it does not modify, delete, or transmit them. |
+| `storage` | Both | Persist your settings and the last-fetched background photo's metadata locally. |
+| `search` | Both | Power the new tab page's search box using your default search engine. |
+| `favicon` | Chrome only | Read favicons from Chrome's own local favicon cache via the `_favicon/` URL scheme. No network is performed by this permission — it reads icons the browser has already cached. |
+| `https://api.unsplash.com/*` | Both | Make HTTPS requests to Unsplash to fetch a random wallpaper photo when "Show background image" is enabled. |
 
 ## 6. Legal basis for processing (EU/EEA users)
 
@@ -84,8 +91,8 @@ Where the General Data Protection Regulation (GDPR) applies, the extension's pro
 
 - **Stop network transmission to Unsplash**: open the extension's settings and turn off "Show background image". No further requests to Unsplash will be made.
 - **Refresh or replace the cached photo**: settings → "Refresh background now".
-- **Delete all local data the extension has stored**: uninstall the extension. Firefox removes the extension's storage automatically on uninstall.
-- **Right to access, rectification, erasure, restriction, portability, and objection** (GDPR), and **right to know, delete, and opt-out of "sale" or sharing** (CCPA / California): the extension stores no personal data on any server controlled by the developer. All data the extension generates is held locally on your device and is fully under your control through Firefox itself. The developer does not sell or share data, so there is nothing to opt out of.
+- **Delete all local data the extension has stored**: uninstall the extension. Your browser removes the extension's storage automatically on uninstall.
+- **Right to access, rectification, erasure, restriction, portability, and objection** (GDPR), and **right to know, delete, and opt-out of "sale" or sharing** (CCPA / California): the extension stores no personal data on any server controlled by the developer. All data the extension generates is held locally on your device and is fully under your control through the browser itself. The developer does not sell or share data, so there is nothing to opt out of.
 
 ## 8. Children's privacy
 
@@ -93,8 +100,8 @@ The extension is not directed at children under the age of 13 and does not knowi
 
 ## 9. Security
 
-The extension uses HTTPS for every network request it makes. Locally stored data is protected by the same operating-system-level access controls that protect your Firefox profile. The extension does not contain remotely loaded code, eval'd code, or third-party tracking scripts.
+The extension uses HTTPS for every network request it makes. Locally stored data is protected by the same operating-system-level access controls that protect your browser profile. The extension does not contain remotely loaded code, eval'd code, or third-party tracking scripts.
 
 ## 10. Changes to this policy
 
-If the extension's data practices change, this policy will be updated and the "Last updated" date at the top will reflect the change. Material changes will also be noted in the extension's release notes on addons.mozilla.org.
+If the extension's data practices change, this policy will be updated and the "Last updated" date at the top will reflect the change. Material changes will also be noted in the extension's release notes on addons.mozilla.org and the Chrome Web Store.

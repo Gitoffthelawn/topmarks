@@ -1,0 +1,117 @@
+# Chrome Web Store submission — dashboard form fields
+
+Text to paste into the **Privacy** and **Distribution** tabs of the chrome.google.com/webstore/devconsole submission form, in addition to the listing copy in [`LISTING_CWS.md`](./LISTING_CWS.md).
+
+## Single purpose
+
+> One sentence. CWS reviewers check that every permission ties back to this.
+
+```
+Replace the new tab page with the user's bookmarks toolbar laid out as a pill at the top of the tab, over an optional curated wallpaper from Unsplash.
+```
+
+## Permission justifications
+
+Paste one line per permission into the corresponding field in the dashboard. Each line answers "Why does your extension need this permission?"
+
+### `bookmarks`
+
+```
+Reads the user's bookmarks (specifically the Bookmarks Bar / Toolbar folder) to render them as the primary UI element on the new tab page. The extension never modifies, deletes, transmits, or otherwise writes bookmarks — it only reads them via chrome.bookmarks.getTree().
+```
+
+### `storage`
+
+```
+Persists user preferences (theme, "Glass" vs "Classic" style, "hide folder icons", "center bookmarks", "show background image", wallpaper refresh interval) and a small wallpaper metadata cache (photo URL, photographer attribution, color, fetched-at timestamp) using chrome.storage.local. All data stays on the user's device.
+```
+
+### `search`
+
+```
+Powers the search box on the new tab page by submitting the query to the user's default search engine via chrome.search.query(). The extension does not log, store, or transmit search queries anywhere else.
+```
+
+### `favicon`
+
+```
+Reads favicons for bookmarked sites from Chrome's local favicon cache via the chrome-extension://{id}/_favicon/?pageUrl=... URL scheme. This avoids making network requests for icons the browser has already cached. If the cache has no icon, the extension falls back to the bookmarked site's own /favicon.ico (no third-party favicon services are used).
+```
+
+### Host permission: `https://api.unsplash.com/*`
+
+```
+Fetches a random wallpaper photo from Unsplash's curated wallpaper collection (collection ID 1053828) when the user enables "Show background image" (default on). Requests are limited to api.unsplash.com/photos/random and api.unsplash.com/photos/{id}/download (the latter is the tracking ping required by Unsplash's API guidelines, one per fresh fetch). All requests carry only a Client-ID application key — never any user identifier. With the default 6-hour refresh interval, this is at most a handful of requests per day.
+```
+
+## Remote code
+
+> CWS field: "Are you using remote code?" — Choose **No**.
+
+```
+No. All JavaScript and CSS executed by the extension is bundled inside the extension package at build time (esbuild, IIFE bundle). No eval, no Function() construction from strings, no <script src> injection, no WebAssembly fetched at runtime. The extension does not load HTML, JS, or CSS from any remote source. Images fetched from images.unsplash.com are loaded into <img> elements only and are not interpreted as code.
+```
+
+## Data usage disclosure
+
+> CWS field: "What user data does your extension collect or use?" — Tick only the categories that actually apply. For Topmarks, **none of the listed categories apply** and the form should be submitted with all categories unchecked.
+
+Rationale for the reviewer (paste in the "Additional details" field if prompted):
+
+```
+Topmarks does not collect or transmit any user-identifying data. The extension reads the user's bookmarks locally and renders them on the new tab page; bookmarks are never sent to any server. The only outbound HTTP destination is api.unsplash.com (when "Show background image" is on), which receives a Client-ID application key and — as an unavoidable consequence of any HTTP request — the user's IP address. No user identifier is constructed or sent. No analytics, telemetry, or crash reporting. All settings are stored on-device via chrome.storage.local.
+```
+
+## Data usage certifications
+
+> CWS displays three required checkboxes near the data-usage form. Tick all three:
+
+- [x] **I do not sell or transfer user data to third parties** apart from the approved use cases.
+- [x] **I do not use or transfer user data for purposes unrelated to my item's single purpose.**
+- [x] **I do not use or transfer user data to determine creditworthiness or for lending purposes.**
+
+## Privacy policy URL
+
+```
+https://github.com/nx-alejandrolacasa/topmarks/blob/main/PRIVACY.md
+```
+
+## Notes for reviewer
+
+> Paste into the "Justification" / "Testing instructions" field on submission.
+
+```
+Topmarks replaces the new tab page with the user's Bookmarks Bar laid out as a pill at the top, over an optional Unsplash wallpaper.
+
+To test:
+1. Install the unpacked extension or the uploaded package.
+2. Open a new tab — you should see the bookmarks pill at the top.
+3. If you don't have anything on the Bookmarks Bar, add a couple of bookmarks to it (Bookmarks → Bookmarks Bar) and reload the new tab; the pill updates immediately.
+4. Click the gear icon (bottom-right) to access settings: theme, Glass vs Classic style, refresh interval, and the "Show background image" toggle.
+
+Network behavior:
+- The only outbound network destination is api.unsplash.com (and images.unsplash.com for image loads), used to fetch a random photo from Unsplash's curated wallpaper collection 1053828. Disabling "Show background image" stops all requests.
+- Favicons are loaded via Chrome's internal _favicon/ URL scheme first (no network), falling back to the bookmarked site's own /favicon.ico when the cache has no entry. No third-party favicon services are used.
+
+Build notes:
+- Source: https://github.com/nx-alejandrolacasa/topmarks (MIT license)
+- The shipped bundle embeds only the public Unsplash Access Key (Client-ID), per Unsplash's API guidelines for client-side apps.
+- No analytics, telemetry, crash reporting, content scripts, or remote code. Bookmarks data never leaves the browser.
+```
+
+## Distribution settings
+
+- **Visibility**: Public
+- **Distribution**: All regions (or restrict as needed; the extension has no region-specific behavior)
+- **Pricing**: Free
+
+## Post-submission checklist
+
+- [ ] Listing language matches `LISTING_CWS.md` (summary ≤ 132 chars, description pasted as plain text)
+- [ ] Privacy practices tab green-checked (all three certifications ticked, privacy policy URL present)
+- [ ] Single purpose statement matches the one above
+- [ ] All requested permissions have justifications
+- [ ] Screenshots uploaded (1280×800 or 640×400, at least one)
+- [ ] Store icon = 128×128 PNG (auto-uses `icons.128` from manifest, but the listing slot is separate — upload `packages/shared/assets/icons/icon.png` there too)
+- [ ] Package uploaded: `web-ext-artifacts/topmarks-chrome-v1.9.0.zip`
+- [ ] "Why are you requesting these permissions?" field non-empty for every permission
