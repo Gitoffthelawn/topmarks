@@ -297,3 +297,55 @@ main {
   font-size: 12px;
   letter-spacing: 0.04em;
 }
+
+/* === Responsive: mobile === */
+@media (max-width: 640px) {
+  main {
+    padding: 32px 16px 24px;
+    gap: 40px;
+  }
+
+  .hero-card {
+    padding: 32px 20px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .hero-tagline {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn {
+    align-items: center;
+    min-width: 0;
+  }
+
+  .slideshow {
+    margin: 0 -16px;
+  }
+
+  .slides {
+    padding: 0 16px;
+    scroll-padding: 0 16px;
+  }
+
+  .slide {
+    flex-basis: calc(100% - 32px);
+  }
+
+  .features-list {
+    padding: 24px 24px;
+  }
+
+  .footer-links {
+    gap: 16px;
+  }
+}
