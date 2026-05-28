@@ -22,6 +22,7 @@ web-ext-artifacts/
 
 # Monorepo build outputs
 packages/*/dist/
+packages/*/dist-types/
 packages/*/web-ext-artifacts/
 # Per-package TS incremental cache
 packages/*/tsconfig.tsbuildinfo
