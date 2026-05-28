@@ -128,7 +128,7 @@ Assets are **copied**, not symlinked. The `site/` folder is self-contained so it
   - Light and dark modes render correctly (toggle via OS).
   - Slideshow snaps cleanly on trackpad scroll and touch (test in DevTools mobile emulator).
   - Buttons keyboard-focusable and visibly focused (`:focus-visible` ring).
-  - Footer links open in the same tab; external links use `rel="noopener"` only where they open in a new tab (we'll default to same-tab to keep markup simple).
+  - All external links (hero install buttons and footer) open in the same tab — keeps markup simple and avoids the need for `rel="noopener noreferrer"`. Revisit if user feedback suggests otherwise.
 - Lighthouse: aim for ≥ 95 on Accessibility and Best Practices. Performance not benchmarked beyond "no obvious regression" — single-page static site with one image-heavy backdrop.
 - After first deploy, visit the public URL on at least one mobile device or device-emulator to confirm CDN cache works.
 
