@@ -170,3 +170,54 @@ main {
   opacity: 0.55;
   cursor: not-allowed;
 }
+
+/* === Screenshot slideshow === */
+.slideshow {
+  /* Bleed past `main`'s padding so slides reach near the viewport edges */
+  margin: 0 -24px;
+}
+
+.slides {
+  display: flex;
+  gap: 16px;
+  padding: 0 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 24px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.slide {
+  flex: 0 0 min(960px, calc(100% - 48px));
+  scroll-snap-align: center;
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.slide img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+
+.slide figcaption {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Hide scrollbar in WebKit; keep semantic scrollability */
+.slides::-webkit-scrollbar {
+  height: 0;
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slides {
+    scroll-behavior: auto;
+  }
+}
