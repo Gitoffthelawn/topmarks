@@ -153,14 +153,34 @@ main {
   transform: none;
 }
 
-/* === Screenshot showcase === */
+/* === Screenshot showcase (peek-snap carousel) === */
+.slideshow {
+  /* Break out of main's max-width so neighbors can spill into the viewport edges */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
 .slides {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  /* Side padding centers the active slide on the viewport */
+  padding-inline: max(24px, calc((100vw - 1052px) / 2));
+  scroll-padding-inline: max(24px, calc((100vw - 1052px) / 2));
+  scrollbar-width: none;
+}
+
+.slides::-webkit-scrollbar {
+  display: none;
 }
 
 .slide {
+  flex: 0 0 min(1052px, calc(100vw - 48px));
+  scroll-snap-align: center;
   margin: 0;
   display: grid;
   gap: 8px;
@@ -178,6 +198,12 @@ main {
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slides {
+    scroll-behavior: auto;
+  }
 }
 
 /* === Features === */
@@ -282,7 +308,7 @@ main {
   }
 
   .slides {
-    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 
   .features-list {
