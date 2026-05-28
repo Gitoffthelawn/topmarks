@@ -17,11 +17,16 @@ const WATCH = process.argv.includes("--watch");
 const DEV = WATCH || process.env.NODE_ENV !== "production";
 
 async function loadUnsplashKey(): Promise<string> {
+  if (process.env.UNSPLASH_ACCESS_KEY) return process.env.UNSPLASH_ACCESS_KEY;
   const envPath = path.join(REPO_ROOT, ".env");
   if (!existsSync(envPath)) return "";
-  const raw = await readFile(envPath, "utf8");
-  const m = raw.match(/^\s*UNSPLASH_ACCESS_KEY\s*=\s*"?([^"\n]*)"?\s*$/m);
-  return m ? (m[1] ?? "") : "";
+  try {
+    const raw = await readFile(envPath, "utf8");
+    const m = raw.match(/^\s*UNSPLASH_ACCESS_KEY\s*=\s*"?([^"\n]*)"?\s*$/m);
+    return m ? (m[1] ?? "") : "";
+  } catch {
+    return "";
+  }
 }
 
 async function readSharedVersion(): Promise<string> {
