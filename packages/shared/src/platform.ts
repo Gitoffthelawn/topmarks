@@ -24,6 +24,9 @@ export interface Platform {
   bookmarks: {
     getToolbar(): Promise<BookmarkNode>;
     onChanged(handler: () => void): () => void;
+    // Returns the browser's cached-favicon URL for a page (Firefox `page-icon:`
+    // or Chrome `_favicon/`). No network — reuses what the browser already has.
+    cachedFaviconUrl(pageUrl: string): string;
   };
   storage: {
     get<K extends string>(keys: readonly K[] | Record<K, unknown>): Promise<Record<K, unknown>>;

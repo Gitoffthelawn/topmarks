@@ -27,6 +27,10 @@ export const platform: Platform = {
         }
       };
     },
+    cachedFaviconUrl(pageUrl) {
+      // Firefox-only URL scheme. Returns Firefox's cached favicon. No network.
+      return `page-icon:${pageUrl}`;
+    },
   },
   storage: {
     get(keys) {

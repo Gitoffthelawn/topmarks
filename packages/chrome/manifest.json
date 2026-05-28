@@ -5,7 +5,7 @@
   "description": "__MSG_extDescription__",
   "default_locale": "en",
   "homepage_url": "https://github.com/nx-alejandrolacasa/topmarks",
-  "permissions": ["bookmarks", "storage", "search"],
+  "permissions": ["bookmarks", "storage", "search", "favicon"],
   "host_permissions": ["https://api.unsplash.com/*"],
   "icons": { "128": "icons/icon.png" },
   "chrome_url_overrides": { "newtab": "newtab.html" },

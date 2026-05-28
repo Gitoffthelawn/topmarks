@@ -30,6 +30,14 @@ export const platform: Platform = {
         chrome.bookmarks.onMoved.removeListener(handler);
       };
     },
+    cachedFaviconUrl(pageUrl) {
+      // chrome.runtime.getURL builds an extension-scoped URL to Chrome's
+      // favicon cache. Requires the "favicon" permission (manifest.json).
+      const url = new URL(chrome.runtime.getURL("/_favicon/"));
+      url.searchParams.set("pageUrl", pageUrl);
+      url.searchParams.set("size", "32");
+      return url.toString();
+    },
   },
   storage: {
     get(keys) {

@@ -14,9 +14,8 @@ function sortFoldersFirst<T extends BookmarkNode>(nodes: T[]): T[] {
 }
 
 function faviconSources(url: string): string[] {
-  // 1. `page-icon:` — undocumented Firefox URL scheme that returns the favicon
-  //    Firefox already has cached. No network, no third parties. Chrome ignores
-  //    the scheme; the second source kicks in.
+  // 1. The browser's cached favicon — Firefox `page-icon:` or Chrome `_favicon/`.
+  //    No network, no third parties. Provided by the platform shim.
   // 2. The site's own `/favicon.ico` — direct fetch, no third-party service.
   //
   // Third-party favicon services (Google, DuckDuckGo, etc.) are deliberately
@@ -24,7 +23,7 @@ function faviconSources(url: string): string[] {
   try {
     const u = new URL(url);
     if (u.protocol !== "http:" && u.protocol !== "https:") return [];
-    return [`page-icon:${url}`, `${u.origin}/favicon.ico`];
+    return [getPlatform().bookmarks.cachedFaviconUrl(url), `${u.origin}/favicon.ico`];
   } catch {
     return [];
   }
