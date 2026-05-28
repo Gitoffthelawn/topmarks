@@ -1,0 +1,80 @@
+/* === Reset === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter",
+    system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--page-bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+/* === Theme tokens === */
+:root {
+  --text: #1a1a1c;
+  --text-muted: rgba(26, 26, 28, 0.65);
+  --surface: rgba(255, 255, 255, 0.6);
+  --surface-hairline: rgba(255, 255, 255, 0.7);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  /* v1: simple solid + subtle gradient. Easy to swap for a photo later. */
+  --page-bg: linear-gradient(180deg, #eef2f6 0%, #e3e8ee 100%);
+  --accent: #2eb872; /* extension bookmark-pill green */
+  --accent-text: #ffffff;
+  --link-underline: rgba(26, 26, 28, 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #f0f0f2;
+    --text-muted: rgba(240, 240, 242, 0.65);
+    --surface: rgba(28, 28, 32, 0.6);
+    --surface-hairline: rgba(255, 255, 255, 0.12);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    --page-bg: linear-gradient(180deg, #0e1014 0%, #14181f 100%);
+    --link-underline: rgba(240, 240, 242, 0.3);
+  }
+}
+
+/* === Glass surface (shared) === */
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--surface-hairline);
+  box-shadow: var(--shadow);
+  border-radius: 20px;
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+}
+
+/* === Main layout === */
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 64px 24px 32px;
+  display: grid;
+  gap: 64px;
+}
