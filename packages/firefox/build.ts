@@ -40,17 +40,21 @@ async function readSharedVersion(): Promise<string> {
 }
 
 async function copyAssets(version: string) {
-  // Phase 2: assets are still in packages/firefox/. Phase 3 moves them to
-  // packages/shared/assets/ and this function changes to copy from there.
-  const filesAtRoot = ["newtab.html", "newtab.css", "sample-bookmarks.html"];
-  for (const f of filesAtRoot) {
-    const src = path.join(HERE, f);
-    if (existsSync(src)) await cp(src, path.join(DIST, f));
+  const sharedAssets = path.join(SHARED_DIR, "assets");
+  const sharedLocales = path.join(SHARED_DIR, "_locales");
+
+  // newtab.html, newtab.css live in shared/assets.
+  for (const f of ["newtab.html", "newtab.css"]) {
+    await cp(path.join(sharedAssets, f), path.join(DIST, f));
   }
-  for (const dir of ["icons", "fonts", "_locales"]) {
-    const src = path.join(HERE, dir);
-    if (existsSync(src)) await cp(src, path.join(DIST, dir), { recursive: true });
+  // icons, fonts come from shared/assets/<name>.
+  for (const dir of ["icons", "fonts"]) {
+    await cp(path.join(sharedAssets, dir), path.join(DIST, dir), { recursive: true });
   }
+  // Locales come from shared/_locales (next to assets, not inside it — matches
+  // the on-disk structure WebExtensions expects under the extension root).
+  await cp(sharedLocales, path.join(DIST, "_locales"), { recursive: true });
+
   // Stamp version into manifest.
   const manifest = JSON.parse(await readFile(path.join(HERE, "manifest.json"), "utf8"));
   manifest.version = version;
