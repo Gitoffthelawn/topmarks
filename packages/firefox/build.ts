@@ -30,12 +30,9 @@ async function loadUnsplashKey(): Promise<string> {
 }
 
 async function readSharedVersion(): Promise<string> {
-  // Until Phase 3 stands up @topmarks/shared, this package's own package.json
-  // is the version source. After Phase 3, the line below switches to SHARED_DIR.
-  const pkgPath = existsSync(path.join(SHARED_DIR, "package.json"))
-    ? path.join(SHARED_DIR, "package.json")
-    : path.join(HERE, "package.json");
-  const { version } = JSON.parse(await readFile(pkgPath, "utf8"));
+  const { version } = JSON.parse(
+    await readFile(path.join(SHARED_DIR, "package.json"), "utf8")
+  );
   return version;
 }
 
