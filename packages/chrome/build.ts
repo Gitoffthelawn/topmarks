@@ -9,6 +9,19 @@ import { readFile, writeFile, mkdir, cp, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadUnsplashKey } from "../shared/src/build-helpers/load-env.ts";
+import { validateDist } from "../shared/src/build-helpers/validate-dist.ts";
+
+const REQUIRED_DIST_FILES = [
+  "manifest.json",
+  "newtab.html",
+  "newtab.css",
+  "newtab.js",
+  "theme-init.js",
+  "_locales/en/messages.json",
+  "icons/icon.png",
+  "icons/bmc-logo.svg",
+  "fonts/Cookie-Regular.ttf",
+] as const;
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(HERE, "..", "..");
@@ -96,6 +109,7 @@ async function main() {
       build(pageBundleOptions(unsplashKey)),
       build(themeInitBundleOptions()),
     ]);
+    await validateDist(DIST, REQUIRED_DIST_FILES);
     console.log(`Built @topmarks/chrome v${version} → ${path.relative(REPO_ROOT, DIST)}`);
   }
 }
