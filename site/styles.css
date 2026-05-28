@@ -221,3 +221,79 @@ main {
     scroll-behavior: auto;
   }
 }
+
+/* === Features === */
+.features {
+  display: flex;
+  justify-content: center;
+}
+
+.features-list {
+  list-style: none;
+  margin: 0;
+  padding: 32px 40px;
+  max-width: 720px;
+  width: 100%;
+  display: grid;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.features-list li {
+  position: relative;
+  padding-left: 28px;
+}
+
+.features-list li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* === Footer === */
+.footer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.footer-links {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.footer-links a {
+  text-decoration: none;
+  border-bottom: 1px solid var(--link-underline);
+  padding-bottom: 1px;
+  font-size: 14px;
+}
+
+.footer-links a:hover {
+  border-bottom-color: var(--text);
+}
+
+.footer-bmc a {
+  border-bottom: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.footer-credit {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
