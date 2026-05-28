@@ -6,5 +6,5 @@
     "types": ["firefox-webext-browser", "node"]
   },
   "include": ["src/**/*.ts"],
-  "references": []
+  "references": [{ "path": "../shared" }]
 }
