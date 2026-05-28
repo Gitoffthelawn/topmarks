@@ -20,9 +20,10 @@ Before starting Task 3, ask the user for these three inputs and write them down.
 
 1. **`AMO_URL`** — the live Firefox Add-ons listing URL for Topmarks. Looks like `https://addons.mozilla.org/firefox/addon/<slug>/`. Required.
 2. **`BMC_URL`** — the user's Buy Me a Coffee page URL, looks like `https://buymeacoffee.com/<handle>`. If the user does not have one, set this to the literal string `SKIP` and omit the footer entry.
-3. **`bg.jpg` source** — either a local file path on disk, or a public image URL to download with `curl`. The image should be a calm, low-contrast photograph (landscape, nature, or abstract — avoid busy product/screenshot imagery). The Unsplash curated wallpapers collection is a good source.
 
-Substitute these literals everywhere the plan writes `__AMO_URL__`, `__BMC_URL__`, or references `bg.jpg`.
+Substitute these literals everywhere the plan writes `__AMO_URL__` or `__BMC_URL__`.
+
+**Background:** v1 ships with a simple CSS solid+subtle-gradient backdrop (no image). A photographic backdrop is explicitly deferred for a later iteration.
 
 ---
 
@@ -80,54 +81,12 @@ git commit -m "Add static product assets for landing site"
 
 ---
 
-## Task 2: Add the page backdrop image
-
-**Files:**
-- Create: `site/assets/bg.jpg`
-
-- [ ] **Step 1: Place the backdrop image**
-
-Use whichever input the user gave during pre-flight:
-
-**If a local path:**
-```bash
-cp <user-provided-path> site/assets/bg.jpg
-```
-
-**If a URL:**
-```bash
-curl -L -o site/assets/bg.jpg "<user-provided-url>"
-```
-
-- [ ] **Step 2: Verify file size and type**
-
-```bash
-file site/assets/bg.jpg
-ls -la site/assets/bg.jpg
-```
-
-Expected: `JPEG image data ...`, file size between 100 KB and 2 MB. If it's larger than 2 MB, downscale or recompress before committing — the page loads it as a fullscreen backdrop and a multi-MB file will hurt first paint.
-
-If the file is much larger, use `sips` (macOS, available by default):
-```bash
-sips -Z 2560 site/assets/bg.jpg --out site/assets/bg.jpg
-```
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add site/assets/bg.jpg
-git commit -m "Add backdrop image for landing site"
-```
-
----
-
-## Task 3: Write `index.html`
+## Task 2: Write `index.html`
 
 **Files:**
 - Create: `site/index.html`
 
-This task writes the full markup in one shot. The CSS classes referenced here are styled in Tasks 4–8 — leaving the markup unstyled until the next task is intentional.
+This task writes the full markup in one shot. The CSS classes referenced here are styled in Tasks 3–7 — leaving the markup unstyled until the next task is intentional.
 
 - [ ] **Step 1: Write the file**
 
@@ -147,9 +106,6 @@ If `__BMC_URL__` is the literal `SKIP`, **omit the entire `<li class="footer-bmc
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="backdrop" aria-hidden="true"></div>
-    <div class="backdrop-overlay" aria-hidden="true"></div>
-
     <main>
       <section class="hero">
         <div class="hero-card glass">
@@ -233,7 +189,7 @@ git commit -m "Add landing site markup"
 
 ---
 
-## Task 4: Add base styles — reset, theme tokens, body backdrop
+## Task 3: Add base styles — reset, theme tokens, body backdrop
 
 **Files:**
 - Create: `site/styles.css`
@@ -262,6 +218,7 @@ body {
   line-height: 1.5;
   color: var(--text);
   background: var(--page-bg);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -280,11 +237,11 @@ a {
 :root {
   --text: #1a1a1c;
   --text-muted: rgba(26, 26, 28, 0.65);
-  --surface: rgba(255, 255, 255, 0.55);
+  --surface: rgba(255, 255, 255, 0.6);
   --surface-hairline: rgba(255, 255, 255, 0.7);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-  --page-bg: #f4f4f6;
-  --overlay: rgba(255, 255, 255, 0.25);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  /* v1: simple solid + subtle gradient. Easy to swap for a photo later. */
+  --page-bg: linear-gradient(180deg, #eef2f6 0%, #e3e8ee 100%);
   --accent: #2eb872; /* extension bookmark-pill green */
   --accent-text: #ffffff;
   --link-underline: rgba(26, 26, 28, 0.25);
@@ -294,30 +251,12 @@ a {
   :root {
     --text: #f0f0f2;
     --text-muted: rgba(240, 240, 242, 0.65);
-    --surface: rgba(20, 20, 22, 0.55);
+    --surface: rgba(28, 28, 32, 0.6);
     --surface-hairline: rgba(255, 255, 255, 0.12);
     --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-    --page-bg: #0e0e10;
-    --overlay: rgba(0, 0, 0, 0.4);
+    --page-bg: linear-gradient(180deg, #0e1014 0%, #14181f 100%);
     --link-underline: rgba(240, 240, 242, 0.3);
   }
-}
-
-/* === Backdrop === */
-.backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background-image: url("assets/bg.jpg");
-  background-size: cover;
-  background-position: center;
-}
-
-.backdrop-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: var(--overlay);
 }
 
 /* === Glass surface (shared) === */
@@ -351,10 +290,10 @@ cd site && python3 -m http.server 8000
 In a browser, open `http://localhost:8000/`.
 
 Expected:
-- Background image fills the viewport
-- The page content is unstyled rectangles but readable (system font, dark text on light, or inverted in dark mode)
-- DevTools → Console: no errors
-- DevTools → Network: `bg.jpg`, `icon.svg`, `bmc-logo.svg`, the four screenshots, and `styles.css` all return 200
+- The page background is a soft light-grey gradient (light mode) or a deep near-black gradient (dark mode).
+- The page content is unstyled rectangles but readable (system font, dark text on light, or inverted in dark mode).
+- DevTools → Console: no errors.
+- DevTools → Network: `icon.svg`, `bmc-logo.svg`, the four screenshots, and `styles.css` all return 200.
 
 Stop the server with Ctrl+C when done.
 
@@ -362,12 +301,12 @@ Stop the server with Ctrl+C when done.
 
 ```bash
 git add site/styles.css
-git commit -m "Add base styles, theme tokens, and backdrop for landing site"
+git commit -m "Add base styles and theme tokens for landing site"
 ```
 
 ---
 
-## Task 5: Add hero section styles
+## Task 4: Add hero section styles
 
 **Files:**
 - Modify: `site/styles.css` (append)
@@ -487,7 +426,7 @@ git commit -m "Style hero section and install buttons"
 
 ---
 
-## Task 6: Add scroll-snap slideshow styles
+## Task 5: Add scroll-snap slideshow styles
 
 **Files:**
 - Modify: `site/styles.css` (append)
@@ -567,7 +506,7 @@ git commit -m "Style screenshot scroll-snap slideshow"
 
 ---
 
-## Task 7: Add features list and footer styles
+## Task 6: Add features list and footer styles
 
 **Files:**
 - Modify: `site/styles.css` (append)
@@ -671,7 +610,7 @@ git commit -m "Style features list and footer"
 
 ---
 
-## Task 8: Add responsive media queries
+## Task 7: Add responsive media queries
 
 **Files:**
 - Modify: `site/styles.css` (append)
@@ -751,7 +690,7 @@ git commit -m "Add mobile responsive layout for landing site"
 
 ---
 
-## Task 9: Local end-to-end verification
+## Task 8: Local end-to-end verification
 
 **Files:**
 - (none modified — verification only)
@@ -766,7 +705,7 @@ cd site && python3 -m http.server 8000
 
 Open `http://localhost:8000/` in Firefox.
 
-- [ ] Background image visible behind everything; legible overlay
+- [ ] Soft gradient backdrop visible behind everything; legible contrast
 - [ ] Hero icon, title, tagline render correctly
 - [ ] Firefox button is green and clickable; visiting it (in a new tab) reaches the real AMO listing
 - [ ] Chrome button is muted, says "Coming soon to Chrome Web Store", and shows a not-allowed cursor — clicking does nothing
@@ -780,7 +719,7 @@ Open `http://localhost:8000/` in Firefox.
 - [ ] **Step 3: Repeat the checklist in Chrome**
 
 Same checks as Step 2, in Chrome. Pay extra attention to:
-- `backdrop-filter` (Chrome supports it well, but check the glass effect is actually blurring the backdrop)
+- `backdrop-filter` rendering (glass cards should have a subtle frosted look against the gradient)
 - Slideshow `scroll-snap` behavior on a Mac trackpad
 
 - [ ] **Step 4: Lighthouse audit (Chrome DevTools)**
@@ -801,7 +740,7 @@ This task introduces no changes — it is a verification gate before deployment.
 
 ---
 
-## Task 10: Add GitHub Actions workflow for Pages
+## Task 9: Add GitHub Actions workflow for Pages
 
 **Files:**
 - Create: `.github/workflows/pages.yml`
@@ -868,7 +807,7 @@ git commit -m "Add GitHub Actions workflow to deploy landing site to Pages"
 
 ---
 
-## Task 11: Enable GitHub Pages and trigger first deploy
+## Task 10: Enable GitHub Pages and trigger first deploy
 
 **Files:**
 - (none modified — repo settings + manual verification)
@@ -930,7 +869,7 @@ This task is operational only.
 
 ---
 
-## Task 12: Link the site from the README
+## Task 11: Link the site from the README
 
 **Files:**
 - Modify: `README.md` (add a one-line link near the top)

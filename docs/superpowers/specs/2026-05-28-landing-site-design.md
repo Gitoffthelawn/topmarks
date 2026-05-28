@@ -59,7 +59,7 @@ Below the link row: a small "Made by Alejandro Lacasa" credit.
 
 Mirrors the extension's own aesthetic so a visitor immediately understands the product's vibe.
 
-- **Backdrop**: one fixed-position, calm Unsplash photo (`bg.jpg`) covering the viewport, dimmed via an overlay (~40% black in dark mode, ~25% white in light mode) for legibility.
+- **Backdrop**: a simple solid color with a very subtle vertical gradient (light: near-white with a faint cool tint; dark: near-black with a faint cool tint). No photographic background in v1 — kept intentionally minimal so the glass cards and screenshots are the visual focus. Easy to swap for a photo later.
 - **Glass cards**: hero block, each screenshot frame, and the feature list use `backdrop-filter: blur(20px) saturate(140%)` over a translucent surface (light: `rgba(255,255,255,0.55)`, dark: `rgba(20,20,22,0.55)`) with a 1px hairline border (`rgba(255,255,255,0.15)`) and a soft outer shadow.
 - **Typography**: system stack `-apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif`. No web fonts.
 - **Theme**: `prefers-color-scheme` only, no manual toggle. Two CSS custom-property sets keyed to `:root` and `@media (prefers-color-scheme: dark)`.
@@ -86,7 +86,6 @@ site/
       2-glass_dark.png
       3-classic.png
       4-settings.png
-    bg.jpg                    # one calm Unsplash photo, downloaded into the repo
 ```
 
 Assets are **copied**, not symlinked. The `site/` folder is self-contained so it can be uploaded as a Pages artifact without any awareness of the rest of the repo. If a screenshot or icon changes upstream, a small npm script (or manual `cp`) re-copies it — the implementation plan will decide whether that's worth automating.
@@ -109,7 +108,6 @@ Assets are **copied**, not symlinked. The `site/` folder is self-contained so it
 
 - `__AMO_URL__` — the live Firefox Add-ons listing URL. User pastes during implementation.
 - `__BMC_URL__` — Buy Me a Coffee page URL, or omit the footer entry if none exists.
-- `bg.jpg` — pick one calm, low-contrast Unsplash wallpaper at implementation time. Should not visually clash with the four product screenshots, since they'll be layered over it.
 
 ## Out of scope (explicit non-features for v1)
 
