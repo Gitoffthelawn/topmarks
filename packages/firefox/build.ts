@@ -75,7 +75,7 @@ function pageBundleOptions(unsplashKey: string): BuildOptions {
     sourcemap: DEV ? "inline" : false,
     minify: !DEV,
     define: {
-      "process.env.UNSPLASH_ACCESS_KEY": JSON.stringify(unsplashKey),
+      __UNSPLASH_KEY__: JSON.stringify(unsplashKey),
     },
     logLevel: "info",
   };
