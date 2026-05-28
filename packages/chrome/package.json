@@ -1,6 +1,6 @@
 {
   "name": "@topmarks/chrome",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "private": true,
   "license": "MIT",
   "description": "Chrome new-tab extension that floats your bookmarks toolbar at the top with a rotating Unsplash wallpaper.",

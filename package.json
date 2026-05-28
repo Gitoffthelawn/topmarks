@@ -1,18 +1,22 @@
 {
   "name": "topmarks-monorepo",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "private": true,
   "license": "MIT",
-  "workspaces": ["packages/*"],
-  "engines": { "node": "22.x" },
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
-    "dev:firefox":   "npm run dev -w @topmarks/firefox",
-    "dev:chrome":    "npm run dev -w @topmarks/chrome",
-    "build":         "npm run build -w @topmarks/firefox && npm run build -w @topmarks/chrome",
+    "dev:firefox": "npm run dev -w @topmarks/firefox",
+    "dev:chrome": "npm run dev -w @topmarks/chrome",
+    "build": "npm run build -w @topmarks/firefox && npm run build -w @topmarks/chrome",
     "build:firefox": "npm run build -w @topmarks/firefox",
-    "build:chrome":  "npm run build -w @topmarks/chrome",
-    "lint":          "npm run lint --workspaces --if-present",
-    "typecheck":     "tsc -b",
+    "build:chrome": "npm run build -w @topmarks/chrome",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "tsc -b",
     "sync-versions": "node scripts/sync-versions.mjs"
   },
   "devDependencies": {
