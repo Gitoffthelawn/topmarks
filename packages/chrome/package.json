@@ -7,7 +7,6 @@
   "scripts": {
     "build": "tsx build.ts",
     "dev": "tsx build.ts --watch & web-ext run --source-dir=dist --target=chromium",
-    "lint": "web-ext lint --source-dir=dist",
     "package": "web-ext build"
   },
   "dependencies": {

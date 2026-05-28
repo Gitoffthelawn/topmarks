@@ -16,7 +16,7 @@
     "build:firefox": "npm run build -w @topmarks/firefox",
     "build:chrome": "npm run build -w @topmarks/chrome",
     "lint": "npm run lint --workspaces --if-present",
-    "typecheck": "tsc -b",
+    "typecheck": "tsc -b && tsc -p tsconfig.scripts.json",
     "sync-versions": "node scripts/sync-versions.mjs"
   },
   "devDependencies": {

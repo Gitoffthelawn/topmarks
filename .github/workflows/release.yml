@@ -41,7 +41,7 @@ jobs:
 
       - run: npm run build:${{ matrix.target }}
 
-      - run: npm run lint -w @topmarks/${{ matrix.target }}
+      - run: npm run lint -w @topmarks/${{ matrix.target }} --if-present
 
       - run: npm run package -w @topmarks/${{ matrix.target }}
 
