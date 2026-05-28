@@ -34,3 +34,4 @@ packages/*/src/**/*.d.ts.map
 # Per-package TS incremental cache
 packages/*/tsconfig.tsbuildinfo
 packages/*/.tsbuildinfo
+config.local.js
