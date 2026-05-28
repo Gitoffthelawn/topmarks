@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist-types",
-    "rootDir": "./src",
+    "rootDir": ".",
     "types": ["firefox-webext-browser", "node"]
   },
   "include": ["src/**/*.ts", "build.ts"],

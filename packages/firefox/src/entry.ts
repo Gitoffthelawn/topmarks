@@ -1,3 +1,4 @@
+/// <reference types="firefox-webext-browser" />
 const TOOLBAR_ID = "toolbar_____";
 const SVG_NS = "http://www.w3.org/2000/svg";
 // Tabliss's curated wallpaper collection — ~545 hand-picked, consistent high quality.
@@ -7,7 +8,7 @@ const UNSPLASH_COLLECTION_ID = "1053828";
 const BACKOFF_BASE_MS = 30 * 1000;
 const BACKOFF_MAX_MS = 30 * 60 * 1000;
 
-function backoffDelayMs(failures) {
+function backoffDelayMs(failures: number): number {
   return Math.min(BACKOFF_BASE_MS * Math.pow(2, failures - 1), BACKOFF_MAX_MS);
 }
 // Per Unsplash API guidelines, every link back to unsplash.com must include UTM
@@ -16,7 +17,7 @@ function backoffDelayMs(failures) {
 const UNSPLASH_UTM_SOURCE = "firefox-bookmarks";
 const UNSPLASH_HOME = "https://unsplash.com/";
 
-function withUtm(urlString) {
+function withUtm(urlString: string): string {
   try {
     const u = new URL(urlString);
     u.searchParams.set("utm_source", UNSPLASH_UTM_SOURCE);
@@ -28,7 +29,7 @@ function withUtm(urlString) {
   }
 }
 
-function t(key) {
+function t(key: string): string {
   try {
     const msg = browser.i18n.getMessage(key);
     if (msg) return msg;
@@ -43,15 +44,15 @@ function applyI18n() {
   } catch {}
   document.title = t("newTabTitle");
   document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const msg = t(el.dataset.i18n);
+    const msg = t((el as HTMLElement).dataset.i18n ?? "");
     if (msg) el.textContent = msg;
   });
   document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
-    const msg = t(el.dataset.i18nAriaLabel);
+    const msg = t((el as HTMLElement).dataset.i18nAriaLabel ?? "");
     if (msg) el.setAttribute("aria-label", msg);
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
-    const msg = t(el.dataset.i18nPlaceholder);
+    const msg = t((el as HTMLElement).dataset.i18nPlaceholder ?? "");
     if (msg) el.setAttribute("placeholder", msg);
   });
 }
@@ -69,20 +70,20 @@ const SETTINGS_DEFAULTS = {
 
 const systemDarkMq = window.matchMedia("(prefers-color-scheme: dark)");
 
-let settings = { ...SETTINGS_DEFAULTS };
+let settings: typeof SETTINGS_DEFAULTS = { ...SETTINGS_DEFAULTS };
 // Sorted top-level toolbar nodes; reused by reflowBookmarksBar to repopulate
 // the overflow dropdown after a resize.
-let topLevelNodes = [];
+let topLevelNodes: browser.bookmarks.BookmarkTreeNode[] = [];
 
-function isFolder(node) {
+function isFolder(node: browser.bookmarks.BookmarkTreeNode): boolean {
   return node.type === "folder" || (!node.url && Array.isArray(node.children));
 }
 
-function sortFoldersFirst(nodes) {
+function sortFoldersFirst<T extends browser.bookmarks.BookmarkTreeNode>(nodes: T[]): T[] {
   return [...nodes].sort((a, b) => (isFolder(a) ? 0 : 1) - (isFolder(b) ? 0 : 1));
 }
 
-function faviconSources(url) {
+function faviconSources(url: string): string[] {
   // 1. `page-icon:` — undocumented Firefox URL scheme that returns the favicon
   //    Firefox already has cached for the page. No network request, no third
   //    parties. Falls through silently if the scheme isn't accessible from this
@@ -173,50 +174,51 @@ function createGlobeIcon() {
   return svg;
 }
 
-function createBookmarkLink(node) {
+function createBookmarkLink(node: browser.bookmarks.BookmarkTreeNode): HTMLAnchorElement {
   const a = document.createElement("a");
   a.className = "bookmark-item";
-  a.href = node.url;
-  a.title = `${node.title || node.url}\n${node.url}`;
+  a.href = node.url ?? "";
+  a.title = `${node.title || node.url}\n${node.url ?? ""}`;
 
-  const sources = faviconSources(node.url);
-  let icon;
+  const sources = faviconSources(node.url ?? "");
+  let icon: HTMLImageElement | SVGSVGElement;
   if (sources.length === 0) {
     icon = createGlobeIcon();
   } else {
-    icon = document.createElement("img");
-    icon.className = "bookmark-icon";
-    icon.alt = "";
-    icon.loading = "lazy";
+    const img = document.createElement("img");
+    icon = img;
+    img.className = "bookmark-icon";
+    img.alt = "";
+    img.loading = "lazy";
     let attempt = 0;
     const tryNext = () => {
       attempt += 1;
       if (attempt < sources.length) {
-        icon.src = sources[attempt];
-      } else if (icon.parentNode) {
-        icon.replaceWith(createGlobeIcon());
+        img.src = sources[attempt] ?? "";
+      } else if (img.parentNode) {
+        img.replaceWith(createGlobeIcon());
       }
     };
-    icon.addEventListener("error", tryNext);
-    icon.addEventListener("load", () => {
+    img.addEventListener("error", tryNext);
+    img.addEventListener("load", () => {
       // 1×1 placeholder responses some hosts serve in lieu of a real 404.
-      if (icon.naturalWidth <= 1) tryNext();
+      if (img.naturalWidth <= 1) tryNext();
       // A late-loading favicon may slightly resize its bar item — re-run
       // overflow detection so the chevron stays accurate.
       scheduleReflow();
     });
-    icon.src = sources[0];
+    img.src = sources[0] ?? "";
   }
 
   const span = document.createElement("span");
   span.className = "bookmark-title";
-  span.textContent = node.title || node.url;
+  span.textContent = node.title || node.url ?? "";
 
   a.append(icon, span);
   return a;
 }
 
-function createDropdownEntry(node) {
+function createDropdownEntry(node: browser.bookmarks.BookmarkTreeNode): HTMLLIElement {
   const li = document.createElement("li");
 
   if (isFolder(node)) {
@@ -271,7 +273,7 @@ function createDropdownEntry(node) {
   return li;
 }
 
-function populateDropdown(ul, children) {
+function populateDropdown(ul: HTMLUListElement, children: browser.bookmarks.BookmarkTreeNode[]): void {
   ul.textContent = "";
   if (!children.length) {
     const empty = document.createElement("li");
@@ -285,7 +287,7 @@ function populateDropdown(ul, children) {
   }
 }
 
-function createTopLevelFolder(node) {
+function createTopLevelFolder(node: browser.bookmarks.BookmarkTreeNode): HTMLDivElement {
   const wrapper = document.createElement("div");
   wrapper.className = "bookmark-folder";
 
@@ -369,9 +371,9 @@ function reflowBookmarksBar() {
   if (!overflow) return;
 
   // Reset: show every item, show the chevron so we can measure with it included.
-  const items = Array.from(bar.children).filter((el) => el !== overflow);
+  const items = Array.from(bar.children).filter((el): el is HTMLElement => el instanceof HTMLElement && el !== overflow);
   for (const item of items) item.style.removeProperty("display");
-  overflow.hidden = false;
+  (overflow as HTMLElement).hidden = false;
 
   // Force layout so subsequent measurements reflect the reset state.
   void bar.offsetWidth;
@@ -391,7 +393,7 @@ function reflowBookmarksBar() {
   let used = 0;
   let firstHidden = -1;
   for (let i = 0; i < items.length; i++) {
-    const itemWidth = items[i].getBoundingClientRect().width;
+    const itemWidth = items[i]!.getBoundingClientRect().width;
     if (used > 0) used += gap;
     used += itemWidth;
     if (used > available) {
@@ -401,19 +403,19 @@ function reflowBookmarksBar() {
   }
 
   if (firstHidden === -1) {
-    overflow.hidden = true;
+    (overflow as HTMLElement).hidden = true;
     return;
   }
 
   for (let i = firstHidden; i < items.length; i++) {
-    items[i].style.display = "none";
+    items[i]!.style.display = "none";
   }
 
-  const dropdown = overflow.querySelector(".folder-dropdown");
-  populateDropdown(dropdown, topLevelNodes.slice(firstHidden));
+  const dropdown = overflow.querySelector<HTMLUListElement>(".folder-dropdown");
+  if (dropdown) populateDropdown(dropdown, topLevelNodes.slice(firstHidden));
 }
 
-function adjustDropdownPosition(dropdown, isSubmenu = false) {
+function adjustDropdownPosition(dropdown: HTMLElement | null, isSubmenu = false): void {
   if (!dropdown) return;
   const flipClass = isSubmenu ? "align-left" : "align-right";
   // Reset first so the natural-anchor measurement is accurate.
@@ -440,10 +442,11 @@ function closeAllDropdowns() {
 
 async function renderBookmarks() {
   const bar = document.getElementById("bookmarks-bar");
+  if (!bar) return;
   bar.textContent = "";
   try {
     const [toolbar] = await browser.bookmarks.getSubTree(TOOLBAR_ID);
-    const items = toolbar.children || [];
+    const items = toolbar?.children || [];
     if (!items.length) {
       const empty = document.createElement("span");
       empty.className = "empty-state";
@@ -470,7 +473,7 @@ async function renderBookmarks() {
   }
 }
 
-function preloadImage(url) {
+function preloadImage(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(url);
@@ -479,8 +482,9 @@ function preloadImage(url) {
   });
 }
 
+const UNSPLASH_ACCESS_KEY: string = (process as any).env?.UNSPLASH_ACCESS_KEY ?? "";
 function hasUnsplashKey() {
-  return typeof UNSPLASH_ACCESS_KEY === "string" && UNSPLASH_ACCESS_KEY.length > 0;
+  return UNSPLASH_ACCESS_KEY.length > 0;
 }
 
 function targetImageWidth() {
@@ -491,7 +495,7 @@ function targetImageWidth() {
   return Math.max(1920, Math.min(snapped, 3840));
 }
 
-function buildImageUrl(rawUrl) {
+function buildImageUrl(rawUrl: string): string {
   const w = targetImageWidth();
   return `${rawUrl}&w=${w}&q=85`;
 }
@@ -518,7 +522,7 @@ async function fetchUnsplashRandomPhoto() {
   };
 }
 
-async function triggerUnsplashDownload(downloadLocation) {
+async function triggerUnsplashDownload(downloadLocation: string | undefined) {
   if (!downloadLocation || !hasUnsplashKey()) return;
   try {
     await fetch(downloadLocation, {
@@ -529,7 +533,7 @@ async function triggerUnsplashDownload(downloadLocation) {
   }
 }
 
-function applyBackground(photo) {
+function applyBackground(photo: any): void {
   const body = document.body;
   if (!photo || !photo.imageUrl) return;
   if (photo.color) body.style.backgroundColor = photo.color;
@@ -537,17 +541,16 @@ function applyBackground(photo) {
   body.classList.add("has-background");
 
   const attr = document.getElementById("bg-attribution");
-  const photoLink = document.getElementById("bg-photo-link");
-  const author = document.getElementById("bg-author");
-  const unsplashLink = document.getElementById("bg-unsplash-link");
+  const photoLink = document.getElementById("bg-photo-link") as HTMLAnchorElement | null;
+  const author = document.getElementById("bg-author") as HTMLAnchorElement | null;
+  const unsplashLink = document.getElementById("bg-unsplash-link") as HTMLAnchorElement | null;
   if (photo.authorName && photo.authorUrl) {
-    photoLink.href = photo.photoUrl || withUtm(UNSPLASH_HOME);
-    author.textContent = photo.authorName;
-    author.href = photo.authorUrl;
-    unsplashLink.href = withUtm(UNSPLASH_HOME);
-    attr.hidden = false;
+    if (photoLink) photoLink.href = photo.photoUrl || withUtm(UNSPLASH_HOME);
+    if (author) { author.textContent = photo.authorName; author.href = photo.authorUrl; }
+    if (unsplashLink) unsplashLink.href = withUtm(UNSPLASH_HOME);
+    if (attr) attr.hidden = false;
   } else {
-    attr.hidden = true;
+    if (attr) attr.hidden = true;
   }
 }
 
@@ -629,7 +632,7 @@ async function loadBackground({ force = false } = {}) {
         unsplashBackoff: {
           failures,
           nextAttemptAt: Date.now() + delay,
-          lastErrorMessage: String(err?.message || err),
+          lastErrorMessage: String((err as any)?.message || err),
           lastErrorAt: Date.now(),
         },
       });
@@ -749,26 +752,27 @@ async function loadSettings() {
   settings = { ...SETTINGS_DEFAULTS, ...stored };
 }
 
-async function saveSetting(key, value) {
-  settings[key] = value;
+async function saveSetting(key: keyof typeof SETTINGS_DEFAULTS, value: any): Promise<void> {
+  (settings as any)[key] = value;
   await browser.storage.local.set({ [key]: value });
 }
 
 function syncSettingsUi() {
   document.querySelectorAll("[data-setting]").forEach((el) => {
-    const key = el.dataset.setting;
-    if (!(key in settings)) return;
-    if (el.classList.contains("toggle-group")) {
-      el.querySelectorAll("button[data-value]").forEach((btn) => {
+    const hel = el as HTMLElement;
+    const key = hel.dataset.setting;
+    if (!key || !(key in settings)) return;
+    if (hel.classList.contains("toggle-group")) {
+      hel.querySelectorAll("button[data-value]").forEach((btn) => {
         btn.setAttribute(
           "aria-checked",
-          String(btn.dataset.value === String(settings[key]))
+          String((btn as HTMLElement).dataset.value === String((settings as any)[key]))
         );
       });
-    } else if (el.type === "checkbox") {
-      el.checked = !!settings[key];
+    } else if ((hel as HTMLInputElement).type === "checkbox") {
+      (hel as HTMLInputElement).checked = !!(settings as any)[key];
     } else {
-      el.value = String(settings[key]);
+      (hel as HTMLInputElement).value = String((settings as any)[key]);
     }
   });
 }
@@ -776,6 +780,7 @@ function syncSettingsUi() {
 function setupSettingsPanel() {
   const btn = document.getElementById("settings-btn");
   const panel = document.getElementById("settings-panel");
+  if (!btn || !panel) return;
 
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -795,42 +800,46 @@ function setupSettingsPanel() {
   });
 
   panel.querySelectorAll('input[type="checkbox"][data-setting]').forEach((input) => {
-    input.addEventListener("change", async () => {
-      const key = input.dataset.setting;
-      await saveSetting(key, input.checked);
+    const inp = input as HTMLInputElement;
+    inp.addEventListener("change", async () => {
+      const key = inp.dataset.setting ?? "";
+      await saveSetting(key as keyof typeof SETTINGS_DEFAULTS, inp.checked);
       handleSettingChange(key);
     });
   });
 
   panel.querySelectorAll("select[data-setting]").forEach((sel) => {
-    sel.addEventListener("change", async () => {
-      const key = sel.dataset.setting;
-      const value = key === "backgroundIntervalHours" ? parseInt(sel.value, 10) : sel.value;
-      await saveSetting(key, value);
+    const s = sel as HTMLSelectElement;
+    s.addEventListener("change", async () => {
+      const key = s.dataset.setting ?? "";
+      const value = key === "backgroundIntervalHours" ? parseInt(s.value, 10) : s.value;
+      await saveSetting(key as keyof typeof SETTINGS_DEFAULTS, value);
       handleSettingChange(key);
     });
   });
 
   panel.querySelectorAll(".toggle-group[data-setting]").forEach((group) => {
-    group.addEventListener("click", async (e) => {
-      const btn = e.target.closest("button[data-value]");
-      if (!btn || !group.contains(btn)) return;
-      const key = group.dataset.setting;
-      const value = btn.dataset.value;
-      if (settings[key] === value) return;
-      await saveSetting(key, value);
+    const grp = group as HTMLElement;
+    grp.addEventListener("click", async (e) => {
+      const btn = (e.target as Element | null)?.closest("button[data-value]");
+      if (!btn || !grp.contains(btn)) return;
+      const key = grp.dataset.setting ?? "";
+      const value = (btn as HTMLElement).dataset.value ?? "";
+      if ((settings as any)[key] === value) return;
+      await saveSetting(key as keyof typeof SETTINGS_DEFAULTS, value);
       syncSettingsUi();
       handleSettingChange(key);
     });
   });
 
   panel.querySelectorAll('input[type="text"][data-setting]').forEach((input) => {
-    let timer;
-    input.addEventListener("input", () => {
+    const inp = input as HTMLInputElement;
+    let timer: ReturnType<typeof setTimeout>;
+    inp.addEventListener("input", () => {
       clearTimeout(timer);
       timer = setTimeout(async () => {
-        const key = input.dataset.setting;
-        await saveSetting(key, input.value);
+        const key = inp.dataset.setting ?? "";
+        await saveSetting(key as keyof typeof SETTINGS_DEFAULTS, inp.value);
         handleSettingChange(key);
       }, 500);
     });
@@ -840,17 +849,18 @@ function setupSettingsPanel() {
 
 // Reference to the search input even when detached from the DOM, so toggling
 // the setting off then on restores the same element (state preserved).
-let searchInput = null;
-let searchInputParent = null;
+let searchInput: HTMLInputElement | null = null;
+let searchInputParent: Element | null = null;
 
 function setupSearch() {
-  searchInput = document.getElementById("search-input");
+  searchInput = document.getElementById("search-input") as HTMLInputElement | null;
   if (!searchInput) return;
   searchInputParent = searchInput.parentElement;
 
-  searchInput.addEventListener("keydown", async (e) => {
+  const input = searchInput;
+  input.addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
-      const query = searchInput.value.trim();
+      const query = input.value.trim();
       if (!query) return;
       e.preventDefault();
       const inNewTab = e.shiftKey || e.ctrlKey || e.metaKey;
@@ -863,29 +873,29 @@ function setupSearch() {
           await browser.search.search({ query, tabId: tab.id });
         } else {
           const current = await browser.tabs.getCurrent();
-          await browser.search.search({ query, tabId: current.id });
+          await browser.search.search({ query, tabId: current?.id });
         }
       } catch (err) {
         console.error("[Topmarks] Search submit failed:", err);
       }
     } else if (e.key === "Escape") {
-      if (searchInput.value !== "") {
-        searchInput.value = "";
+      if (input.value !== "") {
+        input.value = "";
         // Prevent the document-level Escape handler from also closing the
         // settings panel / dropdowns when the user is just clearing text.
         e.stopPropagation();
       } else {
-        searchInput.blur();
+        input.blur();
       }
     }
   });
 
   if (!settings.showSearch) {
-    searchInput.remove();
+    input.remove();
     return;
   }
 
-  searchInput.focus();
+  input.focus();
 }
 
 function applyShowSearch() {
@@ -900,7 +910,7 @@ function applyShowSearch() {
   }
 }
 
-function handleSettingChange(key) {
+function handleSettingChange(key: string): void {
   if (key === "hideFolderIcons" || key === "centerBookmarks") {
     applyClassSettings();
   } else if (key === "theme") {
@@ -926,17 +936,18 @@ document.addEventListener("keydown", (e) => {
     const btn = document.getElementById("settings-btn");
     if (panel && !panel.hidden) {
       panel.hidden = true;
-      btn.setAttribute("aria-expanded", "false");
+      if (btn) btn.setAttribute("aria-expanded", "false");
     }
   }
 });
 
-const bookmarkEvents = ["onCreated", "onRemoved", "onChanged", "onMoved"];
+const bookmarkEvents = ["onCreated", "onRemoved", "onChanged", "onMoved"] as const;
 for (const ev of bookmarkEvents) {
-  if (browser.bookmarks[ev]) browser.bookmarks[ev].addListener(renderBookmarks);
+  const listener = (browser.bookmarks as any)[ev] as { addListener: (fn: () => void) => void } | undefined;
+  if (listener) listener.addListener(renderBookmarks);
 }
 
-let resizeReflowTimer;
+let resizeReflowTimer: ReturnType<typeof setTimeout>;
 window.addEventListener("resize", () => {
   clearTimeout(resizeReflowTimer);
   // Close any open dropdowns: their position was measured against the old size.
@@ -948,7 +959,7 @@ window.addEventListener("resize", () => {
 // loads still resize items after the per-image scheduleReflow fires.
 window.addEventListener("load", scheduleReflow);
 
-(async function init() {
+async function init(): Promise<void> {
   applyI18n();
   await loadSettings();
   applyTheme();
@@ -961,4 +972,5 @@ window.addEventListener("load", scheduleReflow);
   renderBookmarks();
   loadBackground();
   updateBackgroundErrorVisibility();
-})();
+}
+init();

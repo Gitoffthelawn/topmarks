@@ -21,7 +21,7 @@ async function loadUnsplashKey(): Promise<string> {
   if (!existsSync(envPath)) return "";
   const raw = await readFile(envPath, "utf8");
   const m = raw.match(/^\s*UNSPLASH_ACCESS_KEY\s*=\s*"?([^"\n]*)"?\s*$/m);
-  return m ? m[1] : "";
+  return m ? (m[1] ?? "") : "";
 }
 
 async function readSharedVersion(): Promise<string> {
