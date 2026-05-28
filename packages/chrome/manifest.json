@@ -7,7 +7,16 @@
   "homepage_url": "https://github.com/nx-alejandrolacasa/topmarks",
   "permissions": ["bookmarks", "storage", "search"],
   "host_permissions": ["https://api.unsplash.com/*"],
-  "icons": { "48": "icons/icon.png", "128": "icons/icon.png" },
+  "icons": { "128": "icons/icon.png" },
   "chrome_url_overrides": { "newtab": "newtab.html" },
-  "minimum_chrome_version": "120"
+  "minimum_chrome_version": "120",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "topmarks-chrome@nx-alejandrolacasa.github.io",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
 }
