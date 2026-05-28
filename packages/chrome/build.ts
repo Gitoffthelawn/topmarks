@@ -6,8 +6,8 @@
 // Output: ./dist/, a fully-self-contained Chrome-loadable extension dir.
 import { build, context, type BuildOptions } from "esbuild";
 import { readFile, writeFile, mkdir, cp, rm } from "node:fs/promises";
-import { existsSync } from "node:fs";
 import path from "node:path";
+import { loadUnsplashKey } from "../shared/src/build-helpers/load-env.ts";
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const REPO_ROOT = path.resolve(HERE, "..", "..");
@@ -15,18 +15,6 @@ const SHARED_DIR = path.resolve(REPO_ROOT, "packages", "shared");
 const DIST = path.join(HERE, "dist");
 const WATCH = process.argv.includes("--watch");
 const DEV = WATCH || process.env.NODE_ENV !== "production";
-
-async function loadUnsplashKey(): Promise<string> {
-  const envPath = path.join(REPO_ROOT, ".env");
-  if (!existsSync(envPath)) return "";
-  try {
-    const raw = await readFile(envPath, "utf8");
-    const m = raw.match(/^\s*UNSPLASH_ACCESS_KEY\s*=\s*"?([^"\n]*)"?\s*$/m);
-    return m ? (m[1] ?? "") : "";
-  } catch {
-    return "";
-  }
-}
 
 async function readSharedVersion(): Promise<string> {
   const { version } = JSON.parse(
@@ -91,7 +79,7 @@ async function main() {
   await mkdir(DIST, { recursive: true });
 
   const [unsplashKey, version] = await Promise.all([
-    loadUnsplashKey(),
+    loadUnsplashKey(path.join(REPO_ROOT, ".env")),
     readSharedVersion(),
   ]);
 
