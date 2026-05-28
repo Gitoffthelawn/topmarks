@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extName__",
+  "version": "0.0.0",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
+  "homepage_url": "https://github.com/nx-alejandrolacasa/topmarks",
+  "permissions": ["bookmarks", "storage", "search"],
+  "host_permissions": ["https://api.unsplash.com/*"],
+  "icons": { "48": "icons/icon.png", "128": "icons/icon.png" },
+  "chrome_url_overrides": { "newtab": "newtab.html" },
+  "minimum_chrome_version": "120"
+}

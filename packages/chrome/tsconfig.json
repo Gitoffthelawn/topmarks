@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist-types",
+    "rootDir": "./src",
+    "types": ["chrome", "node"]
+  },
+  "include": ["src/**/*.ts", "build.ts"],
+  "references": [{ "path": "../shared" }]
+}

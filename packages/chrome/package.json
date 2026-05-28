@@ -1,0 +1,16 @@
+{
+  "name": "@topmarks/chrome",
+  "version": "1.8.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Chrome new-tab extension that floats your bookmarks toolbar at the top with a rotating Unsplash wallpaper.",
+  "scripts": {
+    "build": "tsx build.ts",
+    "dev": "tsx build.ts --watch & web-ext run --source-dir=dist --target=chromium",
+    "lint": "web-ext lint --source-dir=dist",
+    "package": "web-ext build"
+  },
+  "devDependencies": {
+    "web-ext": "^10.1.0"
+  }
+}
