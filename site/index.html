@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Topmarks — your bookmarks toolbar, floating at the top of every new tab</title>
+    <meta name="description" content="A minimal new-tab extension for Firefox and Chrome that floats your bookmarks toolbar at the top of every new tab, over a rotating Unsplash wallpaper." />
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="hero-card glass">
+          <img class="hero-icon" src="assets/icon.svg" alt="" width="96" height="96" />
+          <h1 class="hero-title">Topmarks</h1>
+          <p class="hero-tagline">Your bookmarks toolbar, floating at the top of every new tab.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://addons.mozilla.org/firefox/addon/topmarks/">
+              <span class="btn-label-small">Add to</span>
+              <span class="btn-label-large">Firefox</span>
+            </a>
+            <span class="btn btn-secondary btn-disabled" role="button" aria-disabled="true">
+              <span class="btn-label-small">Coming soon to</span>
+              <span class="btn-label-large">Chrome Web Store</span>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slideshow" aria-label="Screenshots of Topmarks">
+        <div class="slides">
+          <figure class="slide glass">
+            <img src="assets/screenshots/1-glass_light.png" alt="Glass theme, light mode" />
+            <figcaption>Glass · Light</figcaption>
+          </figure>
+          <figure class="slide glass">
+            <img src="assets/screenshots/2-glass_dark.png" alt="Glass theme, dark mode" />
+            <figcaption>Glass · Dark</figcaption>
+          </figure>
+          <figure class="slide glass">
+            <img src="assets/screenshots/3-classic.png" alt="Classic theme" />
+            <figcaption>Classic</figcaption>
+          </figure>
+          <figure class="slide glass">
+            <img src="assets/screenshots/4-settings.png" alt="Settings panel" />
+            <figcaption>Settings</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="features">
+        <ul class="features-list glass">
+          <li>Floating glass bookmarks bar with folder dropdowns and nested submenus</li>
+          <li>Rotating high-resolution wallpapers from Unsplash</li>
+          <li>Light · Dark · Auto theme</li>
+          <li>Available in 7 languages — English, Spanish, French, Italian, German, Japanese, Chinese Simplified</li>
+          <li>Privacy-respecting — no analytics, no third-party trackers, bookmarks never leave your device</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <ul class="footer-links">
+        <li><a href="https://github.com/nx-alejandrolacasa/topmarks">GitHub</a></li>
+        <li><a href="https://github.com/nx-alejandrolacasa/topmarks/blob/main/PRIVACY.md">Privacy</a></li>
+        <li><a href="https://github.com/nx-alejandrolacasa/topmarks/blob/main/LICENSE">License</a></li>
+      </ul>
+      <p class="footer-credit">Made by Alejandro Lacasa</p>
+    </footer>
+  </body>
+</html>
