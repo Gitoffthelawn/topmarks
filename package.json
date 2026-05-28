@@ -1,19 +1,30 @@
 {
-  "name": "topmarks",
-  "version": "1.8.0",
+  "name": "topmarks-monorepo",
+  "version": "1.9.0",
   "private": true,
   "license": "MIT",
-  "description": "Firefox new-tab extension that floats your bookmarks toolbar at the top with a rotating Unsplash wallpaper.",
+  "workspaces": [
+    "packages/*"
+  ],
   "engines": {
     "node": "22.x"
   },
   "scripts": {
-    "build-config": "./build-config.sh",
-    "lint": "web-ext lint",
-    "build": "npm run build-config && web-ext build --overwrite-dest",
-    "start": "web-ext run"
+    "dev:firefox": "npm run dev -w @topmarks/firefox",
+    "dev:chrome": "npm run dev -w @topmarks/chrome",
+    "build": "npm run build -w @topmarks/firefox && npm run build -w @topmarks/chrome",
+    "build:firefox": "npm run build -w @topmarks/firefox",
+    "build:chrome": "npm run build -w @topmarks/chrome",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "tsc -b && tsc -p tsconfig.scripts.json",
+    "sync-versions": "node scripts/sync-versions.mjs"
   },
   "devDependencies": {
-    "web-ext": "^10.1.0"
+    "esbuild": "^0.24.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0",
+    "@types/firefox-webext-browser": "^120.0.0",
+    "@types/chrome": "^0.0.280"
   }
 }

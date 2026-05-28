@@ -1,6 +1,6 @@
 # Topmarks
 
-A minimal Firefox new-tab extension that floats your bookmarks toolbar at the top of every new tab, over a rotating Unsplash wallpaper.
+A minimal new-tab extension for Firefox and Chrome that floats your bookmarks toolbar at the top of every new tab, over a rotating Unsplash wallpaper.
 
 ## Features
 
@@ -13,7 +13,7 @@ A minimal Firefox new-tab extension that floats your bookmarks toolbar at the to
 - Respects `prefers-reduced-motion` and `prefers-reduced-transparency`
 - Privacy-respecting: no analytics, no third-party trackers, bookmarks never leave your device
 
-Firefox only (manifest v2, uses Firefox-specific APIs).
+Both builds are Manifest V3 and share a single TypeScript source tree under `packages/shared`.
 
 ## Setup
 
@@ -23,19 +23,36 @@ Firefox only (manifest v2, uses Firefox-specific APIs).
    ```sh
    cp .env.example .env
    # paste your UNSPLASH_ACCESS_KEY into .env
-   ./build-config.sh
+   npm install
    ```
 
-   This generates a gitignored `config.local.js`. Re-run after editing `.env`.
+   The key is read at build time and stamped into the bundle. Re-run `npm run build` after editing `.env`.
+
+## Build
+
+```sh
+npm run build              # builds both packages
+npm run build:firefox      # → packages/firefox/dist
+npm run build:chrome       # → packages/chrome/dist
+```
 
 ## Install in Firefox (development)
 
-1. Open `about:debugging#/runtime/this-firefox`.
-2. Click **Load Temporary Add-on…**.
-3. Pick `manifest.json` from this directory.
-4. Open a new tab.
+1. Run `npm run build:firefox` (or `npm run dev:firefox` for watch + auto-reload).
+2. Open `about:debugging#/runtime/this-firefox`.
+3. Click **Load Temporary Add-on…**.
+4. Pick `packages/firefox/dist/manifest.json`.
+5. Open a new tab.
 
-Temporary add-ons are removed when Firefox restarts. For a persistent install, the extension needs to be signed via [addons.mozilla.org](https://addons.mozilla.org), or you can run Firefox Developer Edition with `xpinstall.signatures.required` set to `false` in `about:config`.
+Temporary add-ons are removed when Firefox restarts. For a persistent install, the extension needs to be signed via [addons.mozilla.org](https://addons.mozilla.org), or run Firefox Developer Edition with `xpinstall.signatures.required` set to `false` in `about:config`.
+
+## Install in Chrome (development)
+
+1. Run `npm run build:chrome` (or `npm run dev:chrome` for watch + auto-reload).
+2. Open `chrome://extensions`.
+3. Enable **Developer mode** (top-right toggle).
+4. Click **Load unpacked** and pick `packages/chrome/dist/`.
+5. Open a new tab.
 
 ## Configuration
 
@@ -44,37 +61,49 @@ Click the gear icon at the bottom-right of the new tab page:
 - **Hide folder icons** — show only bookmark titles
 - **Center bookmarks in bar** — center-align instead of left-aligning
 - **Show background image** — toggle Unsplash wallpaper on/off
+- **Show search field** — toggle the search input above the bookmarks bar
 - **Theme** — Auto / Light / Dark
 - **Refresh background every** — 1h / 6h / 12h / 24h
-- **Refresh background now** — fetch a fresh photo immediately
 
-Settings persist in `browser.storage.local` and are wiped on uninstall.
+Settings persist in the browser's extension storage and are wiped on uninstall.
 
 ## Privacy
 
-The extension does not collect, transmit, or store your bookmarks, browsing history, or any personal identifier. When backgrounds are enabled, the extension makes HTTPS requests to `api.unsplash.com` for a random wallpaper. Favicons load directly from each bookmarked site's own `/favicon.ico` — no third-party favicon services.
+The extension does not collect, transmit, or store your bookmarks, browsing history, or any personal identifier. When backgrounds are enabled, the extension makes HTTPS requests to `api.unsplash.com` for a random wallpaper. Favicons are loaded from the browser's own cache (Firefox `page-icon:`, Chrome `chrome://favicon`) with a fallback to each bookmarked site's own `/favicon.ico` — no third-party favicon services.
 
 Full policy: [PRIVACY.md](./PRIVACY.md).
 
 ## Project structure
 
 ```
-manifest.json          Extension manifest (icons, permissions, locale)
-newtab.html            New tab page markup
-newtab.css             Liquid-glass styles, theme tokens
-newtab.js              Bookmarks rendering, settings, Unsplash fetch
-icons/icon.svg         Extension icon (single SVG, scales to all sizes)
-_locales/<lang>/       Translations (en, es, fr, it, de, ja, zh_CN)
-build-config.sh        Generates config.local.js from .env
-.env.example           Template — copy to .env, fill in, gitignored
-PRIVACY.md             Privacy policy
+packages/
+  shared/                Shared runtime (TypeScript), styles, locales, assets
+    src/                 newtab entry, bookmarks, settings, background, search
+    assets/              icons, fonts, newtab.html, newtab.css
+    _locales/            translations (en, es, fr, it, de, ja, zh_CN)
+  firefox/               Firefox MV3 package
+    src/platform.ts      browser.* shim implementing the shared Platform interface
+    manifest.json        Firefox manifest
+    build.ts             esbuild + asset copy + manifest version stamp
+    dist/                build output (loaded as Temporary Add-on)
+  chrome/                Chrome MV3 package
+    src/platform.ts      chrome.* shim implementing the shared Platform interface
+    manifest.json        Chrome manifest
+    build.ts             esbuild + asset copy + manifest version stamp
+    dist/                build output (loaded as Unpacked Extension)
+.env.example             Template — copy to .env, fill in, gitignored
+PRIVACY.md               Privacy policy
 ```
+
+The shared package owns all UI and behavior. Each browser package provides only a thin `platform.ts` adapter that wraps `browser.*` or `chrome.*` APIs to match a shared `Platform` interface, plus its own manifest and build entry point.
 
 ## Development
 
-- **Reload after changes**: in `about:debugging`, click **Reload** on the extension.
-- **Inspect DevTools**: in `about:debugging`, click **Inspect** on the extension to open the new tab page in DevTools.
-- **Re-run** `./build-config.sh` after editing `.env`.
+- **Watch + reload**: `npm run dev:firefox` or `npm run dev:chrome` rebuilds on file change and launches the browser with the extension preloaded (`web-ext run`).
+- **Manual reload**: in `about:debugging` (Firefox) or `chrome://extensions` (Chrome), click **Reload** on the extension after running `npm run build`.
+- **Typecheck**: `npm run typecheck` (uses `tsc -b` across all packages).
+- **Lint**: `npm run lint` (runs `web-ext lint` against both `dist/`s).
+- **Re-run** `npm run build` after editing `.env`.
 
 ## Credits
 

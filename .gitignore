@@ -2,7 +2,6 @@
 .env
 .env.*
 !.env.example
-config.local.js
 
 # OS noise
 .DS_Store
@@ -20,3 +19,18 @@ Thumbs.db
 # Node / web-ext
 node_modules/
 web-ext-artifacts/
+
+# Monorepo build outputs
+packages/*/dist/
+packages/*/dist-types/
+packages/*/web-ext-artifacts/
+# tsc composite emit leakage at package root or src tree
+packages/*/build.js
+packages/*/build.d.ts
+packages/*/build.d.ts.map
+packages/*/src/**/*.js
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+# Per-package TS incremental cache
+packages/*/tsconfig.tsbuildinfo
+packages/*/.tsbuildinfo
