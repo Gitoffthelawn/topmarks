@@ -6,7 +6,8 @@
 # committed.
 
 set -e
-cd "$(dirname "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR/../.."
 
 if [ ! -f .env ]; then
   echo "Error: .env not found in $(pwd)" >&2
@@ -19,7 +20,7 @@ fi
 # and would be a security risk in a browser extension.
 ALLOWED="UNSPLASH_ACCESS_KEY"
 
-OUT=config.local.js
+OUT="$SCRIPT_DIR/config.local.js"
 
 {
   echo "// Auto-generated from .env by build-config.sh — do not edit or commit."
