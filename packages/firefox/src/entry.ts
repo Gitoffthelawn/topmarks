@@ -29,34 +29,6 @@ function withUtm(urlString: string): string {
   }
 }
 
-function t(key: string): string {
-  try {
-    const msg = browser.i18n.getMessage(key);
-    if (msg) return msg;
-  } catch {}
-  return key;
-}
-
-function applyI18n() {
-  try {
-    const lang = browser.i18n.getUILanguage();
-    if (lang) document.documentElement.lang = lang;
-  } catch {}
-  document.title = t("newTabTitle");
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const msg = t((el as HTMLElement).dataset.i18n ?? "");
-    if (msg) el.textContent = msg;
-  });
-  document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
-    const msg = t((el as HTMLElement).dataset.i18nAriaLabel ?? "");
-    if (msg) el.setAttribute("aria-label", msg);
-  });
-  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
-    const msg = t((el as HTMLElement).dataset.i18nPlaceholder ?? "");
-    if (msg) el.setAttribute("placeholder", msg);
-  });
-}
-
 const SETTINGS_DEFAULTS = {
   hideFolderIcons: false,
   centerBookmarks: false,
