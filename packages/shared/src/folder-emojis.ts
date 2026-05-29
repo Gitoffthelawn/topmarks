@@ -1,7 +1,7 @@
-import { getPlatform, type BookmarkNode } from "./platform.js";
-import { isFolder } from "./bookmarks.js";
-import { t } from "./i18n.js";
-import { getFolderEmoji, setFolderEmoji, clearFolderEmoji } from "./settings.js";
+import { getPlatform, type BookmarkNode } from "@/platform";
+import { isFolder } from "@/bookmarks";
+import { t } from "@/i18n";
+import { getFolderEmoji, setFolderEmoji, clearFolderEmoji } from "@/settings";
 
 // Best-effort emoji detection. `\p{RGI_Emoji}` (v flag) covers ZWJ sequences,
 // flags and skin-tone modifiers and is supported by current Chrome/Firefox.

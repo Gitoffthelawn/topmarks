@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist-types",
     "rootDir": "./src",
+    "paths": { "@/*": ["./src/*"] },
     "types": ["firefox-webext-browser", "node"]
   },
   "include": ["src/**/*.ts"],

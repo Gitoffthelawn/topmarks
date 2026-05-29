@@ -1,4 +1,4 @@
-import { getPlatform } from "./platform.js";
+import { getPlatform } from "@/platform";
 
 let searchInput: HTMLInputElement | null = null;
 let searchInputParent: Element | null = null;

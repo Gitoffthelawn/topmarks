@@ -1,4 +1,4 @@
-import { getPlatform } from "./platform.js";
+import { getPlatform } from "@/platform";
 
 export function t(key: string): string {
   try {

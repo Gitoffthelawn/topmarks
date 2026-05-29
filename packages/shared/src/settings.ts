@@ -1,7 +1,7 @@
-import { getPlatform } from "./platform.js";
-import { scheduleReflow, renderBookmarks } from "./bookmarks.js";
-import { loadBackground, updateBackgroundErrorVisibility } from "./unsplash.js";
-import { applyShowSearch } from "./search.js";
+import { getPlatform } from "@/platform";
+import { scheduleReflow, renderBookmarks } from "@/bookmarks";
+import { loadBackground, updateBackgroundErrorVisibility } from "@/unsplash";
+import { applyShowSearch } from "@/search";
 
 export const SETTINGS_DEFAULTS = {
   centerBookmarks: false,

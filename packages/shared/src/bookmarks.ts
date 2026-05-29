@@ -1,6 +1,6 @@
-import { getPlatform, type BookmarkNode } from "./platform.js";
-import { t } from "./i18n.js";
-import { getFolderEmoji } from "./settings.js";
+import { getPlatform, type BookmarkNode } from "@/platform";
+import { t } from "@/i18n";
+import { getFolderEmoji } from "@/settings";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 

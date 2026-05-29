@@ -1,7 +1,7 @@
-import { setPlatform, type Platform } from "./platform.js";
-import { applyI18n } from "./i18n.js";
-import { renderBookmarks, setupBookmarksListeners, closeAllDropdowns } from "./bookmarks.js";
-import { loadBackground, updateBackgroundErrorVisibility } from "./unsplash.js";
+import { setPlatform, type Platform } from "@/platform";
+import { applyI18n } from "@/i18n";
+import { renderBookmarks, setupBookmarksListeners, closeAllDropdowns } from "@/bookmarks";
+import { loadBackground, updateBackgroundErrorVisibility } from "@/unsplash";
 import {
   loadSettings,
   applyTheme,
@@ -13,9 +13,9 @@ import {
   setupBackoffStorageListener,
   setupFolderEmojiStorageListener,
   getSettings,
-} from "./settings.js";
-import { setupFolderEmojiOverlay } from "./folder-emojis.js";
-import { setupSearch } from "./search.js";
+} from "@/settings";
+import { setupFolderEmojiOverlay } from "@/folder-emojis";
+import { setupSearch } from "@/search";
 
 export async function startApp(platform: Platform): Promise<void> {
   setPlatform(platform);

@@ -1,4 +1,4 @@
-import { getPlatform } from "./platform.js";
+import { getPlatform } from "@/platform";
 
 // Tabliss's curated wallpaper collection — ~545 hand-picked, consistent high quality.
 const UNSPLASH_COLLECTION_ID = "1053828";
