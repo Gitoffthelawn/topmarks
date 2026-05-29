@@ -95,6 +95,24 @@ html[data-style="classic"] .glass {
   backdrop-filter: none;
   background: var(--solid);
 }
+/* The hero's over-the-photo frosted elements don't use .glass, so Classic must
+   flatten them too — and make them follow the theme instead of staying
+   translucent/white. The explicit .soon/:hover selectors out-specify the base
+   .btn-ghost.soon:hover rule so the Chrome button doesn't keep its tint. */
+html[data-style="classic"] .eyebrow,
+html[data-style="classic"] .attribution,
+html[data-style="classic"] .hero .btn-ghost,
+html[data-style="classic"] .hero .btn-ghost.soon,
+html[data-style="classic"] .hero .btn-ghost.soon:hover {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--solid);
+  border-color: var(--hair);
+  color: var(--ink);
+}
+html[data-style="classic"] .eyebrow { color: var(--ink-soft); }
+html[data-style="classic"] .attribution a { color: var(--ink); }
+html[data-style="classic"] .hero .btn .tag-soon { background: var(--hair); color: var(--ink-soft); }
 
 /* ============================================================
    WALLPAPER (fixed, behind everything)
