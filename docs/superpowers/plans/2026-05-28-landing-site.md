@@ -1,5 +1,15 @@
 # Landing Site Implementation Plan
 
+> **⚠️ SUPERSEDED — historical record.** This plan built **v1** of the landing
+> site: a plain, zero-JS static page (CSS-gradient backdrop, scroll-snap
+> screenshot peek-carousel, official AMO/CWS badge buttons). All tasks below were
+> completed. The site was subsequently **rebuilt** (commit `2cb928d`) as an
+> interactive liquid-glass design with a rotating Unsplash wallpaper, a live
+> bookmarks-bar demo, and Glass/Classic + Light/Dark toggles. **Do not execute
+> this plan against the current site** — it no longer matches. The current design
+> is documented in [`../specs/2026-05-28-landing-site-design.md`](../specs/2026-05-28-landing-site-design.md).
+> This file is kept to record how v1 was built.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Ship a single-page GitHub Pages site at `https://nx-alejandrolacasa.github.io/topmarks/` with install buttons for Firefox (AMO, live) and Chrome (CWS, coming soon), a scroll-snap screenshot slideshow, a short feature list, and a footer.
