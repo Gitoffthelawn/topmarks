@@ -66,14 +66,14 @@
       <h2 id="settings-heading" data-i18n="settingsHeading">Settings</h2>
 
       <label class="setting">
-        <span data-i18n="hideFolderIcons">Hide folder icons</span>
-        <input type="checkbox" data-setting="hideFolderIcons" />
+        <span data-i18n="centerBookmarks">Center bookmarks in bar</span>
+        <input type="checkbox" data-setting="centerBookmarks" />
         <span class="switch" aria-hidden="true"></span>
       </label>
 
       <label class="setting">
-        <span data-i18n="centerBookmarks">Center bookmarks in bar</span>
-        <input type="checkbox" data-setting="centerBookmarks" />
+        <span data-i18n="hideLabels">Hide labels</span>
+        <input type="checkbox" data-setting="hideLabels" />
         <span class="switch" aria-hidden="true"></span>
       </label>
 
@@ -88,6 +88,17 @@
         <input type="checkbox" data-setting="showSearch" />
         <span class="switch" aria-hidden="true"></span>
       </label>
+
+      <button
+        type="button"
+        class="setting setting-action"
+        id="open-folder-emojis"
+        aria-haspopup="dialog"
+        aria-controls="folder-emoji-overlay"
+      >
+        <span data-i18n="folderEmojisLabel">Folder emojis</span>
+        <span class="setting-action-chevron" aria-hidden="true">›</span>
+      </button>
 
       <div class="setting setting-text">
         <span id="theme-label" data-i18n="themeLabel">Theme</span>
@@ -163,6 +174,35 @@
           <img class="bmc-logo" src="icons/bmc-logo.svg" alt="" width="24" height="24" />
           <span class="bmc-text" data-i18n="buyMeACoffee">Buy me a coffee</span>
         </a>
+      </div>
+    </div>
+
+    <div
+      id="folder-emoji-overlay"
+      class="overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="folder-emoji-heading"
+      hidden
+    >
+      <div class="overlay-backdrop" id="folder-emoji-backdrop"></div>
+      <div class="overlay-card" role="document">
+        <div class="overlay-head">
+          <h2 id="folder-emoji-heading" data-i18n="folderEmojisHeading">Folder emojis</h2>
+          <button
+            type="button"
+            class="overlay-close"
+            id="folder-emoji-close"
+            data-i18n-aria-label="folderEmojisDone"
+            aria-label="Done"
+          >
+            ✕
+          </button>
+        </div>
+        <p class="overlay-desc" data-i18n="folderEmojisDescription">
+          Paste an emoji to replace a folder's icon. Leave empty to use the default.
+        </p>
+        <div id="folder-emoji-list" class="folder-emoji-list"></div>
       </div>
     </div>
 

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plan — Per-folder emoji icons</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --card: #161b22;
+    --card-soft: #1c2330;
+    --border: #2a3340;
+    --fg: #e6edf3;
+    --fg-muted: #9aa7b4;
+    --accent: #6ea8fe;
+    --accent-soft: rgba(110, 168, 254, 0.14);
+    --green: #6ee7a8;
+    --amber: #f5c451;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f8fa; --card: #fff; --card-soft: #f0f3f7; --border: #d8dee4;
+      --fg: #1f2328; --fg-muted: #59636e; --accent: #2f6feb; --accent-soft: rgba(47,111,235,0.1);
+      --green: #1a7f4b; --amber: #9a6700;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 20px 80px;
+    background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6; font-size: 16px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  header {
+    padding: 56px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px;
+  }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin: 0 0 10px;
+  }
+  h1 { font-size: 34px; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.02em; }
+  .lede { color: var(--fg-muted); font-size: 17px; margin: 0; max-width: 62ch; }
+  .meta { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    font-size: 12.5px; padding: 4px 10px; border-radius: 999px;
+    background: var(--card-soft); border: 1px solid var(--border); color: var(--fg-muted);
+  }
+  .status { font-weight: 700; }
+  .status--proposed { color: var(--amber); border-color: var(--amber); }
+  .status--approved { color: var(--accent); border-color: var(--accent); }
+  .status--built { color: var(--green); border-color: var(--green); }
+  .status--superseded { color: var(--fg-muted); border-color: var(--border); text-decoration: line-through; }
+  h2 {
+    font-size: 22px; margin: 44px 0 6px; letter-spacing: -0.01em;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  h2 .num {
+    font-family: var(--mono); font-size: 14px; color: var(--accent);
+    background: var(--accent-soft); border-radius: 7px; padding: 2px 9px; font-weight: 700;
+  }
+  h3 { font-size: 16px; margin: 26px 0 6px; }
+  p { margin: 10px 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px 22px; margin: 16px 0;
+  }
+  code {
+    font-family: var(--mono); font-size: 13.5px;
+    background: var(--card-soft); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 6px;
+  }
+  pre {
+    background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; overflow-x: auto; font-family: var(--mono);
+    font-size: 13px; line-height: 1.55; margin: 12px 0;
+  }
+  pre code { background: none; border: none; padding: 0; }
+  ul, ol { margin: 10px 0; padding-left: 24px; }
+  li { margin: 5px 0; }
+  .file {
+    font-family: var(--mono); font-size: 13px; color: var(--accent);
+    font-weight: 600;
+  }
+  .new-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--green); border: 1px solid var(--green); border-radius: 5px;
+    padding: 1px 6px; margin-left: 8px; vertical-align: middle;
+  }
+  .grid { display: grid; gap: 12px; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--fg-muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td:first-child { white-space: nowrap; }
+  .decided {
+    border-left: 3px solid var(--green); background: var(--card);
+    border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0;
+  }
+  .decided .label { color: var(--green); font-weight: 700; font-size: 13px; }
+  .confirm {
+    border-left: 3px solid var(--amber); background: var(--card);
+    border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0;
+  }
+  .confirm .label { color: var(--amber); font-weight: 700; font-size: 13px; }
+  .flow {
+    font-family: var(--mono); font-size: 13px; color: var(--fg-muted);
+    background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; margin: 14px 0; line-height: 1.9;
+  }
+  .flow b { color: var(--fg); }
+  .footnote { color: var(--fg-muted); font-size: 13.5px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Implementation Plan · Topmarks</p>
+    <h1>Per-folder emoji icons for top-level folders</h1>
+    <p class="lede">
+      Let users replace the generic folder icon of any first-level toolbar folder
+      with an emoji of their choice — pasted from the OS emoji picker — managed
+      through a new settings overlay. Shipped to both Chrome &amp; Firefox from one
+      shared codebase, plus marketing copy.
+    </p>
+    <div class="meta">
+      <span class="chip status status--built">Built</span>
+      <span class="chip">2026-05-29</span>
+      <span class="chip">Both stores (shared package)</span>
+      <span class="chip">No build-system changes</span>
+      <span class="chip">7 locales</span>
+    </div>
+  </header>
+
+  <h2><span class="num">UX</span> What the user sees</h2>
+  <div class="card">
+    <ol>
+      <li>A new <strong>“Folder emojis”</strong> action row appears in the settings panel.</li>
+      <li>Tapping it opens a centered <strong>overlay</strong> listing every first-level toolbar folder.</li>
+      <li>Each row shows the folder name, a small paste field, and a clear (<code>✕</code>) button.</li>
+      <li>The user pastes an emoji from the OS picker (⌃⌘Space on macOS); it immediately replaces that folder’s icon in the bar.</li>
+      <li>Clearing the field reverts the folder to its default SVG icon.</li>
+    </ol>
+  </div>
+
+  <h2><span class="num">1</span> Why this is cheap to ship to both stores</h2>
+  <div class="card">
+    <p>
+      All UI and behaviour live in <span class="file">packages/shared</span>. Chrome and
+      Firefox each consume it through a thin <span class="file">platform.ts</span> shim
+      (<code>storage</code>, <code>bookmarks</code>, <code>i18n</code> are already abstracted).
+      <strong>One implementation covers both stores</strong> — no per-package code, no manifest changes,
+      no new permissions.
+    </p>
+  </div>
+
+  <h2><span class="num">2</span> Storage model</h2>
+  <div class="card">
+    <p>Emojis are keyed by folder <code>id</code> (stable per browser). Add one field to the existing settings object:</p>
+    <pre><code>// settings.ts → SETTINGS_DEFAULTS
+folderEmojis: {} as Record&lt;string, string&gt;   // folderId → emoji</code></pre>
+    <p>It loads &amp; persists with the existing settings machinery for free. Stale ids (from deleted
+    folders) are harmless — the overlay only ever lists folders that currently exist.</p>
+  </div>
+
+  <h2><span class="num">3</span> Files to change</h2>
+
+  <table>
+    <thead><tr><th>File</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="file">shared/src/settings.ts</td>
+        <td>Add <code>folderEmojis</code> default + helpers <code>getFolderEmoji</code>, <code>setFolderEmoji</code>, <code>clearFolderEmoji</code>, and a <code>storage.onChanged</code> listener that updates the in-memory map &amp; re-renders. <strong>Remove</strong> the obsolete <code>hideFolderIcons</code> default and its <code>applyClassSettings</code> branch (keep <code>centerBookmarks</code>).</td>
+      </tr>
+      <tr>
+        <td class="file">shared/src/bookmarks.ts</td>
+        <td>In <code>createTopLevelFolder</code> <em>only</em>: render a <code>&lt;span class="folder-emoji"&gt;</code> in place of the SVG when an emoji exists. Export <code>isFolder</code> for reuse. Submenu folders untouched.</td>
+      </tr>
+      <tr>
+        <td class="file">shared/src/folder-emojis.ts <span class="new-tag">new</span></td>
+        <td>The overlay: open/close wiring, builds the folder list from the toolbar, and the emoji-validation logic.</td>
+      </tr>
+      <tr>
+        <td class="file">shared/src/newtab.ts</td>
+        <td>Call <code>setupFolderEmojiOverlay()</code> and the storage listener in <code>startApp</code>.</td>
+      </tr>
+      <tr>
+        <td class="file">shared/assets/newtab.html</td>
+        <td>Add the settings action row + the overlay dialog markup (with <code>data-i18n</code> hooks). <strong>Remove</strong> the “Hide folder icons” setting row.</td>
+      </tr>
+      <tr>
+        <td class="file">shared/assets/newtab.css</td>
+        <td><code>.folder-emoji</code> sizing, overlay/backdrop/card + per-folder row styles, reusing existing glass tokens. <strong>Remove</strong> the <code>body.hide-folder-icons</code> rule.</td>
+      </tr>
+      <tr>
+        <td class="file">shared/_locales/*/messages.json</td>
+        <td>Add new keys across all 7 locales (en, es, fr, it, de, ja, zh_CN). <strong>Remove</strong> the <code>hideFolderIcons</code> key from each.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2><span class="num">4</span> Emoji input restriction</h2>
+  <div class="card">
+    <p>No custom picker — paste only, per the requirement. Restriction is <strong>best-effort and never blocks a real emoji</strong>:</p>
+    <ol>
+      <li>Take the first grapheme cluster via <code>Intl.Segmenter</code> (handles multi-codepoint emoji).</li>
+      <li>Validate against <code>/\p{RGI_Emoji}/v</code> — covers ZWJ sequences, flags, skin tones. Supported in current Chrome &amp; Firefox.</li>
+      <li>Fallback if the <code>v</code> flag / RGI is unavailable: <code>/\p{Extended_Pictographic}/u</code>.</li>
+      <li>If <em>no</em> Unicode-property regex is supported at all, accept the input unrestricted — so the picker is never crippled.</li>
+      <li>Empty field = clear the emoji.</li>
+    </ol>
+    <p class="footnote">Net effect: on today’s browsers paste is restricted to genuine emoji; on hypothetical
+    old engines it degrades to “accept anything” rather than rejecting valid emoji.</p>
+  </div>
+
+  <h2><span class="num">5</span> Data flow</h2>
+  <div class="flow">
+    paste emoji → <b>sanitizeEmoji()</b> → <b>setFolderEmoji(id, emoji)</b><br>
+    &nbsp;&nbsp;→ <b>storage.set({ folderEmojis })</b><br>
+    &nbsp;&nbsp;→ <b>storage.onChanged</b> fires (this tab + every other open new-tab)<br>
+    &nbsp;&nbsp;→ in-memory map updated → <b>renderBookmarks()</b> → bar shows the emoji
+  </div>
+  <p class="footnote">A single render path (driven by <code>storage.onChanged</code>) keeps every open tab in sync and avoids double-rendering.</p>
+
+  <h2><span class="num">6</span> Marketing &amp; docs</h2>
+  <div class="card">
+    <ul>
+      <li><span class="file">site/index.html</span> — a new feature card (“Folders with personality”) in the <code>#features</code> grid, and update the “Tuned to taste” copy (which currently cites “hide folder icons”) to mention emoji folders instead.</li>
+      <li><span class="file">README.md</span> — a Features bullet + a Configuration entry, and remove the “Hide folder icons” line from the Configuration list.</li>
+      <li><span class="file">LISTING_CWS.md</span> &amp; <span class="file">LISTING_AMO.md</span> — add the feature to both store listings; remove any “hide folder icons” mention.</li>
+      <li><span class="file">PRIVACY.md</span> &amp; <span class="file">CWS_SUBMISSION.md</span> — update the stored-settings lists: drop “hide folder icons”, add “folder emojis”.</li>
+    </ul>
+    <p class="footnote">Historical plan/spec files under <code>docs/superpowers/</code> are left as-is — they record past work.</p>
+  </div>
+
+  <h2><span class="num">7</span> Verification</h2>
+  <div class="card">
+    <ul>
+      <li><code>npm run typecheck</code> · <code>npm run build</code> (both packages) · <code>npm run lint</code></li>
+      <li>Manual: load in Chrome + Firefox, paste &amp; clear emojis, confirm persistence, confirm other open tabs update live.</li>
+    </ul>
+  </div>
+
+  <hr />
+
+  <h2>Decisions (confirmed with you)</h2>
+  <div class="decided">
+    <span class="label">✓ Scope</span>
+    <p style="margin:6px 0 0">First-level folders only — submenu folders keep the default SVG icon.</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ “Hide folder icons” toggle — removed</span>
+    <p style="margin:6px 0 0">The toggle is dropped entirely. Every folder always shows one icon: its emoji if set, otherwise the default SVG. This removes the conflict of two parallel icon systems. Existing users’ stored <code>hideFolderIcons</code> value is simply ignored (harmless leftover).</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ Entry point</span>
+    <p style="margin:6px 0 0">A “Folder emojis” action row in settings opens a dedicated centered overlay listing the folders.</p>
+  </div>
+
+  <h2>Open / worth a glance before I build</h2>
+  <div class="confirm">
+    <span class="label">? Restriction strictness</span>
+    <p style="margin:6px 0 0">On modern browsers the field will reject non-emoji text (e.g. pasting a word does nothing). That’s the intended “restrict to emoji” behaviour — flag me if you’d rather it always accept whatever is pasted.</p>
+  </div>
+  <div class="confirm">
+    <span class="label">? Marketing reach</span>
+    <p style="margin:6px 0 0">Plan touches site + README + both store listings. If you also want the screenshot set refreshed to show emoji folders, that’s a separate follow-up (needs new captures).</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+  PLAN DOC TEMPLATE — copy this file to docs/plans/YYYY-MM-DD-feature-slug.html
+  and fill in the slots. See docs/plans/README.md for the convention.
+
+  Rules of thumb:
+  - Self-contained: keep all CSS inline so the file is portable on its own.
+  - Drop any section that doesn't apply. Don't pad.
+  - This is for ALIGNING ON APPROACH, not driving execution — no task-by-task
+    checklist. Describe what & why, the shape of the change, and the decisions.
+  - Update the Status chip as the doc moves: Proposed → Approved → Built.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plan — TITLE HERE</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --card: #161b22;
+    --card-soft: #1c2330;
+    --border: #2a3340;
+    --fg: #e6edf3;
+    --fg-muted: #9aa7b4;
+    --accent: #6ea8fe;
+    --accent-soft: rgba(110, 168, 254, 0.14);
+    --green: #6ee7a8;
+    --amber: #f5c451;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f8fa; --card: #fff; --card-soft: #f0f3f7; --border: #d8dee4;
+      --fg: #1f2328; --fg-muted: #59636e; --accent: #2f6feb; --accent-soft: rgba(47,111,235,0.1);
+      --green: #1a7f4b; --amber: #9a6700;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 20px 80px;
+    background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6; font-size: 16px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  header {
+    padding: 56px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px;
+  }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin: 0 0 10px;
+  }
+  h1 { font-size: 34px; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.02em; }
+  .lede { color: var(--fg-muted); font-size: 17px; margin: 0; max-width: 62ch; }
+  .meta { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .chip {
+    font-size: 12.5px; padding: 4px 10px; border-radius: 999px;
+    background: var(--card-soft); border: 1px solid var(--border); color: var(--fg-muted);
+  }
+  /* Status chip — switch the modifier class as the doc progresses. */
+  .status { font-weight: 700; }
+  .status--proposed { color: var(--amber); border-color: var(--amber); }
+  .status--approved { color: var(--accent); border-color: var(--accent); }
+  .status--built { color: var(--green); border-color: var(--green); }
+  .status--superseded { color: var(--fg-muted); border-color: var(--border); text-decoration: line-through; }
+  h2 {
+    font-size: 22px; margin: 44px 0 6px; letter-spacing: -0.01em;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  h2 .num {
+    font-family: var(--mono); font-size: 14px; color: var(--accent);
+    background: var(--accent-soft); border-radius: 7px; padding: 2px 9px; font-weight: 700;
+  }
+  h3 { font-size: 16px; margin: 26px 0 6px; }
+  p { margin: 10px 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px 22px; margin: 16px 0;
+  }
+  code {
+    font-family: var(--mono); font-size: 13.5px;
+    background: var(--card-soft); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 6px;
+  }
+  pre {
+    background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; overflow-x: auto; font-family: var(--mono);
+    font-size: 13px; line-height: 1.55; margin: 12px 0;
+  }
+  pre code { background: none; border: none; padding: 0; }
+  ul, ol { margin: 10px 0; padding-left: 24px; }
+  li { margin: 5px 0; }
+  .file {
+    font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 600;
+  }
+  .new-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--green); border: 1px solid var(--green); border-radius: 5px;
+    padding: 1px 6px; margin-left: 8px; vertical-align: middle;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--fg-muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td:first-child { white-space: nowrap; }
+  .decided {
+    border-left: 3px solid var(--green); background: var(--card);
+    border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0;
+  }
+  .decided .label { color: var(--green); font-weight: 700; font-size: 13px; }
+  .confirm {
+    border-left: 3px solid var(--amber); background: var(--card);
+    border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0;
+  }
+  .confirm .label { color: var(--amber); font-weight: 700; font-size: 13px; }
+  .flow {
+    font-family: var(--mono); font-size: 13px; color: var(--fg-muted);
+    background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; margin: 14px 0; line-height: 1.9;
+  }
+  .flow b { color: var(--fg); }
+  .footnote { color: var(--fg-muted); font-size: 13.5px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Plan · Topmarks</p>
+    <h1>Feature title goes here</h1>
+    <p class="lede">
+      One- or two-sentence summary: what this changes and why it's worth doing.
+    </p>
+    <div class="meta">
+      <!-- Switch the status--* class as the doc moves: proposed → approved → built. -->
+      <span class="chip status status--proposed">Proposed</span>
+      <span class="chip">YYYY-MM-DD</span>
+      <span class="chip">scope chip (e.g. both stores)</span>
+    </div>
+  </header>
+
+  <!-- ===== Summary / Behaviour ===== What the user or system does differently. -->
+  <h2><span class="num">UX</span> What changes</h2>
+  <div class="card">
+    <ol>
+      <li>Describe the observable behaviour, step by step.</li>
+    </ol>
+  </div>
+
+  <!-- ===== Why / Context ===== The reasoning a reviewer needs. Delete if obvious. -->
+  <h2><span class="num">1</span> Why / context</h2>
+  <div class="card">
+    <p>Constraints, prior art, the architectural fact that makes this cheap or hard.</p>
+  </div>
+
+  <!-- ===== Approach ===== The shape of the change. A file table is usually clearest. -->
+  <h2><span class="num">2</span> Approach</h2>
+  <table>
+    <thead><tr><th>File</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="file">path/to/file.ts</td>
+        <td>What changes here and why.</td>
+      </tr>
+      <tr>
+        <td class="file">path/to/new-file.ts <span class="new-tag">new</span></td>
+        <td>What this new file is responsible for.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Optional: a data-flow trace when control flow is the tricky part. -->
+  <!--
+  <div class="flow">
+    input → <b>step()</b> → <b>nextStep()</b> → result
+  </div>
+  -->
+
+  <!-- ===== Verification ===== How you'll know it works. -->
+  <h2><span class="num">3</span> Verification</h2>
+  <div class="card">
+    <ul>
+      <li>Commands to run, manual checks to perform.</li>
+    </ul>
+  </div>
+
+  <hr />
+
+  <!-- ===== Decisions ===== Choices already settled (with the user or by default). -->
+  <h2>Decisions</h2>
+  <div class="decided">
+    <span class="label">✓ Decision name</span>
+    <p style="margin:6px 0 0">What was decided and the one-line reason.</p>
+  </div>
+
+  <!-- ===== Open questions ===== Things still needing a call. Delete when none. -->
+  <h2>Open / to confirm</h2>
+  <div class="confirm">
+    <span class="label">? Question name</span>
+    <p style="margin:6px 0 0">What's undecided and the trade-off.</p>
+  </div>
+
+</div>
+</body>
+</html>

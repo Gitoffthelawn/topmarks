@@ -1,11 +1,12 @@
 import { getPlatform, type BookmarkNode } from "./platform.js";
 import { t } from "./i18n.js";
+import { getFolderEmoji } from "./settings.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 let topLevelNodes: BookmarkNode[] = [];
 
-function isFolder(node: BookmarkNode): boolean {
+export function isFolder(node: BookmarkNode): boolean {
   return node.type === "folder" || (!node.url && Array.isArray(node.children));
 }
 
@@ -27,6 +28,14 @@ function faviconSources(url: string): string[] {
   } catch {
     return [];
   }
+}
+
+function createFolderEmoji(emoji: string): HTMLSpanElement {
+  const span = document.createElement("span");
+  span.className = "folder-emoji";
+  span.textContent = emoji;
+  span.setAttribute("aria-hidden", "true");
+  return span;
 }
 
 function createFolderIcon(): SVGSVGElement {
@@ -63,6 +72,24 @@ function createDoubleChevronIcon(): SVGSVGElement {
   const b = document.createElementNS(SVG_NS, "polyline");
   b.setAttribute("points", "13 6 19 12 13 18");
   svg.append(a, b);
+  return svg;
+}
+
+// Small downward caret marking a top-level folder (vs. a loose bookmark link).
+// Mirrors the chevron used on the landing site's bookmark bar.
+function createCaretIcon(): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("class", "folder-caret");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("stroke", "currentColor");
+  svg.setAttribute("stroke-width", "2.5");
+  svg.setAttribute("stroke-linecap", "round");
+  svg.setAttribute("stroke-linejoin", "round");
+  svg.setAttribute("aria-hidden", "true");
+  const path = document.createElementNS(SVG_NS, "path");
+  path.setAttribute("d", "m6 9 6 6 6-6");
+  svg.append(path);
   return svg;
 }
 
@@ -220,7 +247,8 @@ function createTopLevelFolder(node: BookmarkNode): HTMLDivElement {
   label.className = "bookmark-title";
   label.textContent = node.title || t("unnamedFolder");
 
-  button.append(createFolderIcon(), label);
+  const emoji = getFolderEmoji(node.id);
+  button.append(emoji ? createFolderEmoji(emoji) : createFolderIcon(), label, createCaretIcon());
 
   const dropdown = document.createElement("ul");
   dropdown.className = "folder-dropdown";

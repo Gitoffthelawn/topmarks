@@ -23,7 +23,7 @@ Reads the user's bookmarks (specifically the Bookmarks Bar / Toolbar folder) to 
 ### `storage`
 
 ```
-Persists user preferences (theme, "Glass" vs "Classic" style, "hide folder icons", "center bookmarks", "show background image", wallpaper refresh interval) and a small wallpaper metadata cache (photo URL, photographer attribution, color, fetched-at timestamp) using chrome.storage.local. All data stays on the user's device.
+Persists user preferences (theme, "Glass" vs "Classic" style, "center bookmarks", per-folder emojis, "show background image", wallpaper refresh interval) and a small wallpaper metadata cache (photo URL, photographer attribution, color, fetched-at timestamp) using chrome.storage.local. All data stays on the user's device.
 ```
 
 ### `search`

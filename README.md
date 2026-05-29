@@ -7,6 +7,7 @@ A minimal new-tab extension for Firefox and Chrome that floats your bookmarks to
 ## Features
 
 - Floating glass bookmarks bar with folder dropdowns and nested submenus
+- Replace any top-level folder's icon with an emoji of your choice
 - Rotating high-resolution wallpapers from Unsplash's curated wallpaper collection
 - Light / Dark / Auto theme
 - Configurable background refresh interval (1h / 6h / 12h / 24h)
@@ -60,8 +61,9 @@ Temporary add-ons are removed when Firefox restarts. For a persistent install, t
 
 Click the gear icon at the bottom-right of the new tab page:
 
-- **Hide folder icons** — show only bookmark titles
 - **Center bookmarks in bar** — center-align instead of left-aligning
+- **Hide labels** — icons-only bar: folder icon/emoji + caret for folders, favicon for links
+- **Folder emojis** — open the overlay and paste an emoji to replace any top-level folder's icon (clear it to restore the default)
 - **Show background image** — toggle Unsplash wallpaper on/off
 - **Show search field** — toggle the search input above the bookmarks bar
 - **Theme** — Auto / Light / Dark

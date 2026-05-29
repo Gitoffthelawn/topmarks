@@ -20,11 +20,11 @@
   --switch-off: #c8c8c8;
 
   /* Liquid glass tokens */
-  --glass-bg-strong: rgba(255, 255, 255, 0.85);
+  --glass-bg-strong: rgba(255, 255, 255, 0.60);
   --glass-border: rgba(255, 255, 255, 0.55);
   --glass-border-soft: rgba(0, 0, 0, 0.08);
   --glass-highlight: rgba(255, 255, 255, 0.65);
-  --glass-blur: blur(40px) saturate(220%) brightness(1.08);
+  --glass-blur: blur(26px) saturate(150%);
   --glass-shadow:
     0 10px 30px rgba(0, 0, 0, 0.12),
     0 1px 0 var(--glass-highlight) inset,
@@ -43,7 +43,7 @@
   --hover: rgba(255, 255, 255, 0.08);
   --switch-off: #52525b;
 
-  --glass-bg-strong: rgba(28, 27, 34, 0.88);
+  --glass-bg-strong: rgba(28, 27, 34, 0.55);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-border-soft: rgba(255, 255, 255, 0.06);
   --glass-highlight: rgba(255, 255, 255, 0.1);
@@ -222,14 +222,37 @@ body.centered #bookmarks-bar {
   opacity: 0.8;
 }
 
-body.hide-folder-icons .folder-icon:not(.overflow-icon) {
-  display: none;
+.folder-emoji {
+  flex-shrink: 0;
+  font-size: 15px;
+  line-height: 1;
+  /* Center the glyph in the same box the folder SVG occupies. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+}
+
+.folder-caret {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  opacity: 0.5;
+  margin-left: 1px;
 }
 
 .bookmark-title {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* "Hide labels": icons-only bar — folder icon/emoji + caret, link favicons.
+   Scoped to the bar's own items so dropdown contents keep their text. */
+body.hide-labels #bookmarks-bar .folder-button > .bookmark-title,
+body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
+  display: none;
 }
 
 .bookmark-folder {
@@ -700,6 +723,196 @@ body:has(#search-input) #content {
   outline-offset: 1px;
 }
 
+/* ---- Settings action row (opens the folder-emoji overlay) ---- */
+
+.setting-action {
+  width: 100%;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.setting-action-chevron {
+  flex-shrink: 0;
+  color: var(--fg-muted);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.setting-action:hover {
+  color: var(--accent);
+}
+
+.setting-action:hover .setting-action-chevron {
+  color: var(--accent);
+}
+
+.setting-action:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ---- Folder-emoji overlay ---- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.overlay[hidden] {
+  display: none;
+}
+
+.overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.overlay-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 20px;
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+}
+
+.overlay-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.overlay-head h2 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.overlay-close {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: var(--glass-control-bg);
+  color: var(--fg);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.overlay-close:hover {
+  background: var(--hover);
+}
+
+.overlay-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.overlay-desc {
+  margin: 8px 0 12px;
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
+
+.folder-emoji-list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* Breathing room so focus rings on the first/last rows aren't clipped by
+     the scroll container. Negative inline margin keeps rows visually aligned. */
+  padding: 5px 4px;
+  margin: 0 -4px;
+}
+
+.folder-emoji-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.folder-emoji-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folder-emoji-input {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  text-align: center;
+  border: 1px solid var(--glass-control-border);
+  border-radius: 50%;
+  background: var(--glass-control-bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.folder-emoji-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.folder-emoji-clear {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fg-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.folder-emoji-clear:hover {
+  background: var(--hover);
+  color: var(--fg);
+}
+
+.folder-emoji-clear:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.folder-emoji-empty {
+  margin: 4px 0;
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
 
 /* ---- Accessibility: respect user motion / transparency preferences ---- */
 
@@ -724,6 +937,7 @@ body:has(#search-input) #content {
   #settings-btn,
   #settings-panel,
   .folder-dropdown,
+  .overlay-card,
   #bg-attribution,
   #search-input {
     backdrop-filter: none !important;

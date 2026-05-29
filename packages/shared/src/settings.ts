@@ -1,17 +1,19 @@
 import { getPlatform } from "./platform.js";
-import { scheduleReflow } from "./bookmarks.js";
+import { scheduleReflow, renderBookmarks } from "./bookmarks.js";
 import { loadBackground, updateBackgroundErrorVisibility } from "./unsplash.js";
 import { applyShowSearch } from "./search.js";
 
 export const SETTINGS_DEFAULTS = {
-  hideFolderIcons: false,
   centerBookmarks: false,
+  hideLabels: false,
   backgroundEnabled: true,
   backgroundIntervalHours: 6,
   theme: "auto" as "auto" | "light" | "dark",
   style: "glass" as "glass" | "classic",
   bookmarksPosition: "top" as "top" | "bottom",
   showSearch: true,
+  // Maps a top-level folder id to a chosen emoji that replaces its icon.
+  folderEmojis: {} as Record<string, string>,
 };
 
 export type Settings = typeof SETTINGS_DEFAULTS;
@@ -40,8 +42,26 @@ function effectiveTheme(): "light" | "dark" {
 }
 
 export function applyClassSettings(): void {
-  document.body.classList.toggle("hide-folder-icons", settings.hideFolderIcons);
   document.body.classList.toggle("centered", settings.centerBookmarks);
+  document.body.classList.toggle("hide-labels", settings.hideLabels);
+}
+
+export function getFolderEmoji(id: string): string | undefined {
+  return settings.folderEmojis[id];
+}
+
+export async function setFolderEmoji(id: string, emoji: string): Promise<void> {
+  const next = { ...settings.folderEmojis, [id]: emoji };
+  settings.folderEmojis = next;
+  await getPlatform().storage.set({ folderEmojis: next });
+}
+
+export async function clearFolderEmoji(id: string): Promise<void> {
+  if (!(id in settings.folderEmojis)) return;
+  const next = { ...settings.folderEmojis };
+  delete next[id];
+  settings.folderEmojis = next;
+  await getPlatform().storage.set({ folderEmojis: next });
 }
 
 export function applyTheme(): void {
@@ -91,8 +111,11 @@ export function syncSettingsUi(): void {
 }
 
 function handleSettingChange(key: keyof Settings): void {
-  if (key === "hideFolderIcons" || key === "centerBookmarks") {
+  if (key === "centerBookmarks") {
     applyClassSettings();
+  } else if (key === "hideLabels") {
+    applyClassSettings();
+    scheduleReflow();
   } else if (key === "theme") {
     applyTheme();
   } else if (key === "style") {
@@ -187,6 +210,19 @@ export function setupBackoffStorageListener(): () => void {
         enabled: settings.backgroundEnabled,
         intervalHours: settings.backgroundIntervalHours,
       });
+    }
+  });
+}
+
+// Keeps every open new-tab in sync: when folder emojis change (here or in
+// another tab), refresh the in-memory map and re-render the bar. This is the
+// single render path — setFolderEmoji/clearFolderEmoji only persist.
+export function setupFolderEmojiStorageListener(): () => void {
+  return getPlatform().storage.onChanged((changes, area) => {
+    if (area === "local" && changes.folderEmojis) {
+      settings.folderEmojis =
+        (changes.folderEmojis.newValue as Record<string, string>) ?? {};
+      renderBookmarks();
     }
   });
 }

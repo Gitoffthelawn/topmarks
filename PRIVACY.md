@@ -27,7 +27,7 @@ The extension does **not**:
 
 The extension uses your browser's extension storage (`browser.storage.local` in Firefox / `chrome.storage.local` in Chrome) and `window.localStorage` to remember:
 
-- **Your settings** — theme (auto/light/dark), "hide folder icons", "center bookmarks", "show background image", and refresh interval.
+- **Your settings** — theme (auto/light/dark), "center bookmarks", per-folder emojis, "show background image", and refresh interval.
 - **A small cache for the most recent background photo** — its base URL, photographer name, photographer profile link, photo page link, the photo's representative color, and the timestamp it was fetched.
 
 This data is stored only on your device. It is not synchronized to your Firefox Account, Google Account, or any other cloud profile by the extension; it is not transmitted to any server controlled by the developer; and it is not shared with anyone. Uninstalling the extension removes all of it.

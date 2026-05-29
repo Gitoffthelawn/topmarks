@@ -11,8 +11,10 @@ import {
   syncSettingsUi,
   setupSettingsPanel,
   setupBackoffStorageListener,
+  setupFolderEmojiStorageListener,
   getSettings,
 } from "./settings.js";
+import { setupFolderEmojiOverlay } from "./folder-emojis.js";
 import { setupSearch } from "./search.js";
 
 export async function startApp(platform: Platform): Promise<void> {
@@ -41,9 +43,11 @@ export async function startApp(platform: Platform): Promise<void> {
   applyClassSettings();
   syncSettingsUi();
   setupSettingsPanel();
+  setupFolderEmojiOverlay();
   setupSearch(settings.showSearch);
   setupBookmarksListeners();
   setupBackoffStorageListener();
+  setupFolderEmojiStorageListener();
 
   renderBookmarks();
   loadBackground({
