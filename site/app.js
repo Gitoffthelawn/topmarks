@@ -2,46 +2,61 @@
 (function () {
   "use strict";
 
-  /* ---------- Curated wallpapers (mirrors the extension's Unsplash feature) ---------- */
-  var WALLPAPERS = [
-    { id: "1502790671504-542ad42d5189", by: "Aniket Deole", tone: "dark" },
-    { id: "1470071459604-3b5ec3a7fe05", by: "Samuel Ferrara", tone: "dark" },
-    { id: "1441974231531-c6227db76b6e", by: "Sebastian Unrau", tone: "dark" },
-    { id: "1454496522488-7a8e488e8606", by: "Joshua Earle", tone: "dark" },
-    { id: "1506905925346-21bda4d32df4", by: "Kalen Emsley", tone: "dark" }
-  ];
-  function url(id, w) {
+  /* ---------- Curated wallpapers (loaded from wallpapers.json) ----------
+     Same Unsplash collection the extension uses (Tabliss, 1053828). Images are
+     hotlinked from images.unsplash.com; each entry carries the attribution
+     Unsplash requires. Regenerate with: node scripts/curate-wallpapers.mjs */
+  var WALLPAPERS = [];
+
+  function imageUrl(id, w) {
     return "https://images.unsplash.com/photo-" + id +
       "?auto=format&fit=crop&w=" + (w || 2400) + "&q=80";
+  }
+
+  // Per Unsplash API guidelines, links back to unsplash.com must carry UTM
+  // params identifying the app (utm_source = registered application name).
+  function withUtm(u) {
+    if (!u) return "https://unsplash.com/?utm_source=topmarks&utm_medium=referral";
+    return u + (u.indexOf("?") === -1 ? "?" : "&") +
+      "utm_source=topmarks&utm_medium=referral";
   }
 
   var layers = [
     document.getElementById("wp-a"),
     document.getElementById("wp-b")
   ];
-  var attrName = document.getElementById("attr-name");
+  var elAuthor = document.getElementById("wp-author");
+  var elPhoto = document.getElementById("wp-photo");
   var active = 0;
   var wpIndex = -1;
   var rotateTimer = null;
   var ROTATE_MS = 9000;
 
   function showWallpaper(i) {
+    if (!WALLPAPERS.length) return;
     wpIndex = (i + WALLPAPERS.length) % WALLPAPERS.length;
     var wp = WALLPAPERS[wpIndex];
     var next = layers[active ^ 1];
     var cur = layers[active];
     var img = new Image();
     img.onload = function () {
+      if (wp.color) next.style.backgroundColor = wp.color;
       next.style.backgroundImage = "url('" + img.src + "')";
       next.classList.add("is-active");
       cur.classList.remove("is-active");
       active ^= 1;
     };
     img.onerror = function () {
-      // keep gradient fallback; still update credit minimally
+      // keep gradient fallback
     };
-    img.src = url(wp.id);
-    if (attrName) attrName.textContent = wp.by;
+    img.src = imageUrl(wp.id);
+
+    // Attribution: Unsplash • author • photo (the Unsplash link is static in HTML)
+    if (elAuthor) {
+      elAuthor.textContent = wp.author || "Unsplash";
+      elAuthor.href = withUtm(wp.authorUrl);
+    }
+    if (elPhoto) elPhoto.href = withUtm(wp.photoUrl);
   }
 
   function startRotation() {
@@ -94,17 +109,17 @@
   });
 
   /* ---------- Wallpaper kick-off ---------- */
-  showWallpaper(0);
-  startRotation();
-
-  // click attribution shuffle area to advance (little easter egg / manual control)
-  var shuffle = document.getElementById("wp-shuffle");
-  if (shuffle) {
-    shuffle.addEventListener("click", function () {
-      showWallpaper(wpIndex + 1);
+  fetch("wallpapers.json")
+    .then(function (r) { return r.ok ? r.json() : []; })
+    .then(function (list) {
+      WALLPAPERS = Array.isArray(list) ? list : [];
+      if (!WALLPAPERS.length) return;
+      // Start on a different wallpaper each load so repeat visits vary.
+      var start = Math.floor((Date.now() / ROTATE_MS)) % WALLPAPERS.length;
+      showWallpaper(start);
       startRotation();
-    });
-  }
+    })
+    .catch(function () { /* keep the mesh-gradient fallback */ });
 
   /* ---------- Reveal on scroll ---------- */
   var io = new IntersectionObserver(function (entries) {

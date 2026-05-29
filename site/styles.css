@@ -300,9 +300,9 @@ html[data-style="classic"] .bm { border-radius: 8px; }
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   display: flex; gap: 8px; align-items: center;
 }
-.attribution b { font-weight: 600; }
-.attribution .sep { opacity: 0.5; }
-.attribution a:hover { opacity: 0.8; }
+.attribution a { font-weight: 500; }
+.attribution .sep { opacity: 0.6; font-size: 1.35em; line-height: 0; }
+.attribution a:hover { opacity: 0.8; text-decoration: underline; }
 
 .demo-controls {
   position: fixed; right: 18px; bottom: 50px; z-index: 35;
