@@ -408,8 +408,11 @@ body:has(#search-input) #content {
 }
 
 .bg-attribution-sep {
-  margin: 0 6px;
-  opacity: 0.4;
+  margin: 0 7px;
+  font-size: 1.2em;
+  line-height: 0;
+  vertical-align: -0.05em;
+  opacity: 0.5;
   user-select: none;
 }
 
