@@ -1,5 +1,7 @@
 # Topmarks
 
+[**Website**](https://nx-alejandrolacasa.github.io/topmarks/) · [Install for Firefox](https://addons.mozilla.org/firefox/addon/topmarks/)
+
 A minimal new-tab extension for Firefox and Chrome that floats your bookmarks toolbar at the top of every new tab, over a rotating Unsplash wallpaper.
 
 ## Features
