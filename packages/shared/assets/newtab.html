@@ -7,6 +7,13 @@
     <script src="theme-init.js"></script>
     <link
       rel="preload"
+      href="fonts/Satoshi-Variable.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
       href="fonts/Cookie-Regular.ttf"
       as="font"
       type="font/ttf"
@@ -66,6 +73,17 @@
     >
       <h2 id="settings-heading" data-i18n="settingsHeading">Settings</h2>
 
+      <button
+        type="button"
+        class="setting setting-action"
+        id="open-folder-emojis"
+        aria-haspopup="dialog"
+        aria-controls="folder-emoji-overlay"
+      >
+        <span data-i18n="folderEmojisLabel">Folder emojis</span>
+        <span class="setting-action-chevron" aria-hidden="true">›</span>
+      </button>
+
       <label class="setting">
         <span data-i18n="centerBookmarks">Center bookmarks in bar</span>
         <input type="checkbox" data-setting="centerBookmarks" />
@@ -92,22 +110,23 @@
           aria-labelledby="center-widget-label"
           data-setting="centerWidget"
         >
-          <button type="button" role="radio" data-value="search" data-i18n="centerSearch">Search</button>
           <button type="button" role="radio" data-value="clock" data-i18n="centerClock">Clock</button>
+          <button type="button" role="radio" data-value="search" data-i18n="centerSearch">Search</button>
           <button type="button" role="radio" data-value="none" data-i18n="centerNone">None</button>
         </div>
       </div>
 
-      <button
-        type="button"
-        class="setting setting-action"
-        id="open-folder-emojis"
-        aria-haspopup="dialog"
-        aria-controls="folder-emoji-overlay"
-      >
-        <span data-i18n="folderEmojisLabel">Folder emojis</span>
-        <span class="setting-action-chevron" aria-hidden="true">›</span>
-      </button>
+      <div class="setting setting-text" id="setting-clock-size">
+        <span id="clock-size-label" data-i18n="clockSizeLabel">Clock size</span>
+        <input
+          type="range"
+          data-setting="clockSize"
+          min="60"
+          max="160"
+          step="5"
+          aria-labelledby="clock-size-label"
+        />
+      </div>
 
       <div class="setting setting-text">
         <span id="theme-label" data-i18n="themeLabel">Theme</span>

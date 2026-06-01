@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plan — Satoshi as the UI typeface</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --card: #161b22;
+    --card-soft: #1c2330;
+    --border: #2a3340;
+    --fg: #e6edf3;
+    --fg-muted: #9aa7b4;
+    --accent: #6ea8fe;
+    --accent-soft: rgba(110, 168, 254, 0.14);
+    --green: #6ee7a8;
+    --amber: #f5c451;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f8fa; --card: #fff; --card-soft: #f0f3f7; --border: #d8dee4;
+      --fg: #1f2328; --fg-muted: #59636e; --accent: #2f6feb; --accent-soft: rgba(47,111,235,0.1);
+      --green: #1a7f4b; --amber: #9a6700;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 20px 80px;
+    background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6; font-size: 16px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  header {
+    padding: 56px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px;
+  }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin: 0 0 10px;
+  }
+  h1 { font-size: 34px; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.02em; }
+  .lede { color: var(--fg-muted); font-size: 17px; margin: 0; max-width: 62ch; }
+  .meta { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .chip {
+    font-size: 12.5px; padding: 4px 10px; border-radius: 999px;
+    background: var(--card-soft); border: 1px solid var(--border); color: var(--fg-muted);
+  }
+  .status { font-weight: 700; }
+  .status--proposed { color: var(--amber); border-color: var(--amber); }
+  .status--approved { color: var(--accent); border-color: var(--accent); }
+  .status--built { color: var(--green); border-color: var(--green); }
+  h2 {
+    font-size: 22px; margin: 44px 0 6px; letter-spacing: -0.01em;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  h2 .num {
+    font-family: var(--mono); font-size: 14px; color: var(--accent);
+    background: var(--accent-soft); border-radius: 7px; padding: 2px 9px; font-weight: 700;
+  }
+  h3 { font-size: 16px; margin: 26px 0 6px; }
+  p { margin: 10px 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px 22px; margin: 16px 0;
+  }
+  code {
+    font-family: var(--mono); font-size: 13.5px;
+    background: var(--card-soft); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 6px;
+  }
+  pre {
+    background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; overflow-x: auto; font-family: var(--mono);
+    font-size: 13px; line-height: 1.55; margin: 12px 0;
+  }
+  pre code { background: none; border: none; padding: 0; }
+  ul, ol { margin: 10px 0; padding-left: 24px; }
+  li { margin: 5px 0; }
+  .file {
+    font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 600;
+  }
+  .new-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--green); border: 1px solid var(--green); border-radius: 5px;
+    padding: 1px 6px; margin-left: 8px; vertical-align: middle;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--fg-muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td:first-child { white-space: nowrap; }
+  .decided {
+    border-left: 3px solid var(--green); background: var(--card);
+    border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0;
+  }
+  .decided .label { color: var(--green); font-weight: 700; font-size: 13px; }
+  .confirm {
+    border-left: 3px solid var(--amber); background: var(--card);
+    border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0;
+  }
+  .confirm .label { color: var(--amber); font-weight: 700; font-size: 13px; }
+  .flow {
+    font-family: var(--mono); font-size: 13px; color: var(--fg-muted);
+    background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; margin: 14px 0; line-height: 1.9;
+  }
+  .flow b { color: var(--fg); }
+  .footnote { color: var(--fg-muted); font-size: 13.5px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Plan · Topmarks</p>
+    <h1>Satoshi as the UI typeface</h1>
+    <p class="lede">
+      Adopt <b>Satoshi</b> as the new-tab page and settings typeface — a
+      geometric grotesque with more personality than the system stack — with the
+      big bold <b>clock</b> (shipping in parallel) as its loudest moment. Cookie
+      stays as the script accent.
+    </p>
+    <div class="meta">
+      <span class="chip status status--built">Built</span>
+      <span class="chip">2026-06-01</span>
+      <span class="chip">shared · both stores</span>
+    </div>
+  </header>
+
+  <h2><span class="num">UX</span> What changes</h2>
+  <div class="card">
+    <ol>
+      <li>All body and UI text on the new-tab page and the settings panel renders
+        in <b>Satoshi</b> instead of the system sans, with the system stack kept
+        as the fallback (no FOIT, no broken layout if the font fails to load).</li>
+      <li>The <b>clock</b> inherits Satoshi and leans into its heaviest weight
+        (<b>900 / Black</b>) for the "big bold clock" look the center-widget plan
+        calls for — replacing that plan's "bold system sans" decision.</li>
+      <li>The <b>Cookie</b> script font is untouched — it stays on the
+        <code>.bmc-link</code> / brand accent.</li>
+      <li>No visible setting; this is a global typographic change, applied for
+        everyone.</li>
+    </ol>
+  </div>
+
+  <h2><span class="num">1</span> Why / context</h2>
+  <div class="card">
+    <p>The page already self-hosts one bundled font (Cookie) the canonical way:
+      a <code>@font-face</code> in <code>newtab.css</code>, a
+      <code>&lt;link rel="preload"&gt;</code> in <code>newtab.html</code>, and a
+      recursive copy of <code>assets/fonts/</code> into each store's
+      <code>dist/</code> at build time. Satoshi rides the exact same rails — no
+      new build machinery, no remote fetch (which extension CSP forbids and which
+      would leak a request per new tab).</p>
+    <p>Satoshi ships as a single <b>variable</b> file carrying the whole weight
+      axis (<code>300–900</code>). The app today uses weights
+      <code>400 / 600 / 800</code> and the clock wants <code>900</code> — all
+      covered by that one file, so the minimum footprint is literally one
+      <code>.ttf</code>. The other 12 family files that were pasted in have been
+      removed.</p>
+  </div>
+
+  <h2><span class="num">2</span> Approach</h2>
+  <table>
+    <thead><tr><th>File</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="file">packages/shared/assets/fonts/Satoshi-Variable.ttf <span class="new-tag">new</span></td>
+        <td>The single bundled Satoshi file (variable, <code>wght 300–900</code>,
+          ~124&nbsp;KB). Already in place; the 12 redundant static/italic files
+          have been deleted.</td>
+      </tr>
+      <tr>
+        <td class="file">packages/shared/assets/newtab.css</td>
+        <td>Add a <code>@font-face</code> for <code>"Satoshi"</code> pointing at
+          the variable file with <code>font-weight: 300 900</code> and
+          <code>font-display: swap</code>. Prepend <code>"Satoshi"</code> to the
+          <code>body</code> font stack (keep the system fallback). Set the clock's
+          weight to <code>900</code> — coordinated with the clock branch so we
+          don't collide on the <code>#clock</code> rule.</td>
+      </tr>
+      <tr>
+        <td class="file">packages/shared/assets/newtab.html</td>
+        <td>Add <code>&lt;link rel="preload" href="fonts/Satoshi-Variable.ttf"
+          as="font" type="font/ttf" crossorigin&gt;</code> next to the existing
+          Cookie preload, so the body font is ready before first paint.</td>
+      </tr>
+      <tr>
+        <td class="file">packages/chrome/build.ts<br />packages/firefox/build.ts</td>
+        <td>Add <code>"fonts/Satoshi-Variable.ttf"</code> to each
+          <code>REQUIRED_DIST_FILES</code> list so <code>validateDist()</code>
+          fails loudly if it ever stops shipping. The recursive
+          <code>fonts/</code> copy already carries the file into
+          <code>dist/</code> — no copy-logic change needed.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="flow">
+    build copies <b>assets/fonts/</b> → <b>@font-face "Satoshi"</b> (300–900) → preload warms it → <b>body</b> uses Satoshi (system fallback) → <b>#clock</b> @ weight 900
+  </div>
+
+  <h2><span class="num">3</span> Verification</h2>
+  <div class="card">
+    <ul>
+      <li><code>npm run build</code> both packages — <code>validateDist</code>
+        confirms the font ships; type-check is unaffected.</li>
+      <li>Load unpacked: body text and settings render in Satoshi; the clock is
+        heavy/black; Cookie still on the brand link.</li>
+      <li>Throttle/deny the font once → text falls back to system sans cleanly
+        (swap, no invisible text, no layout jump).</li>
+      <li>Check the one italic spot (<code>.empty-state</code>, the "no
+        bookmarks" line) — synthesized oblique looks acceptable at 0.6 opacity.</li>
+      <li>Glass + Classic, light + dark, all legible over a wallpaper at the
+        13px body size.</li>
+    </ul>
+  </div>
+
+  <hr />
+
+  <h2>Decisions</h2>
+  <div class="decided">
+    <span class="label">✓ One variable file — the minimum</span>
+    <p style="margin:6px 0 0"><code>Satoshi-Variable.ttf</code> alone covers
+      400/600/800/900. The 12 static + italic files have been removed.</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ Clock at weight 900</span>
+    <p style="margin:6px 0 0">Satoshi Black gives the "big bold clock" its punch,
+      overriding the center-widget plan's "bold system sans" note.</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ Keep Cookie</span>
+    <p style="margin:6px 0 0">The script accent on <code>.bmc-link</code> stays —
+      Satoshi is the workhorse, Cookie the flourish.</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ No italic file</span>
+    <p style="margin:6px 0 0">The lone italic use (<code>.empty-state</code>) is
+      low-emphasis; let the browser synthesize an oblique rather than bundle a
+      second ~130&nbsp;KB variable-italic file.</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ TTF, matching Cookie</span>
+    <p style="margin:6px 0 0">Consistent with the existing self-hosted font and
+      with what was provided. See the open item on woff2.</p>
+  </div>
+
+  <h2>Open items</h2>
+  <div class="confirm">
+    <span class="label">? woff2 to shrink the payload</span>
+    <p style="margin:6px 0 0">The variable TTF is ~124&nbsp;KB; the equivalent
+      woff2 is typically ~40&nbsp;KB. Fontshare publishes woff2, but it isn't
+      reachable from this sandbox. Optional follow-up: drop in
+      <code>Satoshi-Variable.woff2</code> and switch the <code>src</code> —
+      smaller download, faster first paint. Not required to ship.</p>
+  </div>
+  <div class="confirm">
+    <span class="label">? License file</span>
+    <p style="margin:6px 0 0">Satoshi is under the ITF Free Font License (free for
+      commercial use and bundling). Consider committing the license text
+      alongside the font, as is good practice for redistributed fonts.</p>
+  </div>
+
+</div>
+</body>
+</html>

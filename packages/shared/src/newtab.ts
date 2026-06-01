@@ -8,6 +8,7 @@ import {
   applyStyle,
   applyBookmarksPosition,
   applyCenterWidget,
+  applyClockSize,
   applyClassSettings,
   syncSettingsUi,
   setupSettingsPanel,
@@ -47,6 +48,7 @@ export async function startApp(platform: Platform): Promise<void> {
   setupFolderEmojiOverlay();
   setupSearch();
   applyCenterWidget();
+  applyClockSize();
   setupBookmarksListeners();
   setupBackoffStorageListener();
   setupFolderEmojiStorageListener();

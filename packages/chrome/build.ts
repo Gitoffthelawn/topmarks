@@ -21,6 +21,7 @@ const REQUIRED_DIST_FILES = [
   "icons/icon.png",
   "icons/bmc-logo.svg",
   "fonts/Cookie-Regular.ttf",
+  "fonts/Satoshi-Variable.ttf",
 ] as const;
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));

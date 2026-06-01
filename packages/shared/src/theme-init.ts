@@ -17,5 +17,10 @@
       localStorage.getItem("bookmarksPosition") || "top";
     document.documentElement.dataset.centerWidget =
       localStorage.getItem("centerWidget") || "clock";
+    var cs = parseInt(localStorage.getItem("clockSize") || "110", 10);
+    document.documentElement.style.setProperty(
+      "--clock-scale",
+      String((isNaN(cs) ? 110 : cs) / 100)
+    );
   } catch (e) {}
 })();

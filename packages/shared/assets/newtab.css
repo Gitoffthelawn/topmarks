@@ -6,6 +6,16 @@
   font-display: swap;
 }
 
+/* Satoshi — personality typeface, used on the clock. One variable file spans
+   the whole weight axis, so any clock weight comes from this single file. */
+@font-face {
+  font-family: "Satoshi";
+  src: url("fonts/Satoshi-Variable.ttf") format("truetype");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -21,10 +31,6 @@
 
   /* Liquid glass tokens */
   --glass-bg-strong: rgba(255, 255, 255, 0.60);
-  /* Dropdown menus nest under the bar's backdrop-filter (submenus two levels
-     deep), so their own blur no-ops and they'd read washed-out over the
-     wallpaper; a more opaque background keeps the menus legible. */
-  --glass-bg-menu: rgba(255, 255, 255, 0.92);
   --glass-border: rgba(255, 255, 255, 0.55);
   --glass-border-soft: rgba(0, 0, 0, 0.08);
   --glass-highlight: rgba(255, 255, 255, 0.65);
@@ -48,7 +54,6 @@
   --switch-off: #52525b;
 
   --glass-bg-strong: rgba(28, 27, 34, 0.55);
-  --glass-bg-menu: rgba(28, 27, 34, 0.92);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-border-soft: rgba(255, 255, 255, 0.06);
   --glass-highlight: rgba(255, 255, 255, 0.1);
@@ -66,7 +71,6 @@
 /* ---- Classic style: solid surfaces, no blur, anchored bar ---- */
 :root[data-style="classic"] {
   --glass-bg-strong: #ffffff;
-  --glass-bg-menu: #ffffff;
   --glass-control-bg: #f5f5f5;
   --glass-blur: none;
   --glass-border: rgba(0, 0, 0, 0.1);
@@ -80,7 +84,6 @@
 
 :root[data-style="classic"][data-theme="dark"] {
   --glass-bg-strong: #2b2a33;
-  --glass-bg-menu: #2b2a33;
   --glass-control-bg: #1c1b22;
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-border-soft: rgba(255, 255, 255, 0.08);
@@ -90,12 +93,19 @@
   --toggle-thumb-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* In classic style, the bar anchors flush to the top with a bottom border. */
+/* In classic style, the bar anchors flush to the top with a bottom border.
+   Classic has no blur, so the surface goes back on the element and the glass
+   ::before layer is dropped. */
 :root[data-style="classic"] #bookmarks-bar {
   margin: 0;
   border-radius: 0;
   border-bottom: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
   box-shadow: none;
+}
+
+:root[data-style="classic"] #bookmarks-bar::before {
+  display: none;
 }
 
 :root[data-style="classic"] #bg-attribution {
@@ -139,7 +149,7 @@
 /* Top-level dropdowns flip upward so they don't open off-screen. */
 :root[data-bookmarks-position="bottom"] .bookmark-folder > .folder-dropdown {
   top: auto;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 12px);
 }
 
 html,
@@ -174,13 +184,26 @@ body {
   /* Horizontal padding leaves room for the pill's rounded ends so items
      (and the overflow chevron) never sit on top of the curve. */
   padding: 4px 20px;
+  position: relative;
+  border-radius: 9999px;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+/* The glass surface (tint + blur + shadow) lives on a -1 layer instead of the
+   bar itself. A backdrop-filter on the bar would make it a "backdrop root" and
+   neutralise the blur of the dropdowns nested inside it; keeping it off the bar
+   element lets the menus' own glass match the bar exactly. */
+#bookmarks-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
   background: var(--glass-bg-strong);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border-radius: 9999px;
   box-shadow: var(--glass-shadow);
-  overflow: visible;
-  white-space: nowrap;
 }
 
 body.centered #bookmarks-bar {
@@ -269,19 +292,39 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 .folder-dropdown {
   display: none;
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 16px);
   left: 0;
   margin: 0;
   padding: 4px 0;
   list-style: none;
-  background: var(--glass-bg-menu);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: 12px;
   min-width: 260px;
   max-width: 360px;
-  box-shadow: var(--glass-shadow);
   z-index: 50;
+}
+
+/* Same trick as the bar: glass surface on a -1 layer so the dropdown isn't a
+   backdrop root. This is what lets the blur actually take effect on menus
+   (and on submenus, which are nested another level deeper). */
+.folder-dropdown::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+}
+
+:root[data-style="classic"] .folder-dropdown {
+  background: var(--glass-bg-strong);
+  box-shadow: var(--glass-shadow);
+}
+
+:root[data-style="classic"] .folder-dropdown::before {
+  display: none;
 }
 
 .bookmark-folder.open > .folder-dropdown {
@@ -331,7 +374,9 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 }
 
 .folder-dropdown .submenu {
-  top: 2px;
+  /* -4px cancels the parent dropdown's 4px top padding so the submenu's top
+     edge lines up with the parent's, giving it the same gap below the bar. */
+  top: -4px;
   left: 100%;
   margin-left: 6px;
 }
@@ -368,12 +413,24 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   padding: 24px;
 }
 
-/* Center the slot whenever it holds a widget (search or clock), not when empty. */
-:root[data-center-widget="search"] #content,
-:root[data-center-widget="clock"] #content {
+/* Search sits in the upper third. */
+:root[data-center-widget="search"] #content {
   display: flex;
   justify-content: center;
   padding-top: 33vh;
+}
+
+/* The clock is pinned to the viewport center so it grows symmetrically from the
+   middle as clock size changes, rather than downward from a fixed top edge.
+   Fixed + inset:0 fills the viewport; pointer-events:none lets clicks fall
+   through to the bookmarks bar and settings button beneath it. */
+:root[data-center-widget="clock"] #content {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 
 /* Exactly one center widget is visible at a time, driven by the data attribute. */
@@ -389,8 +446,9 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 
 /* Big bold clock. Always white, no shadow — sits over the wallpaper. */
 #clock {
-  font-size: clamp(6rem, 20vw, 16rem);
-  font-weight: 700;
+  font-family: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: calc(clamp(6rem, 20vw, 16rem) * var(--clock-scale, 1));
+  font-weight: 500;
   line-height: 1;
   letter-spacing: -0.02em;
   color: #fff;
@@ -667,6 +725,39 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   outline: 2px solid var(--accent);
   outline-offset: -1px;
   border-color: transparent;
+}
+
+/* Clock-size slider: only meaningful when the clock is the center widget, so
+   it stays collapsed otherwise and reveals with a height/opacity transition. */
+#setting-clock-size {
+  display: block;
+  overflow: hidden;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  border-top: none;
+  transition: max-height 0.28s ease, opacity 0.2s ease, padding 0.28s ease;
+}
+
+:root[data-center-widget="clock"] #setting-clock-size {
+  max-height: 72px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  opacity: 1;
+}
+
+#setting-clock-size input[type="range"] {
+  width: 100%;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+#setting-clock-size input[type="range"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 .bg-error {

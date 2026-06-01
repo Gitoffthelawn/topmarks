@@ -14,6 +14,9 @@ export const SETTINGS_DEFAULTS = {
   bookmarksPosition: "top" as "top" | "bottom",
   // Which widget occupies the centered slot in #content.
   centerWidget: "clock" as "search" | "clock" | "none",
+  // Clock size as a percentage of the responsive base (100 = base). Scales the
+  // clamp() in CSS via the --clock-scale custom property.
+  clockSize: 110,
   // Maps a top-level folder id to a chosen emoji that replaces its icon.
   folderEmojis: {} as Record<string, string>,
 };
@@ -119,6 +122,22 @@ export function applyCenterWidget(): void {
   if (widget === "search") focusSearch();
 }
 
+export function applyClockSize(): void {
+  setClockScale(settings.clockSize);
+}
+
+// Single place that writes the --clock-scale custom property (and mirrors it to
+// localStorage so theme-init can set it before first paint, avoiding a size
+// jump). Used both for the persisted value and for live drag previews.
+function setClockScale(percent: number): void {
+  document.documentElement.style.setProperty("--clock-scale", String(percent / 100));
+  try {
+    localStorage.setItem("clockSize", String(percent));
+  } catch {
+    /* ignore */
+  }
+}
+
 export function syncSettingsUi(): void {
   document.querySelectorAll<HTMLElement>("[data-setting]").forEach((el) => {
     const key = el.dataset.setting as keyof Settings | undefined;
@@ -164,6 +183,8 @@ function handleSettingChange(key: keyof Settings): void {
     }
   } else if (key === "centerWidget") {
     applyCenterWidget();
+  } else if (key === "clockSize") {
+    applyClockSize();
   }
 }
 
@@ -208,6 +229,19 @@ export function setupSettingsPanel(): void {
       const value =
         key === "backgroundIntervalHours" ? parseInt(sel.value, 10) : (sel.value as Settings[typeof key]);
       await saveSetting(key, value as Settings[typeof key]);
+      handleSettingChange(key);
+    });
+  });
+
+  panel.querySelectorAll<HTMLInputElement>('input[type="range"][data-setting]').forEach((range) => {
+    // Live-preview while dragging (cheap CSS var write, no storage churn);
+    // persist once the drag ends.
+    range.addEventListener("input", () => {
+      setClockScale(parseInt(range.value, 10));
+    });
+    range.addEventListener("change", async () => {
+      const key = range.dataset.setting as keyof Settings;
+      await saveSetting(key, parseInt(range.value, 10) as Settings[typeof key]);
       handleSettingChange(key);
     });
   });
