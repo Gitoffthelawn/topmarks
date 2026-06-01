@@ -30,6 +30,7 @@
         data-i18n-aria-label="searchAriaLabel"
         aria-label="Search"
       />
+      <div id="clock"></div>
     </main>
 
     <div id="bg-attribution" hidden>
@@ -83,11 +84,19 @@
         <span class="switch" aria-hidden="true"></span>
       </label>
 
-      <label class="setting">
-        <span data-i18n="showSearchField">Show search field</span>
-        <input type="checkbox" data-setting="showSearch" />
-        <span class="switch" aria-hidden="true"></span>
-      </label>
+      <div class="setting setting-text">
+        <span id="center-widget-label" data-i18n="centerLabel">Center</span>
+        <div
+          class="toggle-group"
+          role="radiogroup"
+          aria-labelledby="center-widget-label"
+          data-setting="centerWidget"
+        >
+          <button type="button" role="radio" data-value="search" data-i18n="centerSearch">Search</button>
+          <button type="button" role="radio" data-value="clock" data-i18n="centerClock">Clock</button>
+          <button type="button" role="radio" data-value="none" data-i18n="centerNone">None</button>
+        </div>
+      </div>
 
       <button
         type="button"

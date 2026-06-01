@@ -1,7 +1,8 @@
 import { getPlatform } from "@/platform";
 import { scheduleReflow, renderBookmarks } from "@/bookmarks";
 import { loadBackground, updateBackgroundErrorVisibility } from "@/unsplash";
-import { applyShowSearch } from "@/search";
+import { focusSearch } from "@/search";
+import { startClock, stopClock } from "@/clock";
 
 export const SETTINGS_DEFAULTS = {
   centerBookmarks: false,
@@ -11,7 +12,8 @@ export const SETTINGS_DEFAULTS = {
   theme: "auto" as "auto" | "light" | "dark",
   style: "glass" as "glass" | "classic",
   bookmarksPosition: "top" as "top" | "bottom",
-  showSearch: true,
+  // Which widget occupies the centered slot in #content.
+  centerWidget: "clock" as "search" | "clock" | "none",
   // Maps a top-level folder id to a chosen emoji that replaces its icon.
   folderEmojis: {} as Record<string, string>,
 };
@@ -29,6 +31,17 @@ export function getSettings(): Readonly<Settings> {
 export async function loadSettings(): Promise<void> {
   const stored = await getPlatform().storage.get(SETTINGS_DEFAULTS as any);
   settings = { ...SETTINGS_DEFAULTS, ...(stored as Partial<Settings>) };
+
+  // Migrate the legacy `showSearch` boolean → `centerWidget`. The array-form
+  // read distinguishes "never stored" from the default, so an explicit
+  // centerWidget always wins; an unset legacy key falls through to the new
+  // "clock" default ("clock for everyone").
+  const raw = await getPlatform().storage.get(["centerWidget", "showSearch"]);
+  if ((raw as { centerWidget?: unknown }).centerWidget === undefined) {
+    const showSearch = (raw as { showSearch?: boolean }).showSearch;
+    if (showSearch === false) settings.centerWidget = "none";
+    else if (showSearch === true) settings.centerWidget = "search";
+  }
 }
 
 async function saveSetting<K extends keyof Settings>(key: K, value: Settings[K]): Promise<void> {
@@ -91,6 +104,21 @@ export function applyBookmarksPosition(): void {
   }
 }
 
+export function applyCenterWidget(): void {
+  const widget = settings.centerWidget;
+  // Mirror the theme/style/position pattern: a data attribute on <html> that
+  // CSS keys off (and theme-init reads from localStorage to avoid a flash).
+  document.documentElement.dataset.centerWidget = widget;
+  try {
+    localStorage.setItem("centerWidget", widget);
+  } catch {
+    /* ignore */
+  }
+  if (widget === "clock") startClock();
+  else stopClock();
+  if (widget === "search") focusSearch();
+}
+
 export function syncSettingsUi(): void {
   document.querySelectorAll<HTMLElement>("[data-setting]").forEach((el) => {
     const key = el.dataset.setting as keyof Settings | undefined;
@@ -134,8 +162,8 @@ function handleSettingChange(key: keyof Settings): void {
         intervalHours: settings.backgroundIntervalHours,
       });
     }
-  } else if (key === "showSearch") {
-    applyShowSearch(settings.showSearch);
+  } else if (key === "centerWidget") {
+    applyCenterWidget();
   }
 }
 

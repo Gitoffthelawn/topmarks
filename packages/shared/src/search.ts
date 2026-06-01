@@ -1,12 +1,10 @@
 import { getPlatform } from "@/platform";
 
 let searchInput: HTMLInputElement | null = null;
-let searchInputParent: Element | null = null;
 
-export function setupSearch(showSearch: boolean): void {
+export function setupSearch(): void {
   searchInput = document.getElementById("search-input") as HTMLInputElement | null;
   if (!searchInput) return;
-  searchInputParent = searchInput.parentElement;
 
   searchInput.addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
@@ -28,23 +26,10 @@ export function setupSearch(showSearch: boolean): void {
       }
     }
   });
-
-  if (!showSearch) {
-    searchInput.remove();
-    return;
-  }
-
-  searchInput.focus();
 }
 
-export function applyShowSearch(showSearch: boolean): void {
-  if (!searchInput) return;
-  if (showSearch) {
-    if (!searchInput.isConnected && searchInputParent) {
-      searchInputParent.appendChild(searchInput);
-    }
-    searchInput.focus();
-  } else if (searchInput.isConnected) {
-    searchInput.remove();
-  }
+// Visibility is CSS-driven via :root[data-center-widget]; we only need to grab
+// focus when the search field is the active center widget.
+export function focusSearch(): void {
+  searchInput?.focus();
 }

@@ -21,6 +21,10 @@
 
   /* Liquid glass tokens */
   --glass-bg-strong: rgba(255, 255, 255, 0.60);
+  /* Dropdown menus nest under the bar's backdrop-filter (submenus two levels
+     deep), so their own blur no-ops and they'd read washed-out over the
+     wallpaper; a more opaque background keeps the menus legible. */
+  --glass-bg-menu: rgba(255, 255, 255, 0.92);
   --glass-border: rgba(255, 255, 255, 0.55);
   --glass-border-soft: rgba(0, 0, 0, 0.08);
   --glass-highlight: rgba(255, 255, 255, 0.65);
@@ -44,6 +48,7 @@
   --switch-off: #52525b;
 
   --glass-bg-strong: rgba(28, 27, 34, 0.55);
+  --glass-bg-menu: rgba(28, 27, 34, 0.92);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-border-soft: rgba(255, 255, 255, 0.06);
   --glass-highlight: rgba(255, 255, 255, 0.1);
@@ -61,6 +66,7 @@
 /* ---- Classic style: solid surfaces, no blur, anchored bar ---- */
 :root[data-style="classic"] {
   --glass-bg-strong: #ffffff;
+  --glass-bg-menu: #ffffff;
   --glass-control-bg: #f5f5f5;
   --glass-blur: none;
   --glass-border: rgba(0, 0, 0, 0.1);
@@ -74,6 +80,7 @@
 
 :root[data-style="classic"][data-theme="dark"] {
   --glass-bg-strong: #2b2a33;
+  --glass-bg-menu: #2b2a33;
   --glass-control-bg: #1c1b22;
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-border-soft: rgba(255, 255, 255, 0.08);
@@ -132,7 +139,7 @@
 /* Top-level dropdowns flip upward so they don't open off-screen. */
 :root[data-bookmarks-position="bottom"] .bookmark-folder > .folder-dropdown {
   top: auto;
-  bottom: calc(100% + 7px);
+  bottom: calc(100% + 10px);
 }
 
 html,
@@ -262,12 +269,12 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 .folder-dropdown {
   display: none;
   position: absolute;
-  top: calc(100% + 7px);
+  top: calc(100% + 10px);
   left: 0;
   margin: 0;
   padding: 4px 0;
   list-style: none;
-  background: var(--glass-bg-strong);
+  background: var(--glass-bg-menu);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border-radius: 12px;
@@ -324,7 +331,7 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 }
 
 .folder-dropdown .submenu {
-  top: -5px;
+  top: 2px;
   left: 100%;
   margin-left: 6px;
 }
@@ -361,10 +368,34 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   padding: 24px;
 }
 
-body:has(#search-input) #content {
+/* Center the slot whenever it holds a widget (search or clock), not when empty. */
+:root[data-center-widget="search"] #content,
+:root[data-center-widget="clock"] #content {
   display: flex;
   justify-content: center;
   padding-top: 33vh;
+}
+
+/* Exactly one center widget is visible at a time, driven by the data attribute. */
+#clock {
+  display: none;
+}
+:root[data-center-widget="clock"] #clock {
+  display: block;
+}
+:root:not([data-center-widget="search"]) #search-input {
+  display: none;
+}
+
+/* Big bold clock. Always white, no shadow — sits over the wallpaper. */
+#clock {
+  font-size: clamp(6rem, 20vw, 16rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
 }
 
 #search-input {

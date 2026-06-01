@@ -1,6 +1,6 @@
-// Synchronously sets data-theme, data-style, and data-bookmarks-position on
-// <html> based on localStorage, before the stylesheet is parsed — prevents a
-// flash of incorrect theme/style/layout.
+// Synchronously sets data-theme, data-style, data-bookmarks-position, and
+// data-center-widget on <html> based on localStorage, before the stylesheet is
+// parsed — prevents a flash of incorrect theme/style/layout.
 (function () {
   try {
     var t = localStorage.getItem("theme") || "auto";
@@ -15,5 +15,7 @@
       localStorage.getItem("style") || "glass";
     document.documentElement.dataset.bookmarksPosition =
       localStorage.getItem("bookmarksPosition") || "top";
+    document.documentElement.dataset.centerWidget =
+      localStorage.getItem("centerWidget") || "clock";
   } catch (e) {}
 })();

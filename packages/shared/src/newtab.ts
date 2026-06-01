@@ -7,6 +7,7 @@ import {
   applyTheme,
   applyStyle,
   applyBookmarksPosition,
+  applyCenterWidget,
   applyClassSettings,
   syncSettingsUi,
   setupSettingsPanel,
@@ -44,7 +45,8 @@ export async function startApp(platform: Platform): Promise<void> {
   syncSettingsUi();
   setupSettingsPanel();
   setupFolderEmojiOverlay();
-  setupSearch(settings.showSearch);
+  setupSearch();
+  applyCenterWidget();
   setupBookmarksListeners();
   setupBackoffStorageListener();
   setupFolderEmojiStorageListener();

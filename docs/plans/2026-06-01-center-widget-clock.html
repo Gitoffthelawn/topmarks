@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plan — Center widget: search, clock, or nothing</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --card: #161b22;
+    --card-soft: #1c2330;
+    --border: #2a3340;
+    --fg: #e6edf3;
+    --fg-muted: #9aa7b4;
+    --accent: #6ea8fe;
+    --accent-soft: rgba(110, 168, 254, 0.14);
+    --green: #6ee7a8;
+    --amber: #f5c451;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f8fa; --card: #fff; --card-soft: #f0f3f7; --border: #d8dee4;
+      --fg: #1f2328; --fg-muted: #59636e; --accent: #2f6feb; --accent-soft: rgba(47,111,235,0.1);
+      --green: #1a7f4b; --amber: #9a6700;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 20px 80px;
+    background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6; font-size: 16px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  header {
+    padding: 56px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px;
+  }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin: 0 0 10px;
+  }
+  h1 { font-size: 34px; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.02em; }
+  .lede { color: var(--fg-muted); font-size: 17px; margin: 0; max-width: 62ch; }
+  .meta { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .chip {
+    font-size: 12.5px; padding: 4px 10px; border-radius: 999px;
+    background: var(--card-soft); border: 1px solid var(--border); color: var(--fg-muted);
+  }
+  .status { font-weight: 700; }
+  .status--proposed { color: var(--amber); border-color: var(--amber); }
+  .status--approved { color: var(--accent); border-color: var(--accent); }
+  .status--built { color: var(--green); border-color: var(--green); }
+  h2 {
+    font-size: 22px; margin: 44px 0 6px; letter-spacing: -0.01em;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  h2 .num {
+    font-family: var(--mono); font-size: 14px; color: var(--accent);
+    background: var(--accent-soft); border-radius: 7px; padding: 2px 9px; font-weight: 700;
+  }
+  h3 { font-size: 16px; margin: 26px 0 6px; }
+  p { margin: 10px 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px 22px; margin: 16px 0;
+  }
+  code {
+    font-family: var(--mono); font-size: 13.5px;
+    background: var(--card-soft); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 6px;
+  }
+  pre {
+    background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; overflow-x: auto; font-family: var(--mono);
+    font-size: 13px; line-height: 1.55; margin: 12px 0;
+  }
+  pre code { background: none; border: none; padding: 0; }
+  ul, ol { margin: 10px 0; padding-left: 24px; }
+  li { margin: 5px 0; }
+  .file {
+    font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 600;
+  }
+  .new-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--green); border: 1px solid var(--green); border-radius: 5px;
+    padding: 1px 6px; margin-left: 8px; vertical-align: middle;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--fg-muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td:first-child { white-space: nowrap; }
+  .decided {
+    border-left: 3px solid var(--green); background: var(--card);
+    border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0;
+  }
+  .decided .label { color: var(--green); font-weight: 700; font-size: 13px; }
+  .confirm {
+    border-left: 3px solid var(--amber); background: var(--card);
+    border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0;
+  }
+  .confirm .label { color: var(--amber); font-weight: 700; font-size: 13px; }
+  .flow {
+    font-family: var(--mono); font-size: 13px; color: var(--fg-muted);
+    background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; margin: 14px 0; line-height: 1.9;
+  }
+  .flow b { color: var(--fg); }
+  .footnote { color: var(--fg-muted); font-size: 13.5px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Plan · Topmarks</p>
+    <h1>Center widget: search, clock, or nothing</h1>
+    <p class="lede">
+      Turn the boolean “Show search field” toggle into a three-way selector
+      (like Theme/Style): show the <b>search field</b>, a <b>big bold clock</b>,
+      or <b>nothing</b> in the center of the new-tab page.
+    </p>
+    <div class="meta">
+      <span class="chip status status--built">Built</span>
+      <span class="chip">2026-06-01</span>
+      <span class="chip">shared · both stores</span>
+    </div>
+  </header>
+
+  <h2><span class="num">UX</span> What changes</h2>
+  <div class="card">
+    <ol>
+      <li>In Settings, the <b>“Show search field”</b> checkbox is replaced by a
+        <b>“Center”</b> toggle-group with three options:
+        <b>Search</b> · <b>Clock</b> · <b>None</b> — visually identical to the
+        existing Theme and Style selectors.</li>
+      <li><b>Clock</b> (default) — a large, bold, locale-formatted
+        <code>HH:MM</code> clock in the center slot. Updates each minute.</li>
+      <li><b>Search</b> — the rounded search pill, centered at ~33vh,
+        auto-focused.</li>
+      <li><b>None</b> — empty center, just the bookmarks bar and wallpaper.</li>
+      <li>Migration (“clock for everyone”): an explicit stored
+        <code>showSearch:&nbsp;false</code> → <b>None</b>; explicit
+        <code>showSearch:&nbsp;true</code> → <b>Search</b>; unset → the new
+        <b>Clock</b> default (existing search-by-default users flip to clock once).</li>
+    </ol>
+  </div>
+
+  <h2><span class="num">1</span> Why / context</h2>
+  <div class="card">
+    <p>The center area is already a single slot: <code>#content</code> holds
+      <code>#search-input</code> and is centered via
+      <code>body:has(#search-input)</code>. Today visibility is driven
+      imperatively — <code>search.ts</code> calls <code>.remove()</code> /
+      re-appends the input. Adding a second mutually-exclusive widget is cleaner
+      as a <b>declarative attribute</b> the CSS keys off, rather than two
+      independent show/hide paths.</p>
+    <p>So this change introduces a single source of truth —
+      <code>data-center-widget="search|clock|none"</code> on
+      <code>&lt;body&gt;</code> — and lets CSS decide which child is visible. The
+      selector UI reuses the existing <code>.toggle-group</code> +
+      <code>data-setting</code> machinery in <code>settings.ts</code> with zero
+      new wiring (the generic toggle-group click handler already handles it).</p>
+  </div>
+
+  <h2><span class="num">2</span> Approach</h2>
+  <table>
+    <thead><tr><th>File</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="file">packages/shared/src/settings.ts</td>
+        <td>Replace <code>showSearch: true</code> with
+          <code>centerWidget: "search" | "clock" | "none"</code> (default
+          <code>"clock"</code>). Add <code>applyCenterWidget()</code> — sets
+          <code>document.body.dataset.centerWidget</code>, starts/stops the clock,
+          and focuses the search input when relevant. In
+          <code>loadSettings()</code>, migrate legacy <code>showSearch</code>
+          (fetched via <code>storage.get(["showSearch"])</code> so an unset key
+          is distinguishable). Swap the <code>showSearch</code> branch in
+          <code>handleSettingChange</code> for <code>centerWidget</code>.</td>
+      </tr>
+      <tr>
+        <td class="file">packages/shared/src/clock.ts <span class="new-tag">new</span></td>
+        <td><code>startClock()</code> / <code>stopClock()</code>. Renders
+          <code>#clock</code> via <code>Intl.DateTimeFormat(undefined, {hour, minute})</code>
+          (locale-aware 12/24h). Aligns updates to the next minute boundary, then
+          ticks every 60s. Idempotent; clears its timer on stop.</td>
+      </tr>
+      <tr>
+        <td class="file">packages/shared/src/search.ts</td>
+        <td>Drop the imperative <code>.remove()</code> / re-append logic. Keep
+          <code>setupSearch()</code> for the keydown handler + initial focus;
+          visibility is now CSS-driven. Replace <code>applyShowSearch()</code>
+          (folded into <code>applyCenterWidget</code>) or reduce it to a focus
+          helper.</td>
+      </tr>
+      <tr>
+        <td class="file">packages/shared/assets/newtab.html</td>
+        <td>Add <code>&lt;div id="clock" aria-hidden="true"&gt;</code> inside
+          <code>#content</code> next to the search input. Replace the
+          “Show search field” <code>&lt;label&gt;</code> checkbox with a
+          <code>.toggle-group</code> radiogroup (<code>data-setting="centerWidget"</code>,
+          values <code>search/clock/none</code>), mirroring the Theme block.</td>
+      </tr>
+      <tr>
+        <td class="file">packages/shared/assets/newtab.css</td>
+        <td>Center <code>#content</code> when
+          <code>body[data-center-widget="search"|"clock"]</code> (replacing the
+          <code>:has(#search-input)</code> rule). Show/hide each child by
+          attribute. Style <code>#clock</code>: large bold system sans
+          (<code>clamp()</code>-scaled), <code>--fg</code> color, glass/classic
+          parity, drop-shadow for legibility over wallpaper.</td>
+      </tr>
+      <tr>
+        <td class="file">packages/shared/src/newtab.ts</td>
+        <td>Call <code>applyCenterWidget()</code> in the startup sequence (after
+          <code>setupSearch</code>) instead of passing <code>showSearch</code>.</td>
+      </tr>
+      <tr>
+        <td class="file">packages/shared/_locales/*/messages.json</td>
+        <td>Add <code>centerLabel</code>, <code>centerSearch</code>,
+          <code>centerClock</code>, <code>centerNone</code> across all 7 locales
+          (en, de, es, fr, it, ja, zh_CN). Retire <code>showSearchField</code>
+          (or leave unused).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="flow">
+    settings load → <b>migrate showSearch→centerWidget</b> → <b>applyCenterWidget()</b> → sets <b>body[data-center-widget]</b> → CSS shows search OR clock OR none → if clock: <b>startClock()</b>
+  </div>
+
+  <h2><span class="num">3</span> Verification</h2>
+  <div class="card">
+    <ul>
+      <li><code>npm run build</code> (or per-package build) — type-checks the new
+        setting union + module, both Chrome & Firefox.</li>
+      <li>Load unpacked: toggle Search → Clock → None, confirm each renders and
+        the choice persists across reload and across a second open tab.</li>
+      <li>Clock shows correct locale format (e.g. <code>14:30</code> vs
+        <code>2:30&nbsp;PM</code>); flips at the minute boundary.</li>
+      <li>Legacy migration: seed storage with <code>showSearch:false</code>,
+        reload → lands on <b>None</b>.</li>
+      <li>Glass + Classic styles, light + dark themes all legible over a
+        wallpaper.</li>
+    </ul>
+  </div>
+
+  <hr />
+
+  <h2>Decisions</h2>
+  <div class="decided">
+    <span class="label">✓ Time format — follow locale</span>
+    <p style="margin:6px 0 0"><code>Intl.DateTimeFormat</code> with no locale arg
+      picks 12/24h from the browser. Zero config, native everywhere.</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ Detail — hours:minutes</span>
+    <p style="margin:6px 0 0">No seconds. Updates each minute → calm look and a
+      cheap timer (one tick/min, aligned to the boundary).</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ Typeface — bold system sans</span>
+    <p style="margin:6px 0 0">Large, heavy system UI font (not the Cookie script
+      font), <code>clamp()</code>-scaled for the “big bold clock” look.</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ Selector shape — replace the checkbox</span>
+    <p style="margin:6px 0 0">A 3-way toggle-group reusing the Theme/Style
+      pattern, not a new control type. Migrates the old boolean.</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ Default — Clock, for everyone</span>
+    <p style="margin:6px 0 0">Clock is the default for new installs and for
+      existing users who never changed the setting (they flip search→clock once).
+      Only an explicit stored <code>showSearch:false</code> is preserved as None.</p>
+  </div>
+  <div class="decided">
+    <span class="label">✓ Setting label — “Center”</span>
+    <p style="margin:6px 0 0">Group label <b>Center</b>, options
+      <b>Search / Clock / None</b>.</p>
+  </div>
+
+</div>
+</body>
+</html>
