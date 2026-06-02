@@ -15,7 +15,7 @@
 > - Manual browser checks (Task 8), run with `npm run dev:chrome` / `npm run dev:firefox`.
 > Commit after each task once its verification passes. Work happens on the existing `feature/tab-groups` branch.
 
-**Source spec:** [`docs/plans/2026-06-02-tab-groups.html`](../../plans/2026-06-02-tab-groups.html) (status: Approved).
+**Source spec:** [`docs/superpowers/specs/2026-06-02-tab-groups-design.md`](../specs/2026-06-02-tab-groups-design.md) (status: Approved).
 
 **File structure (decomposition):**
 - `packages/shared/src/platform.ts` — extend `Platform` with optional `tabGroups` + `permissions` surfaces and shared types.
@@ -1043,11 +1043,11 @@ no `tabs`/`tabGroups` permissions (they appear only after enabling).
 
 - [ ] **Step 5: Promote the plan doc to Built**
 
-Once all checks pass, in `docs/plans/2026-06-02-tab-groups.html` change the
-header chip from `status--proposed` to `status--built` and its text to `Built`.
+Once all checks pass, in `docs/superpowers/specs/2026-06-02-tab-groups-design.md`
+change the `**Status:**` line from `Proposed` to `Built`.
 
 ```bash
-git add docs/plans/2026-06-02-tab-groups.html
+git add docs/superpowers/specs/2026-06-02-tab-groups-design.md
 git commit -m "Mark tab-groups plan doc as Built"
 ```
 
