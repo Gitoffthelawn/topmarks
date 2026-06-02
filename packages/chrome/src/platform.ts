@@ -6,7 +6,13 @@
 // Chrome MV3's chrome.* APIs return promises natively when called without a
 // callback, so no polyfill needed.
 
-import type { Platform, BookmarkNode, StorageChanges } from "@topmarks/shared/platform";
+import type {
+  Platform,
+  BookmarkNode,
+  StorageChanges,
+  LiveTabGroup,
+  ReopenableGroup,
+} from "@topmarks/shared/platform";
 
 // Chrome's bookmarks bar root is "1" (the bookmark bar's stable ID). Compare
 // with Firefox's "toolbar_____".
@@ -62,6 +68,75 @@ export const platform: Platform = {
         text: query,
         disposition: newTab ? "NEW_TAB" : "CURRENT_TAB",
       });
+    },
+  },
+  // tabGroups + permissions are registered at module load (not lazily) so the
+  // MV3 service worker wakes on group/permission changes without needing a
+  // separate background listener registration step.
+  tabGroups: {
+    async queryOpen(): Promise<LiveTabGroup[]> {
+      const groups = await chrome.tabGroups.query({});
+      const out: LiveTabGroup[] = [];
+      for (const g of groups) {
+        const tabs = await chrome.tabs.query({ groupId: g.id });
+        out.push({
+          id: g.id,
+          title: g.title ?? "",
+          color: g.color,
+          tabs: tabs
+            .filter((t) => !!t.url)
+            .map((t) => ({ url: t.url!, title: t.title ?? "" })),
+        });
+      }
+      return out;
+    },
+    async reopen(group: ReopenableGroup): Promise<void> {
+      const ids: number[] = [];
+      for (const t of group.tabs) {
+        const tab = await chrome.tabs.create({ url: t.url, active: false });
+        if (tab.id != null) ids.push(tab.id);
+      }
+      if (!ids.length) return;
+      const groupId = await chrome.tabs.group({ tabIds: ids });
+      await chrome.tabGroups.update(groupId, {
+        title: group.title,
+        color: group.color as chrome.tabGroups.ColorEnum,
+      });
+    },
+    onChanged(handler) {
+      chrome.tabGroups.onCreated.addListener(handler);
+      chrome.tabGroups.onUpdated.addListener(handler);
+      chrome.tabGroups.onRemoved.addListener(handler);
+      chrome.tabs.onUpdated.addListener(handler);
+      chrome.tabs.onRemoved.addListener(handler);
+      chrome.tabs.onAttached.addListener(handler);
+      chrome.tabs.onDetached.addListener(handler);
+      return () => {
+        chrome.tabGroups.onCreated.removeListener(handler);
+        chrome.tabGroups.onUpdated.removeListener(handler);
+        chrome.tabGroups.onRemoved.removeListener(handler);
+        chrome.tabs.onUpdated.removeListener(handler);
+        chrome.tabs.onRemoved.removeListener(handler);
+        chrome.tabs.onAttached.removeListener(handler);
+        chrome.tabs.onDetached.removeListener(handler);
+      };
+    },
+  },
+  permissions: {
+    contains(perms) {
+      return chrome.permissions.contains({ permissions: perms });
+    },
+    request(perms) {
+      return chrome.permissions.request({ permissions: perms });
+    },
+    remove(perms) {
+      return chrome.permissions.remove({ permissions: perms });
+    },
+    onAdded(handler) {
+      // @types/chrome@0.0.280 types PermissionsAddedEvent without removeListener
+      // (the underlying API supports it); cast to any for the unsubscribe call.
+      chrome.permissions.onAdded.addListener(handler);
+      return () => (chrome.permissions.onAdded as any).removeListener(handler);
     },
   },
   i18n: {
