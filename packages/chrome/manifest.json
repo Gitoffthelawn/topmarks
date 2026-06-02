@@ -6,8 +6,10 @@
   "default_locale": "en",
   "homepage_url": "https://github.com/nx-alejandrolacasa/topmarks",
   "permissions": ["bookmarks", "storage", "search", "favicon"],
+  "optional_permissions": ["tabs", "tabGroups"],
   "host_permissions": ["https://api.unsplash.com/*"],
   "icons": { "128": "icons/icon.png" },
   "chrome_url_overrides": { "newtab": "newtab.html" },
+  "background": { "service_worker": "background.js" },
   "minimum_chrome_version": "120"
 }
