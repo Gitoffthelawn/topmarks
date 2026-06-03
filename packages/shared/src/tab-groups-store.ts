@@ -2,11 +2,8 @@ import { getPlatform } from "@/platform";
 
 // Persisted shape. `id` is our own stable id (NOT the native groupId).
 // `nativeId` tracks the live group within a session; cleared once closed.
-// `sig` is a content signature used to re-link a snapshot to a group that was
-// reopened (and thus got a fresh nativeId) or survived a restart.
 export interface GroupSnapshot {
   id: string;
-  sig: string;
   nativeId?: number;
   title: string;
   color: string;
@@ -23,9 +20,14 @@ const DEBOUNCE_MS = 250;
 // Permissions the feature needs. Exported so settings.ts requests the same set.
 export const TAB_GROUP_PERMISSIONS = ["tabs", "tabGroups"] as const;
 
-function signature(g: { title: string; color: string; tabs: { url: string }[] }): string {
-  const urls = g.tabs.map((t) => t.url).sort().join("|");
-  return `${g.title} ${g.color} ${urls}`;
+// A closed group is re-identified by title + color, not by its exact tab set:
+// URLs drift across reopen (redirects, trailing slashes, load states), so a
+// content signature would fragment the same group into duplicates.
+function sameIdentity(
+  a: { title: string; color: string },
+  b: { title: string; color: string }
+): boolean {
+  return a.title.trim() === b.title.trim() && a.color === b.color;
 }
 
 async function loadStore(): Promise<GroupSnapshot[]> {
@@ -48,8 +50,9 @@ export async function forgetGroup(id: string): Promise<void> {
 }
 
 // Re-read every open group and reconcile the store against it. Open groups are
-// upserted (matched by nativeId, else by signature); snapshots previously open
-// whose native group has vanished are flipped to "closed" (never deleted).
+// upserted (matched by nativeId, else by title+color identity); snapshots
+// previously open whose native group has vanished are flipped to "closed"
+// (never deleted).
 export async function resyncOpenGroups(): Promise<void> {
   const tg = getPlatform().tabGroups;
   if (!tg) return;
@@ -59,15 +62,14 @@ export async function resyncOpenGroups(): Promise<void> {
   const liveNativeIds = new Set(live.map((g) => g.id));
 
   for (const g of live) {
-    const sig = signature(g);
-    // Match a live group to its snapshot by nativeId; fall back to signature
-    // only for UNLINKED snapshots (nativeId === undefined), so two distinct
-    // live groups with identical content never collapse into one snapshot.
+    // Match a live group to its snapshot by nativeId; fall back to title+color
+    // identity only for UNLINKED snapshots (nativeId === undefined), so two
+    // distinct live groups never collapse into one snapshot, while a reopened
+    // closed group updates its existing entry instead of duplicating it.
     const match =
       store.find((s) => s.nativeId === g.id) ??
-      store.find((s) => s.nativeId === undefined && s.sig === sig);
+      store.find((s) => s.nativeId === undefined && sameIdentity(s, g));
     if (match) {
-      match.sig = sig;
       match.nativeId = g.id;
       match.title = g.title;
       match.color = g.color;
@@ -77,7 +79,6 @@ export async function resyncOpenGroups(): Promise<void> {
     } else {
       store.push({
         id: crypto.randomUUID(),
-        sig,
         nativeId: g.id,
         title: g.title,
         color: g.color,
@@ -95,7 +96,23 @@ export async function resyncOpenGroups(): Promise<void> {
     }
   }
 
-  await saveStore(store);
+  // Collapse any snapshots that share an identity — including duplicates left
+  // behind by an earlier URL-based key. Prefer a currently-open one, else the
+  // most recently seen.
+  const byIdentity = new Map<string, GroupSnapshot>();
+  for (const s of store) {
+    const key = `${s.title.trim()}::${s.color}`;
+    const prev = byIdentity.get(key);
+    if (!prev) {
+      byIdentity.set(key, s);
+      continue;
+    }
+    const prefersS =
+      s.state !== prev.state ? s.state === "open" : s.lastSeenAt >= prev.lastSeenAt;
+    byIdentity.set(key, prefersS ? s : prev);
+  }
+
+  await saveStore([...byIdentity.values()]);
 }
 
 // Reopen a snapshot as a fresh native group, then mark it open via resync.
