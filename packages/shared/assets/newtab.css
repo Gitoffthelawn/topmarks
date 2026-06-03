@@ -377,11 +377,12 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 }
 
 .folder-dropdown .submenu {
-  /* -4px cancels the parent dropdown's 4px top padding so the submenu's top
-     edge lines up with the parent's, giving it the same gap below the bar. */
-  top: -4px;
+  /* -6px cancels the parent dropdown's 6px top padding so the submenu's top
+     edge lines up with the parent's. The 16px left gap matches the gap the
+     top-level menu keeps below the bar. */
+  top: -6px;
   left: 100%;
-  margin-left: 6px;
+  margin-left: 16px;
 }
 
 /* Top-level dropdown flipped to the right edge of its trigger when it
@@ -397,7 +398,7 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   left: auto;
   right: 100%;
   margin-left: 0;
-  margin-right: 6px;
+  margin-right: 16px;
 }
 
 .folder-dropdown li.has-submenu:hover > .submenu,
