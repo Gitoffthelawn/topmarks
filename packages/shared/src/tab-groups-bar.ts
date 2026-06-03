@@ -139,13 +139,25 @@ export async function renderTabGroups(): Promise<void> {
   const bar = document.getElementById("bookmarks-bar");
   if (!bar) return;
 
-  const existing = bar.querySelector(".tab-groups-folder");
-  if (existing) existing.remove();
+  // querySelectorAll (not querySelector) so any duplicate from a prior race is
+  // also cleared.
+  const removeExisting = () =>
+    bar.querySelectorAll(".tab-groups-folder").forEach((el) => el.remove());
 
-  if (!getSettings().tabGroupsEnabled || !getPlatform().tabGroups) return;
+  if (!getSettings().tabGroupsEnabled || !getPlatform().tabGroups) {
+    removeExisting();
+    return;
+  }
 
   const closed = await getClosedGroups();
   const tipDismissed = getSettings().tabGroupsTipDismissed;
+
+  // Remove AFTER the await and immediately before the synchronous build+prepend
+  // below (no await in between). Overlapping renders — e.g. the reopen click
+  // handler and the storage-change listener firing together — would otherwise
+  // each pass an up-front removal and then both prepend, duplicating the item.
+  removeExisting();
+
   // Nothing to show: no captured groups and the explanatory tip is dismissed.
   if (!closed.length && tipDismissed) return;
 
