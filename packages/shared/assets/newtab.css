@@ -295,7 +295,8 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   top: calc(100% + 16px);
   left: 0;
   margin: 0;
-  padding: 4px 0;
+  /* Horizontal padding insets each item's rounded hover from the menu edge. */
+  padding: 4px 6px;
   list-style: none;
   border-radius: 12px;
   min-width: 260px;
