@@ -139,7 +139,8 @@ export async function applyTabGroupsEnabled(): Promise<void> {
   const perms = [...TAB_GROUP_PERMISSIONS];
   const api = getPlatform().permissions;
   if (settings.tabGroupsEnabled) {
-    const granted = (await api?.contains(perms)) || (await api?.request(perms)) || false;
+    // A platform without a permissions API (none to request) counts as granted.
+    const granted = !api || (await api.contains(perms)) || (await api.request(perms));
     if (!granted) {
       settings.tabGroupsEnabled = false;
       await getPlatform().storage.set({ tabGroupsEnabled: false });

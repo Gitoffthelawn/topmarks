@@ -1,6 +1,7 @@
 import { getPlatform, type BookmarkNode } from "@/platform";
 import { t } from "@/i18n";
 import { getFolderEmoji } from "@/settings";
+import { renderTabGroups } from "@/tab-groups-bar";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -377,6 +378,9 @@ export function closeAllDropdowns(): void {
     const trigger = el.querySelector(".submenu-trigger");
     if (trigger) trigger.setAttribute("aria-expanded", "false");
   });
+  document.querySelectorAll(".tab-group-row.menu-open").forEach((el) => {
+    el.classList.remove("menu-open");
+  });
 }
 
 export async function renderBookmarks(): Promise<void> {
@@ -403,6 +407,7 @@ export async function renderBookmarks(): Promise<void> {
     }
     bar.append(createOverflowChevron());
     scheduleReflow();
+    void renderTabGroups();
   } catch (err) {
     const msg = document.createElement("span");
     msg.className = "empty-state";

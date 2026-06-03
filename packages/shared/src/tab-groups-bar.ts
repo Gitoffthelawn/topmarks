@@ -44,20 +44,24 @@ function createGroupRow(snap: GroupSnapshot): HTMLLIElement {
   const li = document.createElement("li");
   li.className = "tab-group-row";
 
-  const open = document.createElement("button");
-  open.type = "button";
-  open.className = "bookmark-item tab-group-open";
-  open.title = snap.title || t("unnamedFolder");
+  const openBtn = document.createElement("button");
+  openBtn.type = "button";
+  openBtn.className = "bookmark-item tab-group-open";
+  openBtn.title = snap.title || t("unnamedFolder");
   const label = document.createElement("span");
   label.className = "bookmark-title";
   label.textContent = snap.title || t("unnamedFolder");
   const count = document.createElement("span");
   count.className = "tab-group-count";
   count.textContent = String(snap.tabs.length);
-  open.append(createColorDot(snap.color), label, count);
-  open.addEventListener("click", async (e) => {
+  openBtn.append(createColorDot(snap.color), label, count);
+  openBtn.addEventListener("click", async (e) => {
     e.stopPropagation();
-    await reopenGroup(snap.id);
+    try {
+      await reopenGroup(snap.id);
+    } catch (err) {
+      console.error("Failed to reopen tab group", err);
+    }
     await renderTabGroups();
   });
 
@@ -77,7 +81,11 @@ function createGroupRow(snap: GroupSnapshot): HTMLLIElement {
   forget.textContent = t("tabGroupsForget");
   forget.addEventListener("click", async (e) => {
     e.stopPropagation();
-    await forgetGroup(snap.id);
+    try {
+      await forgetGroup(snap.id);
+    } catch (err) {
+      console.error("Failed to forget tab group", err);
+    }
     await renderTabGroups();
   });
   forgetLi.append(forget);
@@ -88,7 +96,7 @@ function createGroupRow(snap: GroupSnapshot): HTMLLIElement {
     li.classList.toggle("menu-open");
   });
 
-  li.append(open, kebab, menu);
+  li.append(openBtn, kebab, menu);
   return li;
 }
 
