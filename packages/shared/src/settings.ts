@@ -24,6 +24,8 @@ export const SETTINGS_DEFAULTS = {
   // When on, Topmarks watches native tab groups and lists closed ones in the
   // bar for one-click reopen. Off by default; enabling requests tabs+tabGroups.
   tabGroupsEnabled: false,
+  // Whether the user dismissed the explanatory tip at the foot of the groups menu.
+  tabGroupsTipDismissed: false,
 };
 
 export type Settings = typeof SETTINGS_DEFAULTS;
@@ -150,6 +152,12 @@ export async function applyTabGroupsEnabled(): Promise<void> {
     await api?.remove(perms);
   }
   await renderTabGroups();
+}
+
+// Persist that the user dismissed the groups-menu tip so it stays hidden.
+export async function dismissTabGroupsTip(): Promise<void> {
+  settings.tabGroupsTipDismissed = true;
+  await getPlatform().storage.set({ tabGroupsTipDismissed: true });
 }
 
 // Single place that writes the --clock-scale custom property (and mirrors it to

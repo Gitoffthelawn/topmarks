@@ -1,6 +1,6 @@
 import { getPlatform } from "@/platform";
 import { t } from "@/i18n";
-import { getSettings } from "@/settings";
+import { getSettings, dismissTabGroupsTip } from "@/settings";
 import {
   getClosedGroups,
   reopenGroup,
@@ -11,24 +11,28 @@ import {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-// Tab-groups glyph: two rounded "tabs" — native-adjacent, with our rounded feel.
+// Tab-groups glyph: a 2×2 grid of rounded squares, mirroring the browsers' own
+// tab-groups icon. Sized in CSS to match the link favicons / folder icons.
 function createTabGroupsIcon(): SVGSVGElement {
   const svg = document.createElementNS(SVG_NS, "svg");
-  svg.setAttribute("class", "folder-icon tab-groups-icon");
+  svg.setAttribute("class", "tab-groups-icon");
   svg.setAttribute("viewBox", "0 0 24 24");
-  svg.setAttribute("fill", "none");
-  svg.setAttribute("stroke", "currentColor");
-  svg.setAttribute("stroke-width", "1.8");
-  svg.setAttribute("stroke-linecap", "round");
-  svg.setAttribute("stroke-linejoin", "round");
+  svg.setAttribute("fill", "currentColor");
   svg.setAttribute("aria-hidden", "true");
-  const r1 = document.createElementNS(SVG_NS, "rect");
-  r1.setAttribute("x", "3"); r1.setAttribute("y", "4");
-  r1.setAttribute("width", "8"); r1.setAttribute("height", "16"); r1.setAttribute("rx", "2");
-  const r2 = document.createElementNS(SVG_NS, "rect");
-  r2.setAttribute("x", "13"); r2.setAttribute("y", "4");
-  r2.setAttribute("width", "8"); r2.setAttribute("height", "16"); r2.setAttribute("rx", "2");
-  svg.append(r1, r2);
+  for (const [x, y] of [
+    [4, 4],
+    [13, 4],
+    [4, 13],
+    [13, 13],
+  ]) {
+    const r = document.createElementNS(SVG_NS, "rect");
+    r.setAttribute("x", String(x));
+    r.setAttribute("y", String(y));
+    r.setAttribute("width", "7");
+    r.setAttribute("height", "7");
+    r.setAttribute("rx", "2");
+    svg.append(r);
+  }
   return svg;
 }
 
@@ -100,6 +104,31 @@ function createGroupRow(snap: GroupSnapshot): HTMLLIElement {
   return li;
 }
 
+// A dismissible footer note explaining how groups get captured. Shown until the
+// user dismisses it (persisted via the tabGroupsTipDismissed setting).
+function createTip(): HTMLLIElement {
+  const li = document.createElement("li");
+  li.className = "tab-group-tip";
+
+  const text = document.createElement("span");
+  text.className = "tab-group-tip-text";
+  text.textContent = t("tabGroupsTip");
+
+  const dismiss = document.createElement("button");
+  dismiss.type = "button";
+  dismiss.className = "tab-group-tip-dismiss";
+  dismiss.setAttribute("aria-label", t("tabGroupsTipDismiss"));
+  dismiss.textContent = "✕";
+  dismiss.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    await dismissTabGroupsTip();
+    await renderTabGroups();
+  });
+
+  li.append(text, dismiss);
+  return li;
+}
+
 // Render (or remove) the single tab-groups bar item. No-op-safe to call anytime.
 export async function renderTabGroups(): Promise<void> {
   const bar = document.getElementById("bookmarks-bar");
@@ -111,7 +140,9 @@ export async function renderTabGroups(): Promise<void> {
   if (!getSettings().tabGroupsEnabled || !getPlatform().tabGroups) return;
 
   const closed = await getClosedGroups();
-  if (!closed.length) return;
+  const tipDismissed = getSettings().tabGroupsTipDismissed;
+  // Nothing to show: no captured groups and the explanatory tip is dismissed.
+  if (!closed.length && tipDismissed) return;
 
   const wrapper = document.createElement("div");
   wrapper.className = "bookmark-folder tab-groups-folder";
@@ -123,11 +154,22 @@ export async function renderTabGroups(): Promise<void> {
   button.setAttribute("aria-label", t("tabGroupsIconLabel"));
   button.setAttribute("aria-haspopup", "true");
   button.setAttribute("aria-expanded", "false");
-  button.append(createTabGroupsIcon());
+  const barLabel = document.createElement("span");
+  barLabel.className = "bookmark-title";
+  barLabel.textContent = t("tabGroupsBarLabel");
+  button.append(createTabGroupsIcon(), barLabel);
 
   const dropdown = document.createElement("ul");
   dropdown.className = "folder-dropdown tab-groups-dropdown";
-  for (const snap of closed) dropdown.append(createGroupRow(snap));
+  if (closed.length) {
+    for (const snap of closed) dropdown.append(createGroupRow(snap));
+  } else {
+    const empty = document.createElement("li");
+    empty.className = "empty-state";
+    empty.textContent = t("tabGroupsEmpty");
+    dropdown.append(empty);
+  }
+  if (!tipDismissed) dropdown.append(createTip());
 
   button.addEventListener("click", (e) => {
     e.stopPropagation();

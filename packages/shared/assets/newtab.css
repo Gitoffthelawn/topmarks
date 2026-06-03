@@ -1068,9 +1068,32 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 }
 
 /* --- Tab groups ---------------------------------------------------------- */
+/* The bar's tab-groups glyph — sized to match link favicons / folder icons. */
+.tab-groups-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: currentColor;
+  opacity: 0.85;
+}
+/* Subtle divider between the groups item and the bookmarks that follow it. */
+.tab-groups-folder {
+  margin-right: 6px;
+  padding-right: 10px;
+  border-right: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
 .tab-groups-dropdown { min-width: 220px; }
 .tab-group-row { display: flex; align-items: center; gap: 4px; position: relative; }
-.tab-group-open { flex: 1; min-width: 0; }
+/* Match the folder-dropdown rows: full-width, left-aligned (button text would
+   otherwise center), comfortable padding. */
+.tab-group-open {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  padding: 6px 12px;
+  text-align: left;
+}
 .tab-group-open .bookmark-title { flex: 1; min-width: 0; }
 .tab-group-count {
   font-size: 12px; opacity: 0.6; font-variant-numeric: tabular-nums; margin-left: auto;
@@ -1095,3 +1118,29 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 .tab-group-kebab:hover { opacity: 1; }
 .tab-group-menu { display: none; position: absolute; right: 0; top: 100%; }
 .tab-group-row.menu-open .tab-group-menu { display: block; }
+/* Dismissible explanatory note at the foot of the menu. */
+.tab-group-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 8px 12px 4px;
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  font-size: 11.5px;
+  line-height: 1.4;
+  opacity: 0.6;
+}
+.tab-group-tip-text { flex: 1; min-width: 0; }
+.tab-group-tip-dismiss {
+  flex: none;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0.8;
+}
+.tab-group-tip-dismiss:hover { opacity: 1; background: var(--hover); }

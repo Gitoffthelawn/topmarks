@@ -51,5 +51,8 @@
   "tabGroupsIconLabel": { "message": "Tab groups" },
   "tabGroupsEmpty": { "message": "No closed tab groups yet." },
   "tabGroupsForget": { "message": "Forget" },
-  "tabGroupsManageLabel": { "message": "Manage group" }
+  "tabGroupsManageLabel": { "message": "Manage group" },
+  "tabGroupsBarLabel": { "message": "Groups" },
+  "tabGroupsTip": { "message": "Groups show up here once Topmarks has seen them open. Reopen a closed group once to start tracking it." },
+  "tabGroupsTipDismiss": { "message": "Dismiss tip" }
 }
