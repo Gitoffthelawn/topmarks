@@ -97,7 +97,12 @@ function createGroupRow(snap: GroupSnapshot): HTMLLIElement {
 
   kebab.addEventListener("click", (e) => {
     e.stopPropagation();
-    li.classList.toggle("menu-open");
+    const wasOpen = li.classList.contains("menu-open");
+    // Only one row's manage menu open at a time.
+    li.parentElement
+      ?.querySelectorAll(".tab-group-row.menu-open")
+      .forEach((el) => el.classList.remove("menu-open"));
+    if (!wasOpen) li.classList.add("menu-open");
   });
 
   li.append(openBtn, kebab, menu);

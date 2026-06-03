@@ -1114,11 +1114,25 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 .tab-group-kebab {
   flex: none; background: none; border: none; color: inherit; cursor: pointer;
   font-size: 16px; line-height: 1; padding: 4px 6px; border-radius: 6px; opacity: 0.7;
+  margin-right: 6px;
 }
 .tab-group-kebab:hover { opacity: 1; }
-.tab-group-menu { display: none; position: absolute; right: 0; top: 100%; }
+/* Compact popover anchored under the kebab — override .folder-dropdown's wide
+   min-width and left:0 so the single "Forget" action sizes to its content
+   instead of ballooning out of the menu. */
+.tab-group-menu {
+  display: none;
+  top: calc(100% - 2px);
+  left: auto;
+  right: 6px;
+  min-width: max-content;
+  max-width: none;
+  width: max-content;
+  padding: 4px;
+}
 .tab-group-row.menu-open .tab-group-menu { display: block; }
-/* Dismissible explanatory note at the foot of the menu. */
+/* Dismissible explanatory note at the foot of the menu. Wraps within the menu
+   width (the bar's white-space:nowrap would otherwise force it onto one line). */
 .tab-group-tip {
   display: flex;
   align-items: flex-start;
@@ -1129,6 +1143,7 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   font-size: 11.5px;
   line-height: 1.4;
   opacity: 0.6;
+  white-space: normal;
 }
 .tab-group-tip-text { flex: 1; min-width: 0; }
 .tab-group-tip-dismiss {
