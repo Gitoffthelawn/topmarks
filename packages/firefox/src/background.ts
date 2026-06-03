@@ -1,24 +1,18 @@
 import { setPlatform } from "@topmarks/shared/platform";
-import { startTabGroupsWatcher, TAB_GROUP_PERMISSIONS } from "@topmarks/shared/tab-groups-store";
+import { startTabGroupsWatcher } from "@topmarks/shared/tab-groups-store";
 import { platform } from "@/platform";
 
 setPlatform(platform);
 
-let stop: (() => void) | null = null;
+// Register the watcher SYNCHRONOUSLY at top level so a torn-down MV3 event
+// page is woken by tab-group/tab events. The platform's onChanged/queryOpen
+// no-op when the optional tabGroups permission isn't granted (the API is
+// undefined), so this is safe before the user enables the feature.
+let stop = startTabGroupsWatcher();
 
-async function syncWatcher(): Promise<void> {
-  const granted = await platform.permissions!.contains([...TAB_GROUP_PERMISSIONS]);
-  if (granted && !stop) {
-    stop = startTabGroupsWatcher();
-  } else if (!granted && stop) {
-    stop();
-    stop = null;
-  }
-}
-
-// Re-evaluate when the user grants the optional permissions from the new-tab UI.
+// When the user grants the optional permissions from the new-tab UI, the API
+// becomes available — re-register so listeners attach for real.
 platform.permissions!.onAdded(() => {
-  void syncWatcher();
+  stop();
+  stop = startTabGroupsWatcher();
 });
-
-void syncWatcher();

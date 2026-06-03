@@ -73,6 +73,7 @@ export const platform: Platform = {
   // separate background listener registration step.
   tabGroups: {
     async queryOpen(): Promise<LiveTabGroup[]> {
+      if (!browser.tabGroups) return [];
       const groups = await browser.tabGroups.query({});
       const out: LiveTabGroup[] = [];
       for (const g of groups) {
@@ -103,6 +104,7 @@ export const platform: Platform = {
       });
     },
     onChanged(handler) {
+      if (!browser.tabGroups) return () => {};
       browser.tabGroups.onCreated.addListener(handler);
       browser.tabGroups.onUpdated.addListener(handler);
       browser.tabGroups.onRemoved.addListener(handler);
