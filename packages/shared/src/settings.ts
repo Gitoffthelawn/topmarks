@@ -3,6 +3,8 @@ import { scheduleReflow, renderBookmarks } from "@/bookmarks";
 import { loadBackground, updateBackgroundErrorVisibility } from "@/unsplash";
 import { focusSearch } from "@/search";
 import { startClock, stopClock } from "@/clock";
+import { TAB_GROUP_PERMISSIONS } from "@/tab-groups-store";
+import { renderTabGroups } from "@/tab-groups-bar";
 
 export const SETTINGS_DEFAULTS = {
   centerBookmarks: false,
@@ -19,6 +21,9 @@ export const SETTINGS_DEFAULTS = {
   clockSize: 110,
   // Maps a top-level folder id to a chosen emoji that replaces its icon.
   folderEmojis: {} as Record<string, string>,
+  // When on, Topmarks watches native tab groups and lists closed ones in the
+  // bar for one-click reopen. Off by default; enabling requests tabs+tabGroups.
+  tabGroupsEnabled: false,
 };
 
 export type Settings = typeof SETTINGS_DEFAULTS;
@@ -126,6 +131,26 @@ export function applyClockSize(): void {
   setClockScale(settings.clockSize);
 }
 
+// Enabling requests the optional permissions; if the user declines, revert the
+// toggle. Disabling relinquishes them. The snapshot archive in storage is
+// intentionally kept (manual purge only). Runs inside the toggle's click
+// gesture, so permissions.request() is allowed to prompt.
+export async function applyTabGroupsEnabled(): Promise<void> {
+  const perms = [...TAB_GROUP_PERMISSIONS];
+  const api = getPlatform().permissions;
+  if (settings.tabGroupsEnabled) {
+    const granted = (await api?.contains(perms)) || (await api?.request(perms)) || false;
+    if (!granted) {
+      settings.tabGroupsEnabled = false;
+      await getPlatform().storage.set({ tabGroupsEnabled: false });
+      syncSettingsUi();
+    }
+  } else {
+    await api?.remove(perms);
+  }
+  await renderTabGroups();
+}
+
 // Single place that writes the --clock-scale custom property (and mirrors it to
 // localStorage so theme-init can set it before first paint, avoiding a size
 // jump). Used both for the persisted value and for live drag previews.
@@ -185,6 +210,8 @@ function handleSettingChange(key: keyof Settings): void {
     applyCenterWidget();
   } else if (key === "clockSize") {
     applyClockSize();
+  } else if (key === "tabGroupsEnabled") {
+    void applyTabGroupsEnabled();
   }
 }
 

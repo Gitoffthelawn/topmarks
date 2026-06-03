@@ -1066,3 +1066,32 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
     -webkit-backdrop-filter: none !important;
   }
 }
+
+/* --- Tab groups ---------------------------------------------------------- */
+.tab-groups-dropdown { min-width: 220px; }
+.tab-group-row { display: flex; align-items: center; gap: 4px; position: relative; }
+.tab-group-open { flex: 1; min-width: 0; }
+.tab-group-open .bookmark-title { flex: 1; min-width: 0; }
+.tab-group-count {
+  font-size: 12px; opacity: 0.6; font-variant-numeric: tabular-nums; margin-left: auto;
+}
+.tab-group-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex: none;
+  background: var(--tab-group-color, #888);
+}
+.tab-group-dot[data-color="grey"]   { --tab-group-color: #5f6368; }
+.tab-group-dot[data-color="blue"]   { --tab-group-color: #1a73e8; }
+.tab-group-dot[data-color="red"]    { --tab-group-color: #d93025; }
+.tab-group-dot[data-color="yellow"] { --tab-group-color: #f9ab00; }
+.tab-group-dot[data-color="green"]  { --tab-group-color: #1e8e3e; }
+.tab-group-dot[data-color="pink"]   { --tab-group-color: #d01884; }
+.tab-group-dot[data-color="purple"] { --tab-group-color: #9334e6; }
+.tab-group-dot[data-color="cyan"]   { --tab-group-color: #007b83; }
+.tab-group-dot[data-color="orange"] { --tab-group-color: #fa903e; }
+.tab-group-kebab {
+  flex: none; background: none; border: none; color: inherit; cursor: pointer;
+  font-size: 16px; line-height: 1; padding: 4px 6px; border-radius: 6px; opacity: 0.7;
+}
+.tab-group-kebab:hover { opacity: 1; }
+.tab-group-menu { display: none; position: absolute; right: 0; top: 100%; }
+.tab-group-row.menu-open .tab-group-menu { display: block; }
