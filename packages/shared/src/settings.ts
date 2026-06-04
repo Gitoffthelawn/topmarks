@@ -133,23 +133,14 @@ export function applyClockSize(): void {
   setClockScale(settings.clockSize);
 }
 
-// Enabling requests the optional permissions; if the user declines, revert the
-// toggle. Disabling relinquishes them. The snapshot archive in storage is
-// intentionally kept (manual purge only). Runs inside the toggle's click
-// gesture, so permissions.request() is allowed to prompt.
+// Side effects of toggling tab groups. The optional-permission REQUEST is NOT
+// here — Firefox rejects permissions.request() unless it's called synchronously
+// within the user gesture, so the request runs directly in the checkbox change
+// handler (see setupSettingsPanel) before any await. Here we only relinquish on
+// disable and re-render. The snapshot archive in storage is kept (manual purge).
 export async function applyTabGroupsEnabled(): Promise<void> {
-  const perms = [...TAB_GROUP_PERMISSIONS];
-  const api = getPlatform().permissions;
-  if (settings.tabGroupsEnabled) {
-    // A platform without a permissions API (none to request) counts as granted.
-    const granted = !api || (await api.contains(perms)) || (await api.request(perms));
-    if (!granted) {
-      settings.tabGroupsEnabled = false;
-      await getPlatform().storage.set({ tabGroupsEnabled: false });
-      syncSettingsUi();
-    }
-  } else {
-    await api?.remove(perms);
+  if (!settings.tabGroupsEnabled) {
+    await getPlatform().permissions?.remove([...TAB_GROUP_PERMISSIONS]);
   }
   await renderTabGroups();
 }
@@ -254,6 +245,17 @@ export function setupSettingsPanel(): void {
   panel.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-setting]').forEach((input) => {
     input.addEventListener("change", async () => {
       const key = input.dataset.setting as keyof Settings;
+      // Tab groups needs its optional permissions, and Firefox only allows
+      // permissions.request() to run synchronously inside the user gesture —
+      // i.e. BEFORE any await in this handler. Request first; revert on decline.
+      if (key === "tabGroupsEnabled" && input.checked) {
+        const api = getPlatform().permissions;
+        const granted = !api || (await api.request([...TAB_GROUP_PERMISSIONS]));
+        if (!granted) {
+          input.checked = false;
+          return;
+        }
+      }
       await saveSetting(key, input.checked as Settings[typeof key]);
       handleSettingChange(key);
     });
