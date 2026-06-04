@@ -247,10 +247,19 @@ export function setupSettingsPanel(): void {
       const key = input.dataset.setting as keyof Settings;
       // Tab groups needs its optional permissions, and Firefox only allows
       // permissions.request() to run synchronously inside the user gesture —
-      // i.e. BEFORE any await in this handler. Request first; revert on decline.
+      // i.e. BEFORE any await in this handler. Request first; revert on decline
+      // (resolves false) OR on error (rejects), so the toggle never sticks on
+      // without the grant.
       if (key === "tabGroupsEnabled" && input.checked) {
         const api = getPlatform().permissions;
-        const granted = !api || (await api.request([...TAB_GROUP_PERMISSIONS]));
+        let granted = !api;
+        if (api) {
+          try {
+            granted = await api.request([...TAB_GROUP_PERMISSIONS]);
+          } catch {
+            granted = false;
+          }
+        }
         if (!granted) {
           input.checked = false;
           return;
