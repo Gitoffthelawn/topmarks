@@ -20,14 +20,25 @@ const DEBOUNCE_MS = 250;
 // Permissions the feature needs. Exported so settings.ts requests the same set.
 export const TAB_GROUP_PERMISSIONS = ["tabs", "tabGroups"] as const;
 
-// A closed group is re-identified by title + color, not by its exact tab set:
-// URLs drift across reopen (redirects, trailing slashes, load states), so a
-// content signature would fragment the same group into duplicates.
+function urlKey(tabs: { url: string }[]): string {
+  return tabs.map((t) => t.url).sort().join("\n");
+}
+
+// A NAMED closed group is re-identified by title + color, not by its exact tab
+// set: URLs drift across reopen (redirects, trailing slashes, load states), so
+// a content signature would fragment the same group into duplicates. An UNNAMED
+// group (no title) isn't distinctive by colour alone, so it additionally
+// requires a matching URL set — otherwise two different untitled same-colour
+// groups would relink/merge into one (losing one of them).
 function sameIdentity(
-  a: { title: string; color: string },
-  b: { title: string; color: string }
+  a: { title: string; color: string; tabs: { url: string }[] },
+  b: { title: string; color: string; tabs: { url: string }[] }
 ): boolean {
-  return a.title.trim() === b.title.trim() && a.color === b.color;
+  if (a.color !== b.color) return false;
+  const title = a.title.trim();
+  if (title !== b.title.trim()) return false;
+  if (title === "") return urlKey(a.tabs) === urlKey(b.tabs);
+  return true;
 }
 
 async function loadStore(): Promise<GroupSnapshot[]> {
@@ -119,7 +130,10 @@ export async function resyncOpenGroups(): Promise<void> {
   // most recently seen.
   const byIdentity = new Map<string, GroupSnapshot>();
   for (const s of store) {
-    const key = `${s.title.trim()}::${s.color}`;
+    // Named: title+color. Unnamed: also keyed by URL set so distinct untitled
+    // same-colour groups don't collapse together.
+    const base = `${s.title.trim()}::${s.color}`;
+    const key = s.title.trim() === "" ? `${base}::${urlKey(s.tabs)}` : base;
     const prev = byIdentity.get(key);
     if (!prev) {
       byIdentity.set(key, s);

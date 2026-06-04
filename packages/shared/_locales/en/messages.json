@@ -49,7 +49,6 @@
   "buyMeACoffee": { "message": "Buy me a coffee" },
   "tabGroupsLabel": { "message": "Tab groups" },
   "tabGroupsIconLabel": { "message": "Tab groups" },
-  "tabGroupsEmpty": { "message": "No closed tab groups yet." },
   "tabGroupsForget": { "message": "Forget" },
   "tabGroupsManageLabel": { "message": "Manage group" },
   "tabGroupsBarLabel": { "message": "Groups" },
