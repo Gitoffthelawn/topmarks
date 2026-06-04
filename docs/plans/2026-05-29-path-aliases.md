@@ -1,6 +1,6 @@
 <!--
   PLAN DOC — docs/plans/2026-05-29-path-aliases.md
-  See docs/plans/README.md for the convention.
+  See CLAUDE.md ("Plan docs") for the convention.
 -->
 
 # Path aliases — `import … from "@/…"`

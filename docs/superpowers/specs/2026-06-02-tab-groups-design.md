@@ -8,7 +8,7 @@
 
 ## What changes
 
-1. A single **tab-groups icon** appears in the bookmarks bar (a native-ish glyph with Topmarks' personality). It's hidden when the feature is off or there are no closed groups to show.
+1. A single **tab-groups icon** appears in the bookmarks bar (a native-ish glyph with Topmarks' personality). It's hidden when the feature is off; when on it stays visible even with no saved groups — the menu then shows an explanatory empty-state note.
 2. Clicking it opens a dropdown listing the user's **closed** tab groups — each row a **color dot + name** (and tab count). Open groups aren't listed; they're already visible in the tab strip.
 3. **Clicking a row reopens the group**: its tabs open and bundle into a real native tab group with the same name and color.
 4. Each row has a **kebab (⋮)** on the right to manage it — for the MVP, *Forget* (remove from Topmarks). Rename/recolor are left as room to grow.
@@ -41,11 +41,12 @@ copy.
 A `tabGroups` array of snapshots:
 
 ```
-{ id, title, color, tabs: [{ url, title }], state: "open" | "closed", lastSeenAt }
+{ id, nativeId?, title, color, tabs: [{ url, title }], state: "open" | "closed", lastSeenAt }
 ```
 
 - `id` — our own stable id (`crypto.randomUUID()`), *not* the native `groupId`, which changes across restarts and reopens.
-- **Reconciliation by signature** (title + color + URL set): a freshly observed open group is matched to an existing snapshot so reopening one via the browser doesn't create a duplicate.
+- `nativeId` — the live group's `groupId` while open; cleared on close. Used to relink a snapshot to its live group within a session.
+- **Reconciliation by identity.** A live group is matched to its snapshot by `nativeId` first, then by **title + color** (URLs drift across reopen, so they're not part of the key — except for *unnamed* groups, where the URL set is the only discriminator). This stops a reopened group from duplicating its entry while keeping distinct groups separate.
 - **Never auto-deleted.** `onRemoved` fires for both *close* and *delete* — the API can't tell them apart, and true deletion of a saved group emits no event at all. So we treat the store as the user's archive: `onRemoved` only flips `state → "closed"`; removal is user-only (kebab → Forget).
 
 ### Capture — both watcher and backstop
