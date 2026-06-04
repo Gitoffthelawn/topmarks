@@ -40,6 +40,23 @@ async function saveStore(list: GroupSnapshot[]): Promise<void> {
   await getPlatform().storage.set({ [STORE_KEY]: list });
 }
 
+// Serializes the user-visible store content, excluding the volatile lastSeenAt
+// timestamp. Used to skip no-op writes: tabs.onUpdated fires constantly (any
+// tab loading anywhere), and rewriting storage on every resync would fire a
+// storage-change event that re-renders — and closes — an open menu.
+function contentKey(list: GroupSnapshot[]): string {
+  return JSON.stringify(
+    list.map((s) => ({
+      id: s.id,
+      nativeId: s.nativeId,
+      title: s.title,
+      color: s.color,
+      state: s.state,
+      tabs: s.tabs,
+    }))
+  );
+}
+
 export async function getClosedGroups(): Promise<GroupSnapshot[]> {
   return (await loadStore()).filter((s) => s.state === "closed");
 }
@@ -59,6 +76,7 @@ export async function resyncOpenGroups(): Promise<void> {
 
   const live = await tg.queryOpen();
   const store = await loadStore();
+  const before = contentKey(store);
   const liveNativeIds = new Set(live.map((g) => g.id));
 
   for (const g of live) {
@@ -112,7 +130,11 @@ export async function resyncOpenGroups(): Promise<void> {
     byIdentity.set(key, prefersS ? s : prev);
   }
 
-  await saveStore([...byIdentity.values()]);
+  const next = [...byIdentity.values()];
+  // Skip the write (and the re-render it would trigger) when nothing
+  // user-visible changed — only lastSeenAt churning doesn't count.
+  if (contentKey(next) === before) return;
+  await saveStore(next);
 }
 
 // Reopen a snapshot as a fresh native group, then mark it open via resync.

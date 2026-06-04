@@ -157,6 +157,10 @@ export async function renderTabGroups(): Promise<void> {
   const closed = await getClosedGroups();
   const tipDismissed = getSettings().tabGroupsTipDismissed;
 
+  // Preserve the open state across a re-render: a background resync writing
+  // storage shouldn't blink the menu shut while the user has it open.
+  const wasOpen = !!bar.querySelector(".tab-groups-folder.open");
+
   // Remove AFTER the await and immediately before the synchronous build+prepend
   // below (no await in between). Overlapping renders — e.g. the reopen click
   // handler and the storage-change listener firing together — would otherwise
@@ -194,6 +198,11 @@ export async function renderTabGroups(): Promise<void> {
       button.setAttribute("aria-expanded", "true");
     }
   });
+
+  if (wasOpen) {
+    wrapper.classList.add("open");
+    button.setAttribute("aria-expanded", "true");
+  }
 
   wrapper.append(button, dropdown);
   // Insert as the first bar item (groups lead, before folders/links).
