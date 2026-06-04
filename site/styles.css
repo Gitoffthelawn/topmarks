@@ -286,6 +286,20 @@ html[data-style="classic"] .bm { border-radius: 8px; }
   box-shadow: 0 10px 34px rgba(0,0,0,0.28);
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 42px rgba(0,0,0,0.34); }
+/* In Glass mode the hero's two store buttons share the same frosted background,
+   so the Firefox primary drops its solid white in favour of the ghost look. */
+html[data-style="glass"] .hero .btn-primary {
+  background: rgba(255,255,255,0.13);
+  border: 1px solid rgba(255,255,255,0.28);
+  color: #fff;
+  box-shadow: none;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+html[data-style="glass"] .hero .btn-primary:hover {
+  background: rgba(255,255,255,0.22);
+  transform: none;
+  box-shadow: none;
+}
 .btn-ghost {
   background: rgba(255,255,255,0.13);
   border: 1px solid rgba(255,255,255,0.28);
