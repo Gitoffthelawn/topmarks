@@ -13,6 +13,22 @@ export interface BookmarkNode {
   children?: BookmarkNode[];
 }
 
+// A tab group as read from the browser while it is open. `id` is the native
+// groupId — stable only within a session (it changes across restarts/reopens).
+export interface LiveTabGroup {
+  id: number;
+  title: string;
+  color: string;
+  tabs: { url: string; title: string }[];
+}
+
+// The minimum needed to re-create a group: open these URLs and bundle them.
+export interface ReopenableGroup {
+  title: string;
+  color: string;
+  tabs: { url: string }[];
+}
+
 export interface StorageChange {
   oldValue?: unknown;
   newValue?: unknown;
@@ -42,6 +58,22 @@ export interface Platform {
   };
   runtime: {
     isFirefox: boolean;
+  };
+  // Present only on platforms that support tab groups. Guard with `?.`.
+  tabGroups?: {
+    queryOpen(): Promise<LiveTabGroup[]>;
+    reopen(group: ReopenableGroup): Promise<void>;
+    // Fires on any group/tab change relevant to snapshots. Caller debounces
+    // and re-queries via queryOpen(); the payload is intentionally empty.
+    onChanged(handler: () => void): () => void;
+  };
+  // optional-permission management. The permissions API itself is always
+  // available; these wrap request/contains/remove + a grant event.
+  permissions?: {
+    contains(perms: string[]): Promise<boolean>;
+    request(perms: string[]): Promise<boolean>;
+    remove(perms: string[]): Promise<boolean>;
+    onAdded(handler: () => void): () => void;
   };
 }
 

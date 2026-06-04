@@ -3,6 +3,8 @@ import { scheduleReflow, renderBookmarks } from "@/bookmarks";
 import { loadBackground, updateBackgroundErrorVisibility } from "@/unsplash";
 import { focusSearch } from "@/search";
 import { startClock, stopClock } from "@/clock";
+import { TAB_GROUP_PERMISSIONS } from "@/tab-groups-store";
+import { renderTabGroups } from "@/tab-groups-bar";
 
 export const SETTINGS_DEFAULTS = {
   centerBookmarks: false,
@@ -19,6 +21,11 @@ export const SETTINGS_DEFAULTS = {
   clockSize: 110,
   // Maps a top-level folder id to a chosen emoji that replaces its icon.
   folderEmojis: {} as Record<string, string>,
+  // When on, Topmarks watches native tab groups and lists closed ones in the
+  // bar for one-click reopen. Off by default; enabling requests tabs+tabGroups.
+  tabGroupsEnabled: false,
+  // Whether the user dismissed the explanatory tip at the foot of the groups menu.
+  tabGroupsTipDismissed: false,
 };
 
 export type Settings = typeof SETTINGS_DEFAULTS;
@@ -126,6 +133,24 @@ export function applyClockSize(): void {
   setClockScale(settings.clockSize);
 }
 
+// Side effects of toggling tab groups. The optional-permission REQUEST is NOT
+// here — Firefox rejects permissions.request() unless it's called synchronously
+// within the user gesture, so the request runs directly in the checkbox change
+// handler (see setupSettingsPanel) before any await. Here we only relinquish on
+// disable and re-render. The snapshot archive in storage is kept (manual purge).
+export async function applyTabGroupsEnabled(): Promise<void> {
+  if (!settings.tabGroupsEnabled) {
+    await getPlatform().permissions?.remove([...TAB_GROUP_PERMISSIONS]);
+  }
+  await renderTabGroups();
+}
+
+// Persist that the user dismissed the groups-menu tip so it stays hidden.
+export async function dismissTabGroupsTip(): Promise<void> {
+  settings.tabGroupsTipDismissed = true;
+  await getPlatform().storage.set({ tabGroupsTipDismissed: true });
+}
+
 // Single place that writes the --clock-scale custom property (and mirrors it to
 // localStorage so theme-init can set it before first paint, avoiding a size
 // jump). Used both for the persisted value and for live drag previews.
@@ -185,6 +210,8 @@ function handleSettingChange(key: keyof Settings): void {
     applyCenterWidget();
   } else if (key === "clockSize") {
     applyClockSize();
+  } else if (key === "tabGroupsEnabled") {
+    void applyTabGroupsEnabled();
   }
 }
 
@@ -218,6 +245,26 @@ export function setupSettingsPanel(): void {
   panel.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-setting]').forEach((input) => {
     input.addEventListener("change", async () => {
       const key = input.dataset.setting as keyof Settings;
+      // Tab groups needs its optional permissions, and Firefox only allows
+      // permissions.request() to run synchronously inside the user gesture —
+      // i.e. BEFORE any await in this handler. Request first; revert on decline
+      // (resolves false) OR on error (rejects), so the toggle never sticks on
+      // without the grant.
+      if (key === "tabGroupsEnabled" && input.checked) {
+        const api = getPlatform().permissions;
+        let granted = !api;
+        if (api) {
+          try {
+            granted = await api.request([...TAB_GROUP_PERMISSIONS]);
+          } catch {
+            granted = false;
+          }
+        }
+        if (!granted) {
+          input.checked = false;
+          return;
+        }
+      }
       await saveSetting(key, input.checked as Settings[typeof key]);
       handleSettingChange(key);
     });

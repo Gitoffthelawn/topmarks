@@ -21,6 +21,10 @@
 }
 
 :root {
+  /* Satoshi for display accents (clock, settings heading, search pill); body
+     text stays on the system stack. Change here to widen/narrow the scope. */
+  --font-display: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+
   /* Light theme tokens (default — applied unless [data-theme="dark"]) */
   --bg: #fafafa;
   --fg: #1a1a1a;
@@ -295,7 +299,10 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   top: calc(100% + 16px);
   left: 0;
   margin: 0;
-  padding: 4px 0;
+  /* Uniform inset on all four sides — equal to the menu's 12px radius minus an
+     item's 6px radius — so the first/last items' outer corners nest
+     concentrically into the menu's rounded corners. */
+  padding: 6px;
   list-style: none;
   border-radius: 12px;
   min-width: 260px;
@@ -374,11 +381,12 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 }
 
 .folder-dropdown .submenu {
-  /* -4px cancels the parent dropdown's 4px top padding so the submenu's top
-     edge lines up with the parent's, giving it the same gap below the bar. */
-  top: -4px;
+  /* -6px cancels the parent dropdown's 6px top padding so the submenu's top
+     edge lines up with the parent's. The 16px left gap matches the gap the
+     top-level menu keeps below the bar. */
+  top: -6px;
   left: 100%;
-  margin-left: 6px;
+  margin-left: 16px;
 }
 
 /* Top-level dropdown flipped to the right edge of its trigger when it
@@ -394,7 +402,7 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   left: auto;
   right: 100%;
   margin-left: 0;
-  margin-right: 6px;
+  margin-right: 16px;
 }
 
 .folder-dropdown li.has-submenu:hover > .submenu,
@@ -446,7 +454,7 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 
 /* Big bold clock. Always white, no shadow — sits over the wallpaper. */
 #clock {
-  font-family: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-family: var(--font-display);
   font-size: calc(clamp(6rem, 20vw, 16rem) * var(--clock-scale, 1));
   font-weight: 500;
   line-height: 1;
@@ -461,6 +469,7 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   min-height: 52px;
   padding: 12px 18px;
   font: inherit;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   color: var(--fg);
   background: var(--glass-bg-strong);
@@ -621,6 +630,7 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 
 #settings-panel h2 {
   margin: 0 0 6px;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -1066,3 +1076,104 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
     -webkit-backdrop-filter: none !important;
   }
 }
+
+/* --- Tab groups ---------------------------------------------------------- */
+/* The bar's tab-groups glyph — sized to match link favicons / folder icons. */
+.tab-groups-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: currentColor;
+  opacity: 0.85;
+}
+/* Subtle divider between the groups item and the bookmarks that follow it. */
+.tab-groups-folder {
+  margin-right: 6px;
+  padding-right: 10px;
+  border-right: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+.tab-groups-dropdown { min-width: 220px; }
+.tab-group-row { display: flex; align-items: center; gap: 4px; position: relative; }
+/* Match the folder-dropdown rows: full-width, left-aligned (button text would
+   otherwise center), comfortable padding. */
+.tab-group-open {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  padding: 6px 12px;
+  text-align: left;
+  /* Match the link rows' radius so outer rows nest into the menu corners. */
+  border-radius: 6px;
+}
+.tab-group-open .bookmark-title { flex: 1; min-width: 0; }
+.tab-group-count {
+  font-size: 12px; opacity: 0.6; font-variant-numeric: tabular-nums; margin-left: auto;
+}
+.tab-group-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex: none;
+  background: var(--tab-group-color, #888);
+}
+.tab-group-dot[data-color="grey"]   { --tab-group-color: #5f6368; }
+.tab-group-dot[data-color="blue"]   { --tab-group-color: #1a73e8; }
+.tab-group-dot[data-color="red"]    { --tab-group-color: #d93025; }
+.tab-group-dot[data-color="yellow"] { --tab-group-color: #f9ab00; }
+.tab-group-dot[data-color="green"]  { --tab-group-color: #1e8e3e; }
+.tab-group-dot[data-color="pink"]   { --tab-group-color: #d01884; }
+.tab-group-dot[data-color="purple"] { --tab-group-color: #9334e6; }
+.tab-group-dot[data-color="cyan"]   { --tab-group-color: #007b83; }
+.tab-group-dot[data-color="orange"] { --tab-group-color: #fa903e; }
+.tab-group-kebab {
+  flex: none; background: none; border: none; color: inherit; cursor: pointer;
+  font-size: 16px; line-height: 1; padding: 4px 6px; border-radius: 6px; opacity: 0.7;
+  margin-right: 6px;
+}
+.tab-group-kebab:hover { opacity: 1; }
+/* Compact popover anchored under the kebab — override .folder-dropdown's wide
+   min-width and left:0 so the single "Forget" action sizes to its content
+   instead of ballooning out of the menu. */
+.tab-group-menu {
+  display: none;
+  top: calc(100% - 2px);
+  left: auto;
+  right: 6px;
+  min-width: max-content;
+  max-width: none;
+  width: max-content;
+  padding: 4px;
+}
+.tab-group-row.menu-open .tab-group-menu { display: block; }
+/* Dismissible explanatory note at the foot of the menu. Wraps within the menu
+   width (the bar's white-space:nowrap would otherwise force it onto one line). */
+.tab-group-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 8px 12px 4px;
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  font-size: 11.5px;
+  line-height: 1.4;
+  opacity: 0.6;
+  white-space: normal;
+}
+/* As the empty state (no groups above it) there's nothing to separate from, so
+   drop the divider. */
+.tab-group-tip:first-child {
+  margin-top: 0;
+  border-top: none;
+}
+.tab-group-tip-text { flex: 1; min-width: 0; }
+.tab-group-tip-dismiss {
+  flex: none;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0.8;
+}
+.tab-group-tip-dismiss:hover { opacity: 1; background: var(--hover); }

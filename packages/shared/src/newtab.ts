@@ -18,6 +18,7 @@ import {
 } from "@/settings";
 import { setupFolderEmojiOverlay } from "@/folder-emojis";
 import { setupSearch } from "@/search";
+import { setupTabGroups, setupTabGroupsStorageListener } from "@/tab-groups-bar";
 
 export async function startApp(platform: Platform): Promise<void> {
   setPlatform(platform);
@@ -52,8 +53,10 @@ export async function startApp(platform: Platform): Promise<void> {
   setupBookmarksListeners();
   setupBackoffStorageListener();
   setupFolderEmojiStorageListener();
+  setupTabGroupsStorageListener();
 
   renderBookmarks();
+  void setupTabGroups();
   loadBackground({
     enabled: settings.backgroundEnabled,
     intervalHours: settings.backgroundIntervalHours,

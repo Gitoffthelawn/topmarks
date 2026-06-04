@@ -10,6 +10,7 @@
     "url": "https://github.com/nx-alejandrolacasa"
   },
   "permissions": ["bookmarks", "storage", "search"],
+  "optional_permissions": ["tabs", "tabGroups"],
   "host_permissions": ["https://api.unsplash.com/*"],
   "icons": {
     "48": "icons/icon.svg",
@@ -17,6 +18,7 @@
     "128": "icons/icon.svg"
   },
   "chrome_url_overrides": { "newtab": "newtab.html" },
+  "background": { "scripts": ["background.js"] },
   "browser_specific_settings": {
     "gecko": {
       "id": "topmarks@nx-alejandrolacasa.github.io",

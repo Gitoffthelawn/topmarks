@@ -46,5 +46,12 @@
   "unnamedFolder": { "message": "(unnamed folder)" },
   "loadError": { "message": "Could not load bookmarks." },
   "moreBookmarks": { "message": "More bookmarks" },
-  "buyMeACoffee": { "message": "Buy me a coffee" }
+  "buyMeACoffee": { "message": "Buy me a coffee" },
+  "tabGroupsLabel": { "message": "Tab groups" },
+  "tabGroupsIconLabel": { "message": "Tab groups" },
+  "tabGroupsForget": { "message": "Forget" },
+  "tabGroupsManageLabel": { "message": "Manage group" },
+  "tabGroupsBarLabel": { "message": "Groups" },
+  "tabGroupsTip": { "message": "Groups show up here once Topmarks has seen them open. Reopen a closed group once to start tracking it." },
+  "tabGroupsTipDismiss": { "message": "Dismiss tip" }
 }

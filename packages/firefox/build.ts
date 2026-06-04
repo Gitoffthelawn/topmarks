@@ -16,6 +16,7 @@ const REQUIRED_DIST_FILES = [
   "newtab.html",
   "newtab.css",
   "newtab.js",
+  "background.js",
   "theme-init.js",
   "_locales/en/messages.json",
   "icons/icon.svg",
@@ -95,6 +96,20 @@ function themeInitBundleOptions(): BuildOptions {
   };
 }
 
+function backgroundBundleOptions(): BuildOptions {
+  return {
+    entryPoints: [path.join(HERE, "src", "background.ts")],
+    outfile: path.join(DIST, "background.js"),
+    bundle: true,
+    format: "iife",
+    platform: "browser",
+    target: ["firefox142"],
+    sourcemap: DEV ? "inline" : false,
+    minify: !DEV,
+    logLevel: "info",
+  };
+}
+
 async function main() {
   await rm(DIST, { recursive: true, force: true });
   await mkdir(DIST, { recursive: true });
@@ -109,12 +124,14 @@ async function main() {
   if (WATCH) {
     const pageCtx = await context(pageBundleOptions(unsplashKey));
     const themeCtx = await context(themeInitBundleOptions());
-    await Promise.all([pageCtx.watch(), themeCtx.watch()]);
+    const backgroundCtx = await context(backgroundBundleOptions());
+    await Promise.all([pageCtx.watch(), themeCtx.watch(), backgroundCtx.watch()]);
     console.log("esbuild watching… (Ctrl+C to exit)");
   } else {
     await Promise.all([
       build(pageBundleOptions(unsplashKey)),
       build(themeInitBundleOptions()),
+      build(backgroundBundleOptions()),
     ]);
     await validateDist(DIST, REQUIRED_DIST_FILES);
     console.log(`Built @topmarks/firefox v${version} → ${path.relative(REPO_ROOT, DIST)}`);

@@ -3,7 +3,13 @@
 // shapes shared/ expects. Toolbar ID and search submit behavior are Firefox-
 // specific; everything else is thin re-export of browser.*.
 
-import type { Platform, BookmarkNode, StorageChanges } from "@topmarks/shared/platform";
+import type {
+  Platform,
+  BookmarkNode,
+  StorageChanges,
+  LiveTabGroup,
+  ReopenableGroup,
+} from "@topmarks/shared/platform";
 
 const TOOLBAR_ID = "toolbar_____";
 
@@ -60,6 +66,78 @@ export const platform: Platform = {
           await browser.search.search({ query, tabId: current.id });
         }
       }
+    },
+  },
+  // tabGroups + permissions are registered at module load (not lazily) so the
+  // background worker wakes on group/permission changes without needing a
+  // separate background listener registration step.
+  tabGroups: {
+    async queryOpen(): Promise<LiveTabGroup[]> {
+      if (!browser.tabGroups) return [];
+      const groups = await browser.tabGroups.query({});
+      const out: LiveTabGroup[] = [];
+      for (const g of groups) {
+        const tabs = await browser.tabs.query({ groupId: g.id } as any);
+        out.push({
+          id: g.id,
+          title: g.title ?? "",
+          color: g.color,
+          tabs: tabs
+            .filter((t) => !!t.url)
+            .map((t) => ({ url: t.url!, title: t.title ?? "" })),
+        });
+      }
+      return out;
+    },
+    async reopen(group: ReopenableGroup): Promise<void> {
+      const ids: number[] = [];
+      for (const t of group.tabs) {
+        const tab = await browser.tabs.create({ url: t.url, active: false });
+        if (tab.id != null) ids.push(tab.id);
+      }
+      if (!ids.length) return;
+      const groupId = await browser.tabs.group({ tabIds: ids });
+      // ReopenableGroup.color is string; browser.tabGroups.Color is a literal union.
+      await browser.tabGroups.update(groupId, {
+        title: group.title,
+        color: group.color as browser.tabGroups.Color,
+      });
+    },
+    onChanged(handler) {
+      if (!browser.tabGroups) return () => {};
+      browser.tabGroups.onCreated.addListener(handler);
+      browser.tabGroups.onUpdated.addListener(handler);
+      browser.tabGroups.onRemoved.addListener(handler);
+      // browser.tabs.onUpdated listener signature differs from () => void;
+      // cast to any for add AND remove to satisfy the stricter overload.
+      browser.tabs.onUpdated.addListener(handler as any);
+      browser.tabs.onRemoved.addListener(handler);
+      browser.tabs.onAttached.addListener(handler);
+      browser.tabs.onDetached.addListener(handler);
+      return () => {
+        browser.tabGroups.onCreated.removeListener(handler);
+        browser.tabGroups.onUpdated.removeListener(handler);
+        browser.tabGroups.onRemoved.removeListener(handler);
+        browser.tabs.onUpdated.removeListener(handler as any);
+        browser.tabs.onRemoved.removeListener(handler);
+        browser.tabs.onAttached.removeListener(handler);
+        browser.tabs.onDetached.removeListener(handler);
+      };
+    },
+  },
+  permissions: {
+    contains(perms) {
+      return browser.permissions.contains({ permissions: perms } as any);
+    },
+    request(perms) {
+      return browser.permissions.request({ permissions: perms } as any);
+    },
+    remove(perms) {
+      return browser.permissions.remove({ permissions: perms } as any);
+    },
+    onAdded(handler) {
+      browser.permissions.onAdded.addListener(handler);
+      return () => browser.permissions.onAdded.removeListener(handler);
     },
   },
   i18n: {
