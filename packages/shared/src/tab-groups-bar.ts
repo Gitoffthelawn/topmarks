@@ -109,28 +109,33 @@ function createGroupRow(snap: GroupSnapshot): HTMLLIElement {
   return li;
 }
 
-// A dismissible footer note explaining how groups get captured. Shown until the
-// user dismisses it (persisted via the tabGroupsTipDismissed setting).
-function createTip(): HTMLLIElement {
+// Explanatory note about how groups get captured. Doubles as the empty state
+// (when there are no saved groups) and as a dismissible tip (when there are).
+// The dismiss button is only present when `dismissible` — when empty the note
+// is the only content, so there's nothing to dismiss it to.
+function createTip(dismissible: boolean): HTMLLIElement {
   const li = document.createElement("li");
   li.className = "tab-group-tip";
 
   const text = document.createElement("span");
   text.className = "tab-group-tip-text";
   text.textContent = t("tabGroupsTip");
+  li.append(text);
 
-  const dismiss = document.createElement("button");
-  dismiss.type = "button";
-  dismiss.className = "tab-group-tip-dismiss";
-  dismiss.setAttribute("aria-label", t("tabGroupsTipDismiss"));
-  dismiss.textContent = "✕";
-  dismiss.addEventListener("click", async (e) => {
-    e.stopPropagation();
-    await dismissTabGroupsTip();
-    await renderTabGroups();
-  });
+  if (dismissible) {
+    const dismiss = document.createElement("button");
+    dismiss.type = "button";
+    dismiss.className = "tab-group-tip-dismiss";
+    dismiss.setAttribute("aria-label", t("tabGroupsTipDismiss"));
+    dismiss.textContent = "✕";
+    dismiss.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      await dismissTabGroupsTip();
+      await renderTabGroups();
+    });
+    li.append(dismiss);
+  }
 
-  li.append(text, dismiss);
   return li;
 }
 
@@ -158,9 +163,6 @@ export async function renderTabGroups(): Promise<void> {
   // each pass an up-front removal and then both prepend, duplicating the item.
   removeExisting();
 
-  // Nothing to show: no captured groups and the explanatory tip is dismissed.
-  if (!closed.length && tipDismissed) return;
-
   const wrapper = document.createElement("div");
   wrapper.className = "bookmark-folder tab-groups-folder";
 
@@ -178,15 +180,10 @@ export async function renderTabGroups(): Promise<void> {
 
   const dropdown = document.createElement("ul");
   dropdown.className = "folder-dropdown tab-groups-dropdown";
-  if (closed.length) {
-    for (const snap of closed) dropdown.append(createGroupRow(snap));
-  } else {
-    const empty = document.createElement("li");
-    empty.className = "empty-state";
-    empty.textContent = t("tabGroupsEmpty");
-    dropdown.append(empty);
-  }
-  if (!tipDismissed) dropdown.append(createTip());
+  for (const snap of closed) dropdown.append(createGroupRow(snap));
+  // The note is the empty state when there are no groups (always shown, not
+  // dismissible there), and a dismissible tip once groups exist.
+  if (!closed.length || !tipDismissed) dropdown.append(createTip(closed.length > 0));
 
   button.addEventListener("click", (e) => {
     e.stopPropagation();

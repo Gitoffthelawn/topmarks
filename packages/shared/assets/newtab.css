@@ -1151,6 +1151,12 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   opacity: 0.6;
   white-space: normal;
 }
+/* As the empty state (no groups above it) there's nothing to separate from, so
+   drop the divider. */
+.tab-group-tip:first-child {
+  margin-top: 0;
+  border-top: none;
+}
 .tab-group-tip-text { flex: 1; min-width: 0; }
 .tab-group-tip-dismiss {
   flex: none;
