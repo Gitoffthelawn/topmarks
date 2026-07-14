@@ -2,10 +2,14 @@ import { getPlatform, type BookmarkNode } from "@/platform";
 import { t } from "@/i18n";
 import { getFolderEmoji } from "@/settings";
 import { renderTabGroups } from "@/tab-groups-bar";
+import { loadFaviconMap } from "@/favicon-cache";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 let topLevelNodes: BookmarkNode[] = [];
+
+// origin → icon URL captured from open tabs; reloaded on each render.
+let faviconMap: Record<string, string> = {};
 
 export function isFolder(node: BookmarkNode): boolean {
   return node.type === "folder" || (!node.url && Array.isArray(node.children));
@@ -16,16 +20,25 @@ function sortFoldersFirst<T extends BookmarkNode>(nodes: T[]): T[] {
 }
 
 function faviconSources(url: string): string[] {
-  // 1. The browser's cached favicon — Firefox `page-icon:` or Chrome `_favicon/`.
-  //    No network, no third parties. Provided by the platform shim.
-  // 2. The site's own `/favicon.ico` — direct fetch, no third-party service.
+  // 1. The browser's cached favicon, where extensions can reach it — Chrome
+  //    `_favicon/`. Firefox has no extension-accessible cache (its `page-icon:`
+  //    is chrome-privileged), so its platform shim returns null here.
+  // 2. Icons remembered from the user's open tabs (favicon-cache.ts) —
+  //    populated on Firefox while the optional "tabs" permission is granted.
+  // 3. The site's own `/favicon.ico` — direct fetch, no third-party service.
   //
   // Third-party favicon services (Google, DuckDuckGo, etc.) are deliberately
   // avoided: they would receive each bookmark's hostname.
   try {
     const u = new URL(url);
     if (u.protocol !== "http:" && u.protocol !== "https:") return [];
-    return [getPlatform().bookmarks.cachedFaviconUrl(url), `${u.origin}/favicon.ico`];
+    const sources: string[] = [];
+    const cached = getPlatform().bookmarks.cachedFaviconUrl(url);
+    if (cached) sources.push(cached);
+    const remembered = faviconMap[u.origin];
+    if (remembered) sources.push(remembered);
+    sources.push(`${u.origin}/favicon.ico`);
+    return sources;
   } catch {
     return [];
   }
@@ -388,7 +401,11 @@ export async function renderBookmarks(): Promise<void> {
   if (!bar) return;
   bar.textContent = "";
   try {
-    const toolbar = await getPlatform().bookmarks.getToolbar();
+    const [toolbar, favicons] = await Promise.all([
+      getPlatform().bookmarks.getToolbar(),
+      loadFaviconMap(),
+    ]);
+    faviconMap = favicons;
     const items = toolbar.children || [];
     if (!items.length) {
       const empty = document.createElement("span");

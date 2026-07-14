@@ -9,6 +9,7 @@
     ".": "./src/newtab.ts",
     "./platform": "./src/platform.ts",
     "./tab-groups-store": "./src/tab-groups-store.ts",
+    "./favicon-cache": "./src/favicon-cache.ts",
     "./theme-init": "./src/theme-init.ts"
   }
 }

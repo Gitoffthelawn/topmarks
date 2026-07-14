@@ -40,9 +40,10 @@ export interface Platform {
   bookmarks: {
     getToolbar(): Promise<BookmarkNode>;
     onChanged(handler: () => void): () => void;
-    // Returns the browser's cached-favicon URL for a page (Firefox `page-icon:`
-    // or Chrome `_favicon/`). No network — reuses what the browser already has.
-    cachedFaviconUrl(pageUrl: string): string;
+    // Returns the browser's cached-favicon URL for a page (Chrome `_favicon/`),
+    // or null when the browser exposes no extension-accessible favicon cache
+    // (Firefox: `page-icon:` is chrome-privileged — Bugzilla 1315616).
+    cachedFaviconUrl(pageUrl: string): string | null;
   };
   storage: {
     get<K extends string>(keys: readonly K[] | Record<K, unknown>): Promise<Record<K, unknown>>;
@@ -66,6 +67,15 @@ export interface Platform {
     // Fires on any group/tab change relevant to snapshots. Caller debounces
     // and re-queries via queryOpen(); the payload is intentionally empty.
     onChanged(handler: () => void): () => void;
+  };
+  // Present only on platforms that need favicons observed from open tabs
+  // (Firefox, whose favicon cache is not extension-accessible). Tab data is
+  // only exposed while the optional "tabs" permission is granted; without it
+  // queryOpen yields nothing and onChanged never fires. Guard with `?.`.
+  tabFavicons?: {
+    // Favicons of the tabs open right now — seeds the cache on startup.
+    queryOpen(): Promise<{ pageUrl: string; favIconUrl: string }[]>;
+    onChanged(handler: (pageUrl: string, favIconUrl: string) => void): () => void;
   };
   // optional-permission management. The permissions API itself is always
   // available; these wrap request/contains/remove + a grant event.

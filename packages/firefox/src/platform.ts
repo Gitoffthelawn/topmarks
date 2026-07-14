@@ -33,9 +33,11 @@ export const platform: Platform = {
         }
       };
     },
-    cachedFaviconUrl(pageUrl) {
-      // Firefox-only URL scheme. Returns Firefox's cached favicon. No network.
-      return `page-icon:${pageUrl}`;
+    cachedFaviconUrl() {
+      // Firefox's favicon cache is not extension-accessible: `page-icon:` is
+      // chrome-privileged, so extension pages get a blocked load (Bugzilla
+      // 1315616). Favicons come from tabFavicons + /favicon.ico instead.
+      return null;
     },
   },
   storage: {
@@ -123,6 +125,28 @@ export const platform: Platform = {
         browser.tabs.onAttached.removeListener(handler);
         browser.tabs.onDetached.removeListener(handler);
       };
+    },
+  },
+  // Favicons observed from open tabs, feeding the shared favicon cache.
+  // url/favIconUrl are only present on tab objects/events while the optional
+  // "tabs" permission is granted; without it both members yield nothing.
+  tabFavicons: {
+    async queryOpen() {
+      const tabs = await browser.tabs.query({});
+      return tabs
+        .filter((t) => !!t.url && !!t.favIconUrl)
+        .map((t) => ({ pageUrl: t.url!, favIconUrl: t.favIconUrl! }));
+    },
+    onChanged(handler) {
+      const listener = (
+        _tabId: number,
+        changeInfo: { favIconUrl?: string },
+        tab: browser.tabs.Tab
+      ) => {
+        if (changeInfo.favIconUrl && tab.url) handler(tab.url, changeInfo.favIconUrl);
+      };
+      browser.tabs.onUpdated.addListener(listener);
+      return () => browser.tabs.onUpdated.removeListener(listener);
     },
   },
   permissions: {
