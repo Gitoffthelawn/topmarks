@@ -89,6 +89,27 @@ No analytics, telemetry, or crash reporting. No remote code. No
 content scripts. Bookmarks data never leaves the browser.
 ```
 
+## Source code submission
+
+> AMO asks "Do you use any of the following in your extension?" — answer **Yes** (esbuild bundles multiple files into one). Upload a source zip generated from the release tag: `git archive --format=zip -o web-ext-artifacts/topmarks-<version>-source.zip v<version>`. Paste the following into the source-submission notes field:
+
+```
+Requirements: Node.js 22.x (ships with npm 10). Any OS.
+
+1. Unzip the source archive and cd into it.
+2. npm install
+3. Create a .env file at the repo root with one line:
+   UNSPLASH_ACCESS_KEY=<the public Unsplash Client-ID — the same value
+   visible in the uploaded newtab.js bundle's Authorization header>
+   (Without .env the build still succeeds; the only difference in output
+   is that the embedded key string is empty.)
+4. npm run build
+
+The Firefox package is produced at packages/firefox/dist/ and matches
+the uploaded zip: esbuild IIFE bundles, unminified, with inline source
+maps. No other code generation or templating is involved.
+```
+
 ## Release notes
 
 > Paste the latest entry into the version's "Release notes" / "What's new" field. Newest first.
