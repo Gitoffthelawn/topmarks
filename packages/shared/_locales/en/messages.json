@@ -50,8 +50,9 @@
   "tabGroupsLabel": { "message": "Tab groups" },
   "tabGroupsIconLabel": { "message": "Tab groups" },
   "tabGroupsForget": { "message": "Forget" },
-  "tabGroupsManageLabel": { "message": "Manage group" },
+  "tabGroupsForgetConfirm": { "message": "Forget?" },
   "tabGroupsBarLabel": { "message": "Groups" },
   "tabGroupsTip": { "message": "Groups show up here once Topmarks has seen them open. Reopen a closed group once to start tracking it." },
-  "tabGroupsTipDismiss": { "message": "Dismiss tip" }
+  "tabGroupsTipDismiss": { "message": "Dismiss tip" },
+  "tabGroupsGrantPermission": { "message": "Permission missing — click to re-enable group tracking" }
 }

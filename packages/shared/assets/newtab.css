@@ -1123,26 +1123,42 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
 .tab-group-dot[data-color="purple"] { --tab-group-color: #9334e6; }
 .tab-group-dot[data-color="cyan"]   { --tab-group-color: #007b83; }
 .tab-group-dot[data-color="orange"] { --tab-group-color: #fa903e; }
-.tab-group-kebab {
+/* Two-step forget: a quiet ✕ that arms into a red "Forget?" on first click;
+   only the second click while armed deletes (see createGroupRow). */
+.tab-group-forget {
   flex: none; background: none; border: none; color: inherit; cursor: pointer;
-  font-size: 16px; line-height: 1; padding: 4px 6px; border-radius: 6px; opacity: 0.7;
+  font-size: 12px; line-height: 1; padding: 4px 6px; border-radius: 6px; opacity: 0.7;
   margin-right: 6px;
+  transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
 }
-.tab-group-kebab:hover { opacity: 1; }
-/* Compact popover anchored under the kebab — override .folder-dropdown's wide
-   min-width and left:0 so the single "Forget" action sizes to its content
-   instead of ballooning out of the menu. */
-.tab-group-menu {
-  display: none;
-  top: calc(100% - 2px);
-  left: auto;
-  right: 6px;
-  min-width: max-content;
-  max-width: none;
-  width: max-content;
-  padding: 4px;
+.tab-group-forget:hover { opacity: 1; background: var(--hover); }
+.tab-group-forget.confirming,
+.tab-group-forget.confirming:hover {
+  opacity: 1;
+  color: #fff;
+  background: #d93025;
+  font-size: 11.5px;
+  font-weight: 600;
+  animation: forget-arm 0.18s ease;
 }
-.tab-group-row.menu-open .tab-group-menu { display: block; }
+@keyframes forget-arm {
+  0% { transform: scale(0.8); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+/* Mirror of the arm pop while the button settles back to the ✕ (on blur /
+   leaving the row). */
+.tab-group-forget.disarming { animation: forget-disarm 0.18s ease; }
+@keyframes forget-disarm {
+  0% { transform: scale(1.08); }
+  60% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-group-forget { transition: none; }
+  .tab-group-forget.confirming,
+  .tab-group-forget.disarming { animation: none; }
+}
 /* Dismissible explanatory note at the foot of the menu. Wraps within the menu
    width (the bar's white-space:nowrap would otherwise force it onto one line). */
 .tab-group-tip {

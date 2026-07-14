@@ -391,9 +391,6 @@ export function closeAllDropdowns(): void {
     const trigger = el.querySelector(".submenu-trigger");
     if (trigger) trigger.setAttribute("aria-expanded", "false");
   });
-  document.querySelectorAll(".tab-group-row.menu-open").forEach((el) => {
-    el.classList.remove("menu-open");
-  });
 }
 
 export async function renderBookmarks(): Promise<void> {

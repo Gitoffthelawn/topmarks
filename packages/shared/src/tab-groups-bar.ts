@@ -6,6 +6,7 @@ import {
   reopenGroup,
   forgetGroup,
   resyncOpenGroups,
+  TAB_GROUP_PERMISSIONS,
   type GroupSnapshot,
 } from "@/tab-groups-store";
 
@@ -69,22 +70,37 @@ function createGroupRow(snap: GroupSnapshot): HTMLLIElement {
     await renderTabGroups();
   });
 
-  const kebab = document.createElement("button");
-  kebab.type = "button";
-  kebab.className = "tab-group-kebab";
-  kebab.setAttribute("aria-label", t("tabGroupsManageLabel"));
-  kebab.setAttribute("aria-haspopup", "true");
-  kebab.textContent = "⋮";
-
-  const menu = document.createElement("ul");
-  menu.className = "folder-dropdown submenu tab-group-menu";
-  const forgetLi = document.createElement("li");
+  // Direct forget button with a two-step confirm (replaces the old one-item
+  // kebab menu): the first click arms it — the ✕ turns into a red "Forget?" —
+  // and only a second click while armed deletes. Disarms on leaving the row or
+  // losing focus, so stray clicks stay harmless.
   const forget = document.createElement("button");
   forget.type = "button";
-  forget.className = "bookmark-item";
-  forget.textContent = t("tabGroupsForget");
+  forget.className = "tab-group-forget";
+  forget.setAttribute("aria-label", t("tabGroupsForget"));
+  forget.title = t("tabGroupsForget");
+  forget.textContent = "✕";
+
+  const disarm = () => {
+    if (!forget.classList.contains("confirming")) return;
+    forget.classList.remove("confirming");
+    // Play the settle animation while reverting; cleared on animationend so it
+    // can replay on the next disarm.
+    forget.classList.add("disarming");
+    forget.textContent = "✕";
+  };
+  forget.addEventListener("animationend", () => forget.classList.remove("disarming"));
   forget.addEventListener("click", async (e) => {
     e.stopPropagation();
+    if (!forget.classList.contains("confirming")) {
+      forget.classList.add("confirming");
+      forget.textContent = t("tabGroupsForgetConfirm");
+      // macOS Firefox doesn't focus buttons on click; focus explicitly so the
+      // blur disarm below works.
+      forget.focus();
+      return;
+    }
+    disarm();
     try {
       await forgetGroup(snap.id);
     } catch (err) {
@@ -92,20 +108,36 @@ function createGroupRow(snap: GroupSnapshot): HTMLLIElement {
     }
     await renderTabGroups();
   });
-  forgetLi.append(forget);
-  menu.append(forgetLi);
+  li.addEventListener("mouseleave", disarm);
+  forget.addEventListener("blur", disarm);
 
-  kebab.addEventListener("click", (e) => {
+  li.append(openBtn, forget);
+  return li;
+}
+
+// Shown when the feature is enabled but the optional permissions are gone —
+// grants don't always outlive the setting (temporary installs drop them on
+// restart; users can revoke them in the Add-ons Manager). Without this row the
+// feature fails silently: the API namespace is undefined, so no group is ever
+// captured. Clicking re-requests the grant (the click is the required user
+// gesture; request() must run before any await).
+function createPermissionRow(): HTMLLIElement {
+  const li = document.createElement("li");
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "bookmark-item";
+  btn.textContent = t("tabGroupsGrantPermission");
+  btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    const wasOpen = li.classList.contains("menu-open");
-    // Only one row's manage menu open at a time.
-    li.parentElement
-      ?.querySelectorAll(".tab-group-row.menu-open")
-      .forEach((el) => el.classList.remove("menu-open"));
-    if (!wasOpen) li.classList.add("menu-open");
+    void getPlatform()
+      .permissions?.request([...TAB_GROUP_PERMISSIONS])
+      .then(async (granted) => {
+        if (!granted) return;
+        await resyncOpenGroups();
+        await renderTabGroups();
+      });
   });
-
-  li.append(openBtn, kebab, menu);
+  li.append(btn);
   return li;
 }
 
@@ -154,7 +186,9 @@ export async function renderTabGroups(): Promise<void> {
     return;
   }
 
-  const closed = await getClosedGroups();
+  const perms = getPlatform().permissions;
+  const granted = perms ? await perms.contains([...TAB_GROUP_PERMISSIONS]) : true;
+  const closed = granted ? await getClosedGroups() : [];
   const tipDismissed = getSettings().tabGroupsTipDismissed;
 
   // Preserve the open state across a re-render: a background resync writing
@@ -184,10 +218,14 @@ export async function renderTabGroups(): Promise<void> {
 
   const dropdown = document.createElement("ul");
   dropdown.className = "folder-dropdown tab-groups-dropdown";
-  for (const snap of closed) dropdown.append(createGroupRow(snap));
-  // The note is the empty state when there are no groups (always shown, not
-  // dismissible there), and a dismissible tip once groups exist.
-  if (!closed.length || !tipDismissed) dropdown.append(createTip(closed.length > 0));
+  if (!granted) {
+    dropdown.append(createPermissionRow());
+  } else {
+    for (const snap of closed) dropdown.append(createGroupRow(snap));
+    // The note is the empty state when there are no groups (always shown, not
+    // dismissible there), and a dismissible tip once groups exist.
+    if (!closed.length || !tipDismissed) dropdown.append(createTip(closed.length > 0));
+  }
 
   button.addEventListener("click", (e) => {
     e.stopPropagation();
