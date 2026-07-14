@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last updated:** 2026-05-28
+**Last updated:** 2026-07-14
 
 This policy explains what data the **Topmarks** browser extension (the "extension") handles, what is transmitted off your device, and how you can control it. It applies to the version of the extension distributed via [addons.mozilla.org](https://addons.mozilla.org) (Firefox) and the [Chrome Web Store](https://chromewebstore.google.com) (Chrome and Chromium-based browsers), and any source-built copy of the same code.
 
@@ -9,6 +9,7 @@ This policy explains what data the **Topmarks** browser extension (the "extensio
 - The extension reads your browser's bookmarks toolbar locally and displays it on every new tab page.
 - The extension does **not** collect, transmit, sell, or share your bookmarks, browsing history, or any personal identifier.
 - When the optional "Show background image" feature is enabled (default: on), the extension makes HTTPS requests to Unsplash to fetch a random wallpaper photo. These requests transmit your IP address (unavoidable for any HTTP request) but no other personal data.
+- When the optional "Tab groups" feature is enabled (default: off), the extension reads your browser tab groups (their names, colors, and member tab URLs) to save them on your device so closed groups can be reopened. This data is stored locally and is never transmitted.
 - All settings and cached data are stored only on your device using your browser's local extension storage APIs.
 
 ## 2. Data the extension does not collect or transmit
@@ -16,7 +17,7 @@ This policy explains what data the **Topmarks** browser extension (the "extensio
 The extension does **not**:
 
 - Send your bookmarks (URLs, titles, folder structure) to any server.
-- Read or transmit your browsing history, page visits, open tabs, or the contents of web pages.
+- Transmit your browsing history, page visits, open tabs, or the contents of web pages. (When you enable the optional "Tab groups" feature, the extension *reads* the URLs of tabs that belong to a tab group — see §3 and §5 — but it stores them only on your device and never transmits them.)
 - Use analytics, telemetry, crash reporting, or any user-identification mechanism.
 - Use cookies or any cross-site tracking technology.
 - Sell, rent, lease, share, or disclose data to advertisers, data brokers, or any third party.
@@ -29,6 +30,8 @@ The extension uses your browser's extension storage (`browser.storage.local` in 
 
 - **Your settings** — theme (auto/light/dark), "center bookmarks", per-folder emojis, "show background image", and refresh interval.
 - **A small cache for the most recent background photo** — its base URL, photographer name, photographer profile link, photo page link, the photo's representative color, and the timestamp it was fetched.
+- **Tab group snapshots** (only if you enable the optional "Tab groups" feature) — for each group you've opened: its name, color, and the titles and URLs of its member tabs, so a closed group can be reopened from the new tab page. Remove individual entries via the group's "Forget" action, or disable the feature.
+- **A favicon cache** (Firefox, only while the optional `tabs` permission from "Tab groups" is granted) — for each site you open, the icon URL your browser already shows in the tab strip, keyed by site origin (capped at 500 entries), so your bookmarks can display their icons. Firefox does not expose its own favicon cache to extensions.
 
 This data is stored only on your device. It is not synchronized to your Firefox Account, Google Account, or any other cloud profile by the extension; it is not transmitted to any server controlled by the developer; and it is not shared with anyone. Uninstalling the extension removes all of it.
 
@@ -81,6 +84,8 @@ The extension requests only the permissions strictly required for its functional
 | `storage` | Both | Persist your settings and the last-fetched background photo's metadata locally. |
 | `search` | Both | Power the new tab page's search box using your default search engine. |
 | `favicon` | Chrome only | Read favicons from Chrome's own local favicon cache via the `_favicon/` URL scheme. No network is performed by this permission — it reads icons the browser has already cached. |
+| `tabs` | Both (optional) | Requested only when you enable "Tab groups". Reads the titles and URLs of tabs in a tab group so the group can be saved locally and reopened. On Firefox it also reads open tabs' favicon URLs to build the local favicon cache described in §3. Never transmitted. |
+| `tabGroups` | Both (optional) | Requested only when you enable "Tab groups". Reads a group's name and color to save it, and re-creates a group when you reopen one. Never transmitted. |
 | `https://api.unsplash.com/*` | Both | Make HTTPS requests to Unsplash to fetch a random wallpaper photo when "Show background image" is enabled. |
 
 ## 6. Legal basis for processing (EU/EEA users)

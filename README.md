@@ -7,6 +7,7 @@ A minimal new-tab extension for Firefox and Chrome that floats your bookmarks to
 ## Features
 
 - Floating glass bookmarks bar with folder dropdowns and nested submenus
+- Reopen closed browser tab groups from the bookmarks bar (opt-in; requests `tabs` + `tabGroups` only when enabled, snapshots stay on-device)
 - Replace any top-level folder's icon with an emoji of your choice
 - Rotating high-resolution wallpapers from Unsplash's curated wallpaper collection
 - Light / Dark / Auto theme
@@ -73,7 +74,7 @@ Settings persist in the browser's extension storage and are wiped on uninstall.
 
 ## Privacy
 
-The extension does not collect, transmit, or store your bookmarks, browsing history, or any personal identifier. When backgrounds are enabled, the extension makes HTTPS requests to `api.unsplash.com` for a random wallpaper. Favicons are loaded from the browser's own cache (Firefox `page-icon:`, Chrome `chrome://favicon`) with a fallback to each bookmarked site's own `/favicon.ico` — no third-party favicon services.
+The extension does not collect, transmit, or store your bookmarks, browsing history, or any personal identifier. When backgrounds are enabled, the extension makes HTTPS requests to `api.unsplash.com` for a random wallpaper. Favicons come from icons the browser has already seen — Chrome's own favicon cache (`_favicon/`), or on Firefox icons remembered locally from your open tabs — with a fallback to each bookmarked site's own `/favicon.ico`. No third-party favicon services.
 
 Full policy: [PRIVACY.md](./PRIVACY.md).
 

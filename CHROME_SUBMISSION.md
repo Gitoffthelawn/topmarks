@@ -1,13 +1,13 @@
 # Chrome Web Store submission — dashboard form fields
 
-Text to paste into the **Privacy** and **Distribution** tabs of the chrome.google.com/webstore/devconsole submission form, in addition to the listing copy in [`LISTING_CWS.md`](./LISTING_CWS.md).
+Text to paste into the **Privacy** and **Distribution** tabs of the chrome.google.com/webstore/devconsole submission form, in addition to the listing copy in [`LISTING_CHROME.md`](./LISTING_CHROME.md).
 
 ## Single purpose
 
 > One sentence. CWS reviewers check that every permission ties back to this.
 
 ```
-Replace the new tab page with the user's bookmarks toolbar laid out as a pill at the top of the tab, over an optional curated wallpaper from Unsplash.
+Replace the new tab page with the user's bookmarks toolbar laid out as a pill at the top of the tab, over an optional curated wallpaper from Unsplash — and, optionally, let the user reopen their browser tab groups from that same bar.
 ```
 
 ## Permission justifications
@@ -38,6 +38,18 @@ Powers the search box on the new tab page by submitting the query to the user's 
 Reads favicons for bookmarked sites from Chrome's local favicon cache via the chrome-extension://{id}/_favicon/?pageUrl=... URL scheme. This avoids making network requests for icons the browser has already cached. If the cache has no icon, the extension falls back to the bookmarked site's own /favicon.ico (no third-party favicon services are used).
 ```
 
+### `tabs` (optional)
+
+```
+Optional permission — listed in optional_permissions and requested only when the user turns on "Tab groups" in Settings (off by default). It reads the titles and URLs of tabs that belong to a tab group so the group can be saved locally and reopened later from the new tab page, and it is used to open those URLs when the user clicks to reopen a group. Tab data is stored only in chrome.storage.local and is never transmitted.
+```
+
+### `tabGroups` (optional)
+
+```
+Optional permission — requested together with "tabs" only when the user enables "Tab groups". It reads a tab group's name and color (chrome.tabGroups) to snapshot it, and re-creates a group (chrome.tabs.group + chrome.tabGroups.update) when the user reopens one. The extension never transmits this data.
+```
+
 ### Host permission: `https://api.unsplash.com/*`
 
 ```
@@ -54,12 +66,14 @@ No. All JavaScript and CSS executed by the extension is bundled inside the exten
 
 ## Data usage disclosure
 
-> CWS field: "What user data does your extension collect or use?" — Tick only the categories that actually apply. For Topmarks, **none of the listed categories apply** and the form should be submitted with all categories unchecked.
+> CWS field: "What user data does your extension collect or use?" — Tick only the categories that actually apply. Topmarks transmits no user data, but the optional **Tab groups** feature *reads* tab URLs locally, which Google may classify as **"Website content."** Decision to confirm before submitting: if you treat reading-but-not-transmitting as in-scope (the conservative reading), tick **Website content** and rely on the certifications below (used only for the single purpose, never sold/transferred); otherwise, with the feature being off by default and entirely on-device, all categories may be left unchecked. Either way the rationale below applies.
 
 Rationale for the reviewer (paste in the "Additional details" field if prompted):
 
 ```
-Topmarks does not collect or transmit any user-identifying data. The extension reads the user's bookmarks locally and renders them on the new tab page; bookmarks are never sent to any server. The only outbound HTTP destination is api.unsplash.com (when "Show background image" is on), which receives a Client-ID application key and — as an unavoidable consequence of any HTTP request — the user's IP address. No user identifier is constructed or sent. No analytics, telemetry, or crash reporting. All settings are stored on-device via chrome.storage.local.
+Topmarks does not transmit any user-identifying data. The extension reads the user's bookmarks locally and renders them on the new tab page; bookmarks are never sent to any server. The only outbound HTTP destination is api.unsplash.com (when "Show background image" is on), which receives a Client-ID application key and — as an unavoidable consequence of any HTTP request — the user's IP address. No user identifier is constructed or sent. No analytics, telemetry, or crash reporting. All settings are stored on-device via chrome.storage.local.
+
+The optional "Tab groups" feature (off by default; requests the tabs and tabGroups permissions only when the user enables it) reads open tab groups — their names, colors, and member tab URLs — solely to save them on the device so the user can reopen a closed group from the new tab page. This data is stored in chrome.storage.local and is never transmitted, sold, or shared.
 ```
 
 ## Data usage certifications
@@ -107,11 +121,11 @@ Build notes:
 
 ## Post-submission checklist
 
-- [ ] Listing language matches `LISTING_CWS.md` (summary ≤ 132 chars, description pasted as plain text)
+- [ ] Listing language matches `LISTING_CHROME.md` (summary ≤ 132 chars, description pasted as plain text)
 - [ ] Privacy practices tab green-checked (all three certifications ticked, privacy policy URL present)
 - [ ] Single purpose statement matches the one above
 - [ ] All requested permissions have justifications
 - [ ] Screenshots uploaded (1280×800 or 640×400, at least one)
 - [ ] Store icon = 128×128 PNG (auto-uses `icons.128` from manifest, but the listing slot is separate — upload `packages/shared/assets/icons/icon.png` there too)
-- [ ] Package uploaded: `web-ext-artifacts/topmarks-chrome-v1.9.0.zip`
+- [ ] Package uploaded: `web-ext-artifacts/topmarks-chrome-v1.11.0.zip`
 - [ ] "Why are you requesting these permissions?" field non-empty for every permission

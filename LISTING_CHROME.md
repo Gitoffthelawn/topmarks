@@ -31,6 +31,8 @@ FEATURES
 
 • Bookmarks where you want them. Your Bookmarks Toolbar appears as a clean pill at the top of every new tab. Folders open as dropdowns; nested folders cascade as side menus.
 
+• Reopen your tab groups. Topmarks remembers the browser tab groups you've opened and lists the closed ones in the bookmarks bar — click one to reopen the whole group. Opt-in: turn it on in Settings (it requests the tabs and tab-groups permissions only then), and your groups are saved on your device, never uploaded.
+
 • Folders with personality. Replace any top-level folder's icon with an emoji — just paste one from your system picker. Clear it anytime to restore the default.
 
 • Curated wallpapers. Each session loads a high-resolution photo from a curated Unsplash collection, sized to your display (up to 4K). Pick a refresh interval: every 1, 6, 12, or 24 hours.
@@ -45,7 +47,7 @@ FEATURES
 
 PRIVACY
 
-Topmarks does not collect, transmit, or store your bookmarks, browsing history, or any personal identifier. The only outbound network request is to api.unsplash.com when wallpapers are enabled, to fetch a random photo. Favicons load from Chrome's own favicon cache first (no network), then fall back to each bookmarked site's own /favicon.ico — no third-party favicon services. No analytics. No telemetry. No remote code.
+Topmarks does not collect, transmit, or store your bookmarks, browsing history, or any personal identifier. The only outbound network request is to api.unsplash.com when wallpapers are enabled, to fetch a random photo. Favicons load from Chrome's own favicon cache first (no network), then fall back to each bookmarked site's own /favicon.ico — no third-party favicon services. When the optional Tab groups feature is enabled, Topmarks reads your tab groups (their names, colors, and member tab URLs) to save them on your device for one-click reopening — this stays in local storage and is never transmitted. No analytics. No telemetry. No remote code.
 
 Full privacy policy: https://github.com/nx-alejandrolacasa/topmarks/blob/main/PRIVACY.md
 
@@ -81,30 +83,17 @@ The extension itself ships translations for 7 locales (en, es, fr, it, de, ja, z
 
 CWS requires **exactly 1280×800** or **640×400**. At least one screenshot is required; up to five may be uploaded.
 
-Available in `packages/shared/assets/screenshots/`:
+Available in `packages/shared/assets/screenshots/` — all already **1280×800**, so they upload as-is (no resize or crop needed):
 
-| File | Current size | What it shows | CWS-ready? |
-|---|---|---|---|
-| `1-glass_light.png` | 2560×1632 | Glass style, light theme, bookmarks pill at top | ❌ Needs downscale + crop |
-| `2-glass_dark.png` | 2560×1632 | Glass style, dark theme, bookmarks pill at top | ❌ Needs downscale + crop |
-| `3-classic.png` | 2560×1600 | Classic style, bookmarks bar flush at bottom | ✅ Downscale only — already 16:10 |
-| `4-settings.png` | 2560×1632 | Settings panel open, bottom-right | ❌ Needs downscale + crop |
+| File | Size | What it shows |
+|---|---|---|
+| `1-glass_light.jpg` | 1280×800 | Glass style, light theme, bookmarks pill at top |
+| `2-glass_dark.jpg` | 1280×800 | Glass style, dark theme, bookmarks pill at top |
+| `3-classic.jpg` | 1280×800 | Classic style, bookmarks bar flush at bottom |
+| `4-glass_bottom.jpg` | 1280×800 | Glass style, bookmarks bar anchored at the bottom |
 
-The shots are Retina captures (2× the CWS target). `3-classic.png` is already 16:10 so it downscales cleanly to 1280×800. The others are 2560×1632 (≈1.569:1), slightly taller than 16:10 — need a 32px crop off the height before downscaling, or a single combined crop+resize.
-
-ImageMagick one-liner (handles both cases, gravity centered):
-
-```sh
-cd packages/shared/assets/screenshots
-mkdir -p cws
-for f in 1-glass_light.png 2-glass_dark.png 3-classic.png 4-settings.png; do
-  magick "$f" -resize 1280x -gravity center -crop 1280x800+0+0 +repage "cws/$f"
-done
-```
-
-For `4-settings.png` the settings panel sits in the lower-right; if the centered crop clips it, swap `-gravity center` → `-gravity south` for that file.
-
-Suggested additional shot to capture before submission (optional, max 5 total):
+Suggested additional shots to capture before submission (optional, max 5 total):
+- The **Tab groups** menu open in the bar — shows the headline v1.10.0 feature
 - Localized UI (Japanese or Spanish) — demonstrates the 7-language support
 
 ## Promotional images (optional but recommended)
@@ -113,3 +102,19 @@ Suggested additional shot to capture before submission (optional, max 5 total):
 - **Marquee promo**: 1400×560 PNG/JPG — only used if the extension is featured.
 
 If we don't have these yet, skip them; they can be added in a later edit without re-review.
+
+## Release notes
+
+> CWS shows version notes on the item's update. Paste the latest entry as plain text. Newest first.
+
+### v1.11.0
+
+```
+A friendlier Groups menu: forgetting a saved group is now a direct two-click action (click the ✕, then confirm) instead of a submenu, and Topmarks now detects when the browser has dropped the optional tab permissions and offers a one-click re-grant instead of failing silently.
+```
+
+### v1.10.0
+
+```
+New: Tab groups. Reopen your closed browser tab groups straight from the bookmarks bar. Fully opt-in — Topmarks requests the tabs and tab-groups permissions only when you enable the feature in Settings, and your groups are saved locally, never uploaded.
+```
