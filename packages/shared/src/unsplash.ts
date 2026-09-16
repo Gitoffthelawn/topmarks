@@ -258,7 +258,7 @@ export async function updateBackgroundErrorVisibility(opts: {
   intervalEl.hidden = active;
 
   if (active) {
-    console.error("[Topmarks] Wallpaper error shown in settings.", {
+    console.error("[Mr. Newtabby] Wallpaper error shown in settings.", {
       consecutiveFailures: unsplashBackoff!.failures,
       nextAttemptInSeconds: Math.ceil((unsplashBackoff!.nextAttemptAt - now) / 1000),
       nextAttemptAt: new Date(unsplashBackoff!.nextAttemptAt).toISOString(),
@@ -277,7 +277,7 @@ export async function updateBackgroundErrorVisibility(opts: {
       hasUnsplashKey: hasUnsplashKey(),
     });
   } else {
-    console.info("[Topmarks] No active wallpaper error.", {
+    console.info("[Mr. Newtabby] No active wallpaper error.", {
       backoff: unsplashBackoff ?? null,
       cachedBackgroundShown: !!cachedBackground?.rawUrl,
     });

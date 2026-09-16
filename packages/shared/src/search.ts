@@ -15,7 +15,7 @@ export function setupSearch(): void {
       try {
         await getPlatform().search.submit(query, { newTab: inNewTab });
       } catch (err) {
-        console.error("[Topmarks] Search submit failed:", err);
+        console.error("[Mr. Newtabby] Search submit failed:", err);
       }
     } else if (e.key === "Escape") {
       if (searchInput!.value !== "") {

@@ -9,7 +9,7 @@ import type {
   StorageChanges,
   LiveTabGroup,
   ReopenableGroup,
-} from "@topmarks/shared/platform";
+} from "@mr-newtabby/shared/platform";
 
 const TOOLBAR_ID = "toolbar_____";
 

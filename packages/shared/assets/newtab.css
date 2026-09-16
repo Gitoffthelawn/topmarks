@@ -405,6 +405,23 @@ body.hide-labels #bookmarks-bar > .bookmark-item > .bookmark-title {
   margin-right: 16px;
 }
 
+/* Invisible hit area spanning the 16px gap between a row and its submenu.
+   Hovering a margin doesn't count as hovering the element, so without this
+   the pointer loses li:hover while crossing the gap and the submenu closes. */
+.folder-dropdown .submenu::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 100%;
+  width: 16px;
+}
+
+.folder-dropdown .submenu.align-left::after {
+  right: auto;
+  left: 100%;
+}
+
 .folder-dropdown li.has-submenu:hover > .submenu,
 .folder-dropdown li.has-submenu:focus-within > .submenu,
 .folder-dropdown li.has-submenu.submenu-open > .submenu {

@@ -9,7 +9,7 @@ CWS rendering note: the description field does **not** support Markdown. Line br
 > 50-character limit. Provided by `_locales/en/messages.json` (`extName`).
 
 ```
-Topmarks
+Mr. Newtabby
 ```
 
 ## Summary
@@ -25,13 +25,13 @@ Floats your bookmarks toolbar at the top of every new tab, over a rotating Unspl
 > 16,000-character limit. Paste as plain text — CWS does not render Markdown.
 
 ```
-Topmarks floats your Chrome bookmarks toolbar at the top of every new tab, over a rotating wallpaper from Unsplash. Designed to be minimal, fast, and unobtrusive.
+Mr. Newtabby (formerly Topmarks) floats your Chrome bookmarks toolbar at the top of every new tab, over a rotating wallpaper from Unsplash. Designed to be minimal, fast, and unobtrusive.
 
 FEATURES
 
 • Bookmarks where you want them. Your Bookmarks Toolbar appears as a clean pill at the top of every new tab. Folders open as dropdowns; nested folders cascade as side menus.
 
-• Reopen your tab groups. Topmarks remembers the browser tab groups you've opened and lists the closed ones in the bookmarks bar — click one to reopen the whole group. Opt-in: turn it on in Settings (it requests the tabs and tab-groups permissions only then), and your groups are saved on your device, never uploaded.
+• Reopen your tab groups. Mr. Newtabby remembers the browser tab groups you've opened and lists the closed ones in the bookmarks bar — click one to reopen the whole group. Opt-in: turn it on in Settings (it requests the tabs and tab-groups permissions only then), and your groups are saved on your device, never uploaded.
 
 • Folders with personality. Replace any top-level folder's icon with an emoji — just paste one from your system picker. Clear it anytime to restore the default.
 
@@ -47,15 +47,15 @@ FEATURES
 
 PRIVACY
 
-Topmarks does not collect, transmit, or store your bookmarks, browsing history, or any personal identifier. The only outbound network request is to api.unsplash.com when wallpapers are enabled, to fetch a random photo. Favicons load from Chrome's own favicon cache first (no network), then fall back to each bookmarked site's own /favicon.ico — no third-party favicon services. When the optional Tab groups feature is enabled, Topmarks reads your tab groups (their names, colors, and member tab URLs) to save them on your device for one-click reopening — this stays in local storage and is never transmitted. No analytics. No telemetry. No remote code.
+Mr. Newtabby does not collect, transmit, or store your bookmarks, browsing history, or any personal identifier. The only outbound network request is to api.unsplash.com when wallpapers are enabled, to fetch a random photo. Favicons load from Chrome's own favicon cache first (no network), then fall back to each bookmarked site's own /favicon.ico — no third-party favicon services. When the optional Tab groups feature is enabled, Mr. Newtabby reads your tab groups (their names, colors, and member tab URLs) to save them on your device for one-click reopening — this stays in local storage and is never transmitted. No analytics. No telemetry. No remote code.
 
-Full privacy policy: https://github.com/nx-alejandrolacasa/topmarks/blob/main/PRIVACY.md
+Full privacy policy: https://github.com/nx-alejandrolacasa/mr-newtabby/blob/main/PRIVACY.md
 
 SOURCE AND LICENSE
 
 Open source under the MIT License.
 
-GitHub: https://github.com/nx-alejandrolacasa/topmarks
+GitHub: https://github.com/nx-alejandrolacasa/mr-newtabby
 
 Photos courtesy of Unsplash.
 ```
@@ -106,6 +106,12 @@ If we don't have these yet, skip them; they can be added in a later edit without
 ## Release notes
 
 > CWS shows version notes on the item's update. Paste the latest entry as plain text. Newest first.
+
+### v1.12.0
+
+```
+Topmarks is now Mr. Newtabby. New name, new icon, same extension — your bookmarks, settings, and saved tab groups carry over untouched, and updates keep arriving automatically.
+```
 
 ### v1.11.0
 

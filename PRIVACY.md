@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-07-14
 
-This policy explains what data the **Topmarks** browser extension (the "extension") handles, what is transmitted off your device, and how you can control it. It applies to the version of the extension distributed via [addons.mozilla.org](https://addons.mozilla.org) (Firefox) and the [Chrome Web Store](https://chromewebstore.google.com) (Chrome and Chromium-based browsers), and any source-built copy of the same code.
+This policy explains what data the **Mr. Newtabby** (formerly Topmarks) browser extension (the "extension") handles, what is transmitted off your device, and how you can control it. It applies to the version of the extension distributed via [addons.mozilla.org](https://addons.mozilla.org) (Firefox) and the [Chrome Web Store](https://chromewebstore.google.com) (Chrome and Chromium-based browsers), and any source-built copy of the same code.
 
 ## 1. Summary
 

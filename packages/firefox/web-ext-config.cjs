@@ -3,7 +3,7 @@
 module.exports = {
   sourceDir: "./dist",
   build: {
-    filename: "topmarks-firefox-v{version}.zip",
+    filename: "mr-newtabby-firefox-v{version}.zip",
     overwriteDest: true,
   },
 };

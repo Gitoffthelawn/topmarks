@@ -66,12 +66,12 @@ No. All JavaScript and CSS executed by the extension is bundled inside the exten
 
 ## Data usage disclosure
 
-> CWS field: "What user data does your extension collect or use?" — Tick only the categories that actually apply. Topmarks transmits no user data, but the optional **Tab groups** feature *reads* tab URLs locally, which Google may classify as **"Website content."** Decision to confirm before submitting: if you treat reading-but-not-transmitting as in-scope (the conservative reading), tick **Website content** and rely on the certifications below (used only for the single purpose, never sold/transferred); otherwise, with the feature being off by default and entirely on-device, all categories may be left unchecked. Either way the rationale below applies.
+> CWS field: "What user data does your extension collect or use?" — Tick only the categories that actually apply. Mr. Newtabby transmits no user data, but the optional **Tab groups** feature *reads* tab URLs locally, which Google may classify as **"Website content."** Decision to confirm before submitting: if you treat reading-but-not-transmitting as in-scope (the conservative reading), tick **Website content** and rely on the certifications below (used only for the single purpose, never sold/transferred); otherwise, with the feature being off by default and entirely on-device, all categories may be left unchecked. Either way the rationale below applies.
 
 Rationale for the reviewer (paste in the "Additional details" field if prompted):
 
 ```
-Topmarks does not transmit any user-identifying data. The extension reads the user's bookmarks locally and renders them on the new tab page; bookmarks are never sent to any server. The only outbound HTTP destination is api.unsplash.com (when "Show background image" is on), which receives a Client-ID application key and — as an unavoidable consequence of any HTTP request — the user's IP address. No user identifier is constructed or sent. No analytics, telemetry, or crash reporting. All settings are stored on-device via chrome.storage.local.
+Mr. Newtabby does not transmit any user-identifying data. The extension reads the user's bookmarks locally and renders them on the new tab page; bookmarks are never sent to any server. The only outbound HTTP destination is api.unsplash.com (when "Show background image" is on), which receives a Client-ID application key and — as an unavoidable consequence of any HTTP request — the user's IP address. No user identifier is constructed or sent. No analytics, telemetry, or crash reporting. All settings are stored on-device via chrome.storage.local.
 
 The optional "Tab groups" feature (off by default; requests the tabs and tabGroups permissions only when the user enables it) reads open tab groups — their names, colors, and member tab URLs — solely to save them on the device so the user can reopen a closed group from the new tab page. This data is stored in chrome.storage.local and is never transmitted, sold, or shared.
 ```
@@ -87,7 +87,7 @@ The optional "Tab groups" feature (off by default; requests the tabs and tabGrou
 ## Privacy policy URL
 
 ```
-https://github.com/nx-alejandrolacasa/topmarks/blob/main/PRIVACY.md
+https://github.com/nx-alejandrolacasa/mr-newtabby/blob/main/PRIVACY.md
 ```
 
 ## Notes for reviewer
@@ -95,7 +95,7 @@ https://github.com/nx-alejandrolacasa/topmarks/blob/main/PRIVACY.md
 > Paste into the "Justification" / "Testing instructions" field on submission.
 
 ```
-Topmarks replaces the new tab page with the user's Bookmarks Bar laid out as a pill at the top, over an optional Unsplash wallpaper.
+Mr. Newtabby replaces the new tab page with the user's Bookmarks Bar laid out as a pill at the top, over an optional Unsplash wallpaper.
 
 To test:
 1. Install the unpacked extension or the uploaded package.
@@ -108,7 +108,7 @@ Network behavior:
 - Favicons are loaded via Chrome's internal _favicon/ URL scheme first (no network), falling back to the bookmarked site's own /favicon.ico when the cache has no entry. No third-party favicon services are used.
 
 Build notes:
-- Source: https://github.com/nx-alejandrolacasa/topmarks (MIT license)
+- Source: https://github.com/nx-alejandrolacasa/mr-newtabby (MIT license)
 - The shipped bundle embeds only the public Unsplash Access Key (Client-ID), per Unsplash's API guidelines for client-side apps.
 - No analytics, telemetry, crash reporting, content scripts, or remote code. Bookmarks data never leaves the browser.
 ```
@@ -127,5 +127,5 @@ Build notes:
 - [ ] All requested permissions have justifications
 - [ ] Screenshots uploaded (1280×800 or 640×400, at least one)
 - [ ] Store icon = 128×128 PNG (auto-uses `icons.128` from manifest, but the listing slot is separate — upload `packages/shared/assets/icons/icon.png` there too)
-- [ ] Package uploaded: `web-ext-artifacts/topmarks-chrome-v1.11.0.zip`
+- [ ] Package uploaded: `web-ext-artifacts/mr-newtabby-chrome-v1.12.0.zip`
 - [ ] "Why are you requesting these permissions?" field non-empty for every permission

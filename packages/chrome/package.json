@@ -1,5 +1,5 @@
 {
-  "name": "@topmarks/chrome",
+  "name": "@mr-newtabby/chrome",
   "version": "1.11.0",
   "private": true,
   "license": "MIT",
@@ -10,7 +10,7 @@
     "package": "web-ext build"
   },
   "dependencies": {
-    "@topmarks/shared": "*"
+    "@mr-newtabby/shared": "*"
   },
   "devDependencies": {
     "web-ext": "^10.1.0"

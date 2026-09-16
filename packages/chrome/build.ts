@@ -10,6 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadUnsplashKey } from "../shared/src/build-helpers/load-env.ts";
 import { validateDist } from "../shared/src/build-helpers/validate-dist.ts";
+import { renderIconPng } from "../shared/src/build-helpers/icon-png.ts";
 
 const REQUIRED_DIST_FILES = [
   "manifest.json",
@@ -49,6 +50,7 @@ async function copyAssets(version: string) {
   for (const dir of ["icons", "fonts"]) {
     await cp(path.join(sharedAssets, dir), path.join(DIST, dir), { recursive: true });
   }
+  await writeFile(path.join(DIST, "icons", "icon.png"), renderIconPng());
   await cp(sharedLocales, path.join(DIST, "_locales"), { recursive: true });
 
   const manifest = JSON.parse(await readFile(path.join(HERE, "manifest.json"), "utf8"));
@@ -128,7 +130,7 @@ async function main() {
       build(backgroundBundleOptions()),
     ]);
     await validateDist(DIST, REQUIRED_DIST_FILES);
-    console.log(`Built @topmarks/chrome v${version} → ${path.relative(REPO_ROOT, DIST)}`);
+    console.log(`Built @mr-newtabby/chrome v${version} → ${path.relative(REPO_ROOT, DIST)}`);
   }
 }
 

@@ -134,7 +134,7 @@ async function main() {
       build(backgroundBundleOptions()),
     ]);
     await validateDist(DIST, REQUIRED_DIST_FILES);
-    console.log(`Built @topmarks/firefox v${version} → ${path.relative(REPO_ROOT, DIST)}`);
+    console.log(`Built @mr-newtabby/firefox v${version} → ${path.relative(REPO_ROOT, DIST)}`);
   }
 }
 

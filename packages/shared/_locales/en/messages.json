@@ -1,5 +1,5 @@
 {
-  "extName": { "message": "Topmarks" },
+  "extName": { "message": "Mr. Newtabby" },
   "extDescription": { "message": "Shows your bookmarks toolbar at the top of every new tab page." },
   "newTabTitle": { "message": "New Tab" },
   "bookmarksBarLabel": { "message": "Bookmarks bar" },
@@ -52,7 +52,7 @@
   "tabGroupsForget": { "message": "Forget" },
   "tabGroupsForgetConfirm": { "message": "Forget?" },
   "tabGroupsBarLabel": { "message": "Groups" },
-  "tabGroupsTip": { "message": "Groups show up here once Topmarks has seen them open. Reopen a closed group once to start tracking it." },
+  "tabGroupsTip": { "message": "Groups show up here once Mr. Newtabby has seen them open. Reopen a closed group once to start tracking it." },
   "tabGroupsTipDismiss": { "message": "Dismiss tip" },
   "tabGroupsGrantPermission": { "message": "Permission missing — click to re-enable group tracking" }
 }

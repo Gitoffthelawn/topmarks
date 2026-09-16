@@ -1,4 +1,4 @@
-/* Topmarks marketing site — interactivity */
+/* Mr. Newtabby marketing site — interactivity */
 (function () {
   "use strict";
 

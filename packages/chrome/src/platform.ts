@@ -12,7 +12,7 @@ import type {
   StorageChanges,
   LiveTabGroup,
   ReopenableGroup,
-} from "@topmarks/shared/platform";
+} from "@mr-newtabby/shared/platform";
 
 // Chrome's bookmarks bar root is "1" (the bookmark bar's stable ID). Compare
 // with Firefox's "toolbar_____".

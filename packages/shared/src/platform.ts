@@ -1,5 +1,5 @@
 // The browser-agnostic surface shared/* code uses. Each platform package
-// (@topmarks/firefox, @topmarks/chrome) provides a concrete impl via its own
+// (@mr-newtabby/firefox, @mr-newtabby/chrome) provides a concrete impl via its own
 // platform.ts and passes it to startApp(platform) at extension load.
 //
 // The interface mirrors only the WebExtensions APIs newtab.ts actually calls.

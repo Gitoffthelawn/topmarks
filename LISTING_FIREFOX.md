@@ -15,12 +15,12 @@ Floats your bookmarks toolbar at the top of every new tab, over a curated rotati
 > Markdown is supported (basic). Paste into the AMO description field.
 
 ```markdown
-**Topmarks** floats your Firefox bookmarks toolbar at the top of every new tab, over a rotating wallpaper from Unsplash. Designed to be minimal, fast, and unobtrusive.
+**Mr. Newtabby** (formerly Topmarks) floats your Firefox bookmarks toolbar at the top of every new tab, over a rotating wallpaper from Unsplash. Designed to be minimal, fast, and unobtrusive.
 
 **Features**
 
 - **Bookmarks where you want them.** Your Bookmarks Toolbar appears as a clean pill at the top of every new tab. Folders open as dropdowns; nested folders cascade as side menus.
-- **Reopen your tab groups.** Topmarks remembers the browser tab groups you've opened and lists the closed ones in the bookmarks bar — click one to reopen the whole group in a tab. Opt-in: turn it on in Settings (it requests the tabs and tab-groups permissions only then), and your groups are saved on your device, never uploaded.
+- **Reopen your tab groups.** Mr. Newtabby remembers the browser tab groups you've opened and lists the closed ones in the bookmarks bar — click one to reopen the whole group in a tab. Opt-in: turn it on in Settings (it requests the tabs and tab-groups permissions only then), and your groups are saved on your device, never uploaded.
 - **Folders with personality.** Replace any top-level folder's icon with an emoji — just paste one from your system picker. Clear it anytime to restore the default.
 - **Curated wallpapers.** Each session loads a high-resolution photo from a curated Unsplash collection, sized to your display (up to 4K). Pick a refresh interval: every 1, 6, 12, or 24 hours.
 - **Two styles.** Pick **Glass** for a frosted-glass aesthetic with backdrop blur, or **Classic** for solid surfaces and a flush-anchored bar.
@@ -30,15 +30,15 @@ Floats your bookmarks toolbar at the top of every new tab, over a curated rotati
 
 **Privacy**
 
-Topmarks does **not** collect, transmit, or store your bookmarks, browsing history, or any personal identifier. The only outbound network request is to api.unsplash.com when wallpapers are enabled, to fetch a random photo. Favicons come from icons your browser has already seen (remembered locally from your open tabs) with a fallback to each bookmarked site's own /favicon.ico — no third-party favicon services. When the optional **Tab groups** feature is enabled, Topmarks reads your tab groups (their names, colors, and member tab URLs) to save them on your device for one-click reopening — this stays in local storage and is never transmitted. No analytics. No telemetry. No remote code.
+Mr. Newtabby does **not** collect, transmit, or store your bookmarks, browsing history, or any personal identifier. The only outbound network request is to api.unsplash.com when wallpapers are enabled, to fetch a random photo. Favicons come from icons your browser has already seen (remembered locally from your open tabs) with a fallback to each bookmarked site's own /favicon.ico — no third-party favicon services. When the optional **Tab groups** feature is enabled, Mr. Newtabby reads your tab groups (their names, colors, and member tab URLs) to save them on your device for one-click reopening — this stays in local storage and is never transmitted. No analytics. No telemetry. No remote code.
 
-Full privacy policy: https://github.com/nx-alejandrolacasa/topmarks/blob/main/PRIVACY.md
+Full privacy policy: https://github.com/nx-alejandrolacasa/mr-newtabby/blob/main/PRIVACY.md
 
 **Source & license**
 
 Open source under the MIT License.
 
-GitHub: https://github.com/nx-alejandrolacasa/topmarks
+GitHub: https://github.com/nx-alejandrolacasa/mr-newtabby
 
 Photos courtesy of Unsplash.
 ```
@@ -91,7 +91,7 @@ content scripts. Bookmarks data never leaves the browser.
 
 ## Source code submission
 
-> AMO asks "Do you use any of the following in your extension?" — answer **Yes** (esbuild bundles multiple files into one). Upload a source zip generated from the release tag: `git archive --format=zip -o web-ext-artifacts/topmarks-<version>-source.zip v<version>`. Paste the following into the source-submission notes field:
+> AMO asks "Do you use any of the following in your extension?" — answer **Yes** (esbuild bundles multiple files into one). Upload a source zip generated from the release tag: `git archive --format=zip -o web-ext-artifacts/mr-newtabby-<version>-source.zip v<version>`. Paste the following into the source-submission notes field:
 
 ```
 Requirements: Node.js 22.x (ships with npm 10). Any OS.
@@ -113,6 +113,12 @@ maps. No other code generation or templating is involved.
 ## Release notes
 
 > Paste the latest entry into the version's "Release notes" / "What's new" field. Newest first.
+
+### v1.12.0
+
+```
+Topmarks is now Mr. Newtabby. New name, new icon, same add-on — your bookmarks, settings, and saved tab groups carry over untouched, and updates keep arriving automatically.
+```
 
 ### v1.11.0
 

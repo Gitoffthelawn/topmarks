@@ -4,7 +4,7 @@
   "version": "__VERSION__",
   "description": "__MSG_extDescription__",
   "default_locale": "en",
-  "homepage_url": "https://github.com/nx-alejandrolacasa/topmarks",
+  "homepage_url": "https://github.com/nx-alejandrolacasa/mr-newtabby",
   "permissions": ["bookmarks", "storage", "search", "favicon"],
   "optional_permissions": ["tabs", "tabGroups"],
   "host_permissions": ["https://api.unsplash.com/*"],

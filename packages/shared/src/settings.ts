@@ -21,7 +21,7 @@ export const SETTINGS_DEFAULTS = {
   clockSize: 110,
   // Maps a top-level folder id to a chosen emoji that replaces its icon.
   folderEmojis: {} as Record<string, string>,
-  // When on, Topmarks watches native tab groups and lists closed ones in the
+  // When on, Mr. Newtabby watches native tab groups and lists closed ones in the
   // bar for one-click reopen. Off by default; enabling requests tabs+tabGroups.
   tabGroupsEnabled: false,
   // Whether the user dismissed the explanatory tip at the foot of the groups menu.

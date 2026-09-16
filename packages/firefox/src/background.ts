@@ -1,6 +1,6 @@
-import { setPlatform } from "@topmarks/shared/platform";
-import { startTabGroupsWatcher } from "@topmarks/shared/tab-groups-store";
-import { startFaviconWatcher } from "@topmarks/shared/favicon-cache";
+import { setPlatform } from "@mr-newtabby/shared/platform";
+import { startTabGroupsWatcher } from "@mr-newtabby/shared/tab-groups-store";
+import { startFaviconWatcher } from "@mr-newtabby/shared/favicon-cache";
 import { platform } from "@/platform";
 
 setPlatform(platform);

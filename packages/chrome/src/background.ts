@@ -1,5 +1,5 @@
-import { setPlatform } from "@topmarks/shared/platform";
-import { startTabGroupsWatcher } from "@topmarks/shared/tab-groups-store";
+import { setPlatform } from "@mr-newtabby/shared/platform";
+import { startTabGroupsWatcher } from "@mr-newtabby/shared/tab-groups-store";
 import { platform } from "@/platform";
 
 setPlatform(platform);
