@@ -97,6 +97,8 @@ https://github.com/nx-alejandrolacasa/mr-newtabby/blob/main/PRIVACY.md
 ```
 Mr. Newtabby replaces the new tab page with the user's Bookmarks Bar laid out as a pill at the top, over an optional Unsplash wallpaper.
 
+About this version (1.12.0): this is a rename of the extension previously published as "Topmarks". The name, icon, and homepage URL changed; the functionality, permissions, and data handling are identical to 1.11.0. The store icon is rasterized from the SVG at build time by a small dependency-free script in the repo (packages/shared/src/build-helpers/icon-png.ts).
+
 To test:
 1. Install the unpacked extension or the uploaded package.
 2. Open a new tab — you should see the bookmarks pill at the top.

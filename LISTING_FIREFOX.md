@@ -63,6 +63,11 @@ api.unsplash.com (when "Show background image" is enabled), used to
 fetch a random photo from Unsplash's curated wallpaper collection
 1053828.
 
+About this version (1.12.0): this is a rename of the add-on previously
+listed as "Topmarks". The name, icon, and homepage URL changed; the
+add-on ID, functionality, permissions, and data handling are identical
+to 1.11.0.
+
 Build: npm install && npm run build (esbuild monorepo; see README).
 The public Unsplash Access Key (Client-ID) is read from .env at build
 time and embedded into the bundle, per Unsplash's API guidelines for
